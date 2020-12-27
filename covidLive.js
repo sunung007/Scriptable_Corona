@@ -1,51 +1,44 @@
-const selectBackground = false
+const changeBackground = false
 
-const forcedWhiteFontPhone = false
-const forcedWhiteFontPad = false
-const forcedBlackFontPhone = true
-const forcedBlackFontPad = false
+const forcedWhitePhone = false
+const forcedBlackPhone = true
+const forcedWhitePad = false
+const forcedBlackPad = false
 
 const colorIncrease = '#F51673'
 const colorDecrease = '#2B69F0'
 
-const isPad = Device.isPad()
-
 const jsonURL = 'https://apiv2.corona-live.com/stats.json'
-let widget = new ListWidget()
+
+const isPad = Device.isPad()
 const isDarkmode = Device.isUsingDarkAppearance()
 
-let jsonData = await new Request(jsonURL).loadJSON()
-let overviewData = jsonData['overview']
-let seoulData = jsonData['current']['0']['cases']
+const thisURL = URLScheme.forRunningScript()
 
-const currentNumber = comma(overviewData['current'][0])
-const currentGap = overviewData['current'][1]
-const accumNumber = comma(overviewData['confirmed'][0])
-const yesterNumber = comma(overviewData['confirmed'][1])
+let widget = new ListWidget()
+let jsonData
+let box, container
 
-const seoulCurrent = seoulData[0]
-const seoulGap = seoulData[1]
 
-createWidget()
+// Set background in phone.
+let fileManager = FileManager.local()
+const path = fileManager.joinPath(fileManager.documentsDirectory(), 'corona-background')
 
-// set background in phone.
-if(Device.isPhone()) {
-  let fileManager = FileManager.local()
-  const path = fileManager.joinPath(fileManager.documentsDirectory(), 'corona-background')
-
-  if(selectBackground) {
-    let image = await Photos.fromLibrary()
-    fileManager.writeImage(path, image)
-  }
-    
-  widget.backgroundImage = fileManager.readImage(path)
-  let exits = fileManager.fileExists(path)
+if(!fileManager.fileExists(path) || changeBackground) {
+  let image = await Photos.fromLibrary()
+  fileManager.writeImage(path, image)
 }
+widget.backgroundImage = fileManager.readImage(path)
  
-
-// Refresh for every minute.// 
+// Refresh for every minute.
 widget.refreshAfterDate = new Date(Date.now() +  1000*60*30)
 
+
+// Create widget.
+//if(!config.runsInWidget) {
+  jsonData = await new Request(jsonURL).loadJSON()
+  createWidget()
+//}
 
 widget.setPadding(0,0,0,0)
 Script.setWidget(widget)
@@ -53,91 +46,119 @@ Script.complete()
 widget.presentMedium()
 
 
-function comma(number) {  
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-
-function createWidget() {  
-  let content, stack1, stack2, line, box
-  let year, month, date, day
-  let dayArray = ['일', '월', '화', '수', '목', '금', '토']
+function createWidget() {
+  container = widget.addStack()
+  container.layoutVertically()
   
-  box = widget.addStack()
+  box = container.addStack()
   box.layoutHorizontally()
   
+  setLeftWidget()
+  box.addSpacer(100)
+  setRightWidget()
   
-  // Stack1 : Date information
+  container.addSpacer(10)
+  // buttons
+  box = container.addStack()
+  box.layoutHorizontally()
+  
+  setButtons()  
+}
+
+function setLeftWidget() {
+  const dayArray = ['일', '월', '화', '수', '목', '금', '토']
+  let year, month, date, day
+  let stack, line, content
+  
+  // Date information
+  stack = box.addStack()
+  stack.layoutVertically()
+  
   date = new Date()
   day = dayArray[date.getDay()] + '요일'
   year = String(date.getFullYear()).substring(2) + '년'
   month = date.getMonth() + 1 + '월'
   date = date.getDate() + ''
   
-
-  
-  stack1 = box.addStack()
-  stack1.layoutVertically()
-  
-  content = stack1.addText(year + ' ' + month)
+  content = stack.addText(year + ' ' + month)// + ' ' + day) // 년도 + 월 + 요일
   content.font = Font.caption1()  
   content.textColor = colorMatch()
-  content = stack1.addText(date)
+  
+  line = stack.addStack()
+  line.centerAlignContent()
+  content = line.addText(date + ' ') // 일
   content.font = Font.boldSystemFont(32)
   content.textColor = colorMatch()
-  stack1.addSpacer(4)
+  stack.addSpacer(4)
 
-  content = stack1.addText(day)
+
+  content = stack.addText(day) // 요일
   content.font = Font.systemFont(16)
   content.textColor = colorMatch()
-  stack1.addSpacer(8)
+  stack.addSpacer(8)
 
-  //---------------------
-  // battery in Stack1
+
+  // Battery
   let battery = Device.batteryLevel()
   let image = getBatteryImage()
-  line = stack1.addStack()
+  line = stack.addStack()
   content = line.addImage(image)
 
   if(Device.isCharging()) {
-    content.imageSize = new Size(25, 20)
+    content.imageSize = new Size(25, 20) // resize battery icon
     content.tintColor = Color.green()
     line.addText(' ')
   } else {
-    content.imageSize = new Size(35, 20)
-    if(Device.batteryLevel()*100>20) {
+    content.imageSize = new Size(35, 20) // resize battery icon
+    if(Device.batteryLevel()*100 > 20) {
       content.tintColor = colorMatch()
     }
   }
 
-  content = line.addText(Number(Device.batteryLevel()*100).toFixed(0) + '%')    
+  content = line.addText(Number(battery*100).toFixed(0) + '%')    
   content.font = Font.systemFont(16)
-  content.textColor = colorMatch()
+  content.textColor = colorMatch()  
+}
+
+function setRightWidget() {
+  let stack, line, content
+  let currentNum, currentGap, seoulNum, seoulGap
+  let totalNum, yesterdayNum // Accumulated on yesterday-basis
   
-  box.addSpacer(100)
-    
-  //------------------------------------------
-  // Stack2 : Corona information  
-  stack2 = box.addStack()
-  stack2.layoutVertically()
-  content = stack2.addText('현재')
+  
+  // Get covid data from 'covid-live.com'
+  let overviewData = jsonData['overview']
+  let seoulData = jsonData['current']['0']['cases']
+
+  currentNum = comma(overviewData['current'][0])
+  currentGap = overviewData['current'][1]
+  totalNum = comma(overviewData['confirmed'][0])
+  yesterdayNum = comma(overviewData['confirmed'][1])
+  seoulNum = seoulData[0]
+  seoulGap = seoulData[1]
+  
+  stack = box.addStack()
+  stack.layoutVertically()
+  
+  
+  // Current realtime patient
+  content = stack.addText('현재')
   content.font = Font.caption2()
   content.textColor = colorMatch()
   
-  let length1 = String(currentNumber).length
-  let length2 = String(seoulCurrent).length  
-  
-  line = stack2.addStack()
-  line.layoutHorizontally()
+  // Whole country
+  line = stack.addStack()
   line.centerAlignContent()
-  content = line.addText(currentNumber+'')
+  
+  content = line.addText(currentNum + '')
   content.font = Font.boldSystemFont(20)
   content.textColor = colorMatch()
+  
   content = line.addText(' 명')
   content.font = Font.systemFont(20)
   content.textColor = colorMatch()
 
-  if(currentGap > 0) {  
+  if(currentGap > 0) {  // compare with yesterday's
     content = line.addText(' +' + currentGap)  
     content.textColor = new Color(colorIncrease) 
   } else {
@@ -146,18 +167,19 @@ function createWidget() {
   }    
   content.font = Font.systemFont(14)
   
-  //---------------------
-  line = stack2.addStack()
-  line.layoutHorizontally()
+  // Seoul
+  line = stack.addStack()
   line.centerAlignContent()
-  content = line.addText(seoulCurrent+'')
+  
+  content = line.addText(seoulNum + '')
   content.font = Font.boldSystemFont(20)
   content.textColor = colorMatch()
+  
   content = line.addText(' 명')
   content.font = Font.systemFont(20)
   content.textColor = colorMatch()
   
-  if(seoulGap > 0) {  
+  if(seoulGap > 0) {  // compare with yesterday's
     content = line.addText(' +' + seoulGap)  
     content.textColor = new Color(colorIncrease) 
   } else {
@@ -166,26 +188,76 @@ function createWidget() {
   }      
   content.font = Font.systemFont(14)
   
-  stack2.addSpacer(6)
+  stack.addSpacer(6)
   
   
-  //---------------------
-  content = stack2.addText('0시 기준')
+  // Accumulated number on yesterday-basis.  
+  content = stack.addText('0시 기준')
   content.font = Font.caption2()
   content.textColor = colorMatch()
-  line = stack2.addStack()
+  
+  // Total
+  line = stack.addStack()
   line.layoutHorizontally()
   line.centerAlignContent()
-  content = line.addText(accumNumber+'')
+  
+  content = line.addText(totalNum + '')
   content.font = Font.boldSystemFont(20)
   content.textColor = colorMatch()
+  
   content = line.addText(' 명')
   content.font = Font.systemFont(20)
   content.textColor = colorMatch()
   
-  content = line.addText(' +' + yesterNumber)
+  content = line.addText(' +' + yesterdayNum)
   content.textColor = new Color(colorIncrease)
   content.font = Font.systemFont(14)
+}
+
+function setButtons() {
+  let stack
+  // Buttons  
+  let button1, button2, button3, button4, button5
+  let buttons = [button1, button2, button3, button4, button5]
+  const shortcutURL = 'shortcuts://run-shortcut?name='
+  let urls = [
+    // renew
+    thisURL,
+    // 버즈 + 지니
+    shortcutURL + '%eb%b2%84%ec%a6%88%2b%ec%a7%80%eb%8b%88',
+    // QR 체크인
+    shortcutURL + 'QR%20%ec%b2%b4%ed%81%ac%ec%9d%b8',
+    // 집으로 가기
+    shortcutURL + '%ec%a7%91%ec%9c%bc%eb%a1%9c%20%ea%b0%80%ea%b8%b0',
+    // 계좌 공유
+    shortcutURL + '%ea%b3%84%ec%a2%8c%20%ea%b3%b5%ec%9c%a0'
+  ]
+
+  stack = box.addStack()
+  stack.size = new Size(130, 13)
+  button1 = stack.addImage(SFSymbol.named('arrow.clockwise.circle').image)
+  stack.addSpacer(15)
+  button2 = stack.addImage(SFSymbol.named('headphones').image)
+  stack.addSpacer(15)
+  button3 = stack.addImage(SFSymbol.named('qrcode').image)
+  stack.addSpacer(15)
+  button4 = stack.addImage(SFSymbol.named('house').image)
+  stack.addSpacer(15)
+  button5 = stack.addImage(SFSymbol.named('dollarsign.circle').image)
+  
+  // Set url to buttons.
+  button1.url = urls[0]
+  button2.url = urls[1]
+  button3.url = urls[2]
+  button4.url = urls[3]
+  button5.url = urls[4]
+  
+  // Set buttons' color.
+  button1.tintColor = colorMatch()
+  button2.tintColor = colorMatch()
+  button3.tintColor = colorMatch()
+  button4.tintColor = colorMatch()
+  button5.tintColor = colorMatch()
 }
 
 function getBatteryImage() {
@@ -239,18 +311,22 @@ function getBatteryImage() {
 }
 
 
+function comma(number) {  
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 function colorMatch() {
   let color
   if(isPad) {
-    if(isDarkmode || forcedWhiteFontPad) {
+    if(isDarkmode || forcedWhitePad) {
       color = Color.white()
-    } else if(forcedBlackFontPad) {
+    } else if(forcedBlackPad) {
       color = Color.black()
     }
   } else {
-    if(forcedWhiteFontPhone) {
+    if(forcedWhitePhone) {
       color = Color.white()
-    } else if(forcedBlackFontPhone) {
+    } else if(forcedBlackPhone) {
       color = Color.black()
     }
   }  
