@@ -10,7 +10,7 @@ const colorDecrease = '#2B69F0'
 
 const isPad = Device.isPad()
 
-let jsonURL = 'https://apiv2.corona-live.com/stats.json'
+const jsonURL = 'https://apiv2.corona-live.com/stats.json'
 let widget = new ListWidget()
 const isDarkmode = Device.isUsingDarkAppearance()
 
