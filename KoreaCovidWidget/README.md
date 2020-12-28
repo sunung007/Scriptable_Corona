@@ -1,5 +1,5 @@
 # Widget : Real-time Korean covid-19 patient number
-![KakaoTalk_20201229_013815888](/assets/KakaoTalk_20201229_013815888.jpg)
+![widget Image](/image/KakaoTalk_20201229_013815888.jpg)
 
 This is a widget that runs on 'Scriptable' application in iOS.
 This widget shows basic items like date, battery and covid-19 patient number, and custom items like buttons like headphone, QR code etc.
