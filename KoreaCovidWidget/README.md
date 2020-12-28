@@ -31,16 +31,14 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드이다. 이 코드
 [코드 수정](bear://x-callback-url/open-note?id=EA3E01E9-3261-4DCA-9F64-D8BE0EED942D-1851-0000034A8B335907&header=Set%20up)이 부분은 코드를 직접 수정하여야 한다.
 
 ## Set up
-
-1.	버튼 설정
+1. 최초 사용 시 설정 항목 : *단축어 바로가기 버튼 수정*
 > - number 변경
-	-  `number`는 새로고침 버튼 외의 버튼 개수이다.
-	-   아래 추가하는 `items`  row 수 만큼 입력한다.
+> 	> -  `number`는 새로고침 버튼 외의 버튼 개수이다.
+> 	> - 아래 추가하는 `items`  row 수 만큼 입력한다.
 > - items 항목 변경
->   - Format : `['SF symbol name', 'shortcut name'],`
-> 	 -	첫번째 column은 SF symbol의 name이고, 두번째 column은 iOS **Shortcut**의 이름이다.
-  	  >> -	둘 다 link이기 때문에 띄어쓰기가 정확해야 한다.
-	  >> -	shortcut name은 url로 실행되기 때문에 대/소문자까지 정확해야한다.
+> 	> - Format : `['SF symbol name', 'shortcut name'],`
+> 	> - 첫번째 column은 SF symbol의 name이고, 두번째 column은 iOS **Shortcut**의 이름이다.
+> 	> -	둘 다 띄어쓰기가 정확해야 한다. 특히, 단축어 바로가기가 url scheme를 이용해서 실행되기 때문에 `shorcut name`은  *대/소문자까지 정확*해야한다.
 ```
   // 0. 위젯에 띄울 단축어 버튼 ---------------------------------
   const buttons = {
@@ -59,4 +57,22 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드이다. 이 코드
       ['dollarsign.circle', '계좌 공유'],
     ]
   }
+```
+
+2. 최초 설정 후 변경을 원할 때
+	1. 배경
+> - 기본 background는 기기에 저장되어 있는 이미지를 불러오서 설정합니다. 이를 원하지 않을 경우  `setBackgroundImage`를 `false`로 설정해주세요.
+> - background를 이미지로 하는데, 이미지를 변경하고 싶을 경우 `changeBackgroundImage`를 `true`로 변경하세요. 단, 코드 재실행 후 반드시 `false`로 다시 수정해야 합니다. 
+```
+  // 1. 위젯 배경 --------------------------------------------
+    // true : 위젯의 배경을 이미지로 합니다.
+    //        처음 설정 시 배경 이미지 선택창이 자동으로 뜹니다.
+    // false : 위젯의 배경을 단색으로 합니다. 
+    //         배경색은 기기의 다크모드 사용 여부에 따라 자동으로 결정됩니다.
+    const setBackgroundImage = true
+
+    // true : 배경 이미지 설정 후 변경을 원할 경우 true로 하십시오.
+    //        이미지 변경 후 false로 바꿔야 합니다.
+    // false : 기본 설정
+    const changeBackgroundImage = false	
 ```
