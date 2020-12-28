@@ -30,13 +30,15 @@ Each user can add buttons he or she want to, which is linked to Apple's 'Shortcu
 Set up
 ------
 
-1.	버튼 설정 >- number 변경
-	-	`number`는 새로고침 버튼 외의 버튼 개수이다.
-	-	즉, 아래 `items` array의 row 개수인 셈이다. -items 항목 변경
-	-	['SF symbol name', 'shortcut name']
-	-	첫번째 column은 SF symbol의 name이고, 두번째 column은 iOS **Shortcut**의 이름이다.
-	-	둘 다 link이기 때문에 띄어쓰기가 정확해야 한다.
-	-	shortcut name은 url로 실행되기 때문에 대/소문자까지 정확해야한다.
+1.	버튼 설정 
+    >- number 변경
+	 >> -	`number`는 새로고침 버튼 외의 버튼 개수이다.
+	 >> -	즉, 아래 `items` array의 row 개수인 셈이다. -items 항목 변경
+	>- items 항목 수정
+	  >> - ['SF symbol name', 'shortcut name']
+	  >> -	첫번째 column은 SF symbol의 name이고, 두번째 column은 iOS **Shortcut**의 이름이다.
+  	  >> -	둘 다 link이기 때문에 띄어쓰기가 정확해야 한다.
+	  >> -	shortcut name은 url로 실행되기 때문에 대/소문자까지 정확해야한다.
 
 ```
 const buttons = {
