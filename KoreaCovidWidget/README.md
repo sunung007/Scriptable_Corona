@@ -121,3 +121,6 @@ __SF symbol__과 __단축어 이름__을 이용하여 버튼을 생성합니다.
 	// 분 단위 수정은 괄호 안에 있는 숫자만 수정하면 됩니다.
 	const refreshTime = 1000 * 60 * (10)	
 	```
+## 참조
+본 위젯의 코로나 현황 데이터는 아래 사이트를 이용하였습니다.
+[corona-live.com](http://corona-live.com, "covid-site")
