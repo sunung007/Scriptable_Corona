@@ -1,11 +1,11 @@
 # 위젯 : 전국 및 특정 지역 코로나19 실시간 현황과 날짜, 배터리 정보, 단축어 바로가기 버튼을 담은 위젯
 
-![widget Image](./image/widget.jpg)
+<img src="./image/widget.jpg" width="40%" height="30%" title="Widget Image" alt="Widget Image"></img>
 
 iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다. 이 코드는 baisc components와 사용자가 추가하는  custom componets로 구성되어 있습니다.
 위 이미지에서는 custom components	에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있습니다.
 
-[최초 변경 시](bear://x-callback-url/open-note?id=EA3E01E9-3261-4DCA-9F64-D8BE0EED942D-1851-0000034A8B335907&header=%EC%B5%9C%EC%B4%88%20%EC%82%AC%EC%9A%A9%20%EC%8B%9C%20%EC%84%A4%EC%A0%95%20%ED%95%AD%EB%AA%A9%20:%20%EB%8B%A8%EC%B6%95%EC%96%B4%20%EB%B0%94%EB%A1%9C%EA%B0%80%EA%B8%B0%20%EB%B2%84%ED%8A%BC%20%EC%88%98%EC%A0%95)최초 실행 시 변경해야 하는 사항 안내는 여기를 눌러주세요.
+[최초 변경 시](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목--단축어-바로가기-버튼-수정, "first")최초 실행 시 변경해야 하는 사항 안내는 여기를 눌러주세요.
 
 ## Basic components
 기본적으로 위젯을 구성하는 요소들입니다.
