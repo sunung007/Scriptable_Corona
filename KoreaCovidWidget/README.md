@@ -2,19 +2,21 @@
 
 ![widget Image](./image/widget.jpg)
 
-iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드이다. 이 코드는 baisc components와 사용자가추가하는  custom componets로 구성되어 있다.
-위 이미지에서는 custom components	에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있다.
+iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다. 이 코드는 baisc components와 사용자가 추가하는  custom componets로 구성되어 있습니다.
+위 이미지에서는 custom components	에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있습니다.
+
+[최초 변경 시](bear://x-callback-url/open-note?id=EA3E01E9-3261-4DCA-9F64-D8BE0EED942D-1851-0000034A8B335907&header=%EC%B5%9C%EC%B4%88%20%EC%82%AC%EC%9A%A9%20%EC%8B%9C%20%EC%84%A4%EC%A0%95%20%ED%95%AD%EB%AA%A9%20:%20%EB%8B%A8%EC%B6%95%EC%96%B4%20%EB%B0%94%EB%A1%9C%EA%B0%80%EA%B8%B0%20%EB%B2%84%ED%8A%BC%20%EC%88%98%EC%A0%95)최초 실행 시 변경해야 하는 사항 안내는 여기를 눌러주세요.
 
 ## Basic components
-기본적으로 위젯을 구성하는 요소들이다.
-이 basic componets는 `refreshTime`마다 새로 고침된다. `refreshTime`의 단위는 milisecond이다.
+기본적으로 위젯을 구성하는 요소들입니다.
+이 basic componets는 `refreshTime`마다 새로 고침되며,  `refreshTime`의 단위는 milisecond입니다.
 -	날짜
 	-	년
 	-	월
 	-	일
 	-	요일
--	배터리 저옵
-	-	배터리 percentage를 보여준다.
+-	배터리 정보
+	-	배터리 percentage를 보여줍니다.
 - 	코로나-19 현황
 	-	전국 실시간 확진자
         - 특정지역 실시간 확진자
@@ -22,23 +24,23 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드이다. 이 코드
         - 정부 발표 기준 전일 확진자
         - 각 확진 현황 별 전일 대비 증감 수(빨간색/파란색)
 -	새로고침 버튼
-	-	위 현황들을 수동으로 업데이트 해준다.
+	-	위 현황들을 수동으로 업데이트 합니다.
 
 ## Custom components
-새로고침 버튼 옆에 사용자가 버튼을 추가할 수 있다.
-*SF symbol*과 *단축어 이름*을 이용하여 버튼을 생성한다.
+새로고침 버튼 옆에 사용자가 버튼을 추가할 수 있습니다.
+__SF symbol__과 __단축어 이름__을 이용하여 버튼을 생성합니다.
 
-[코드 수정](bear://x-callback-url/open-note?id=EA3E01E9-3261-4DCA-9F64-D8BE0EED942D-1851-0000034A8B335907&header=Set%20up)이 부분은 코드를 직접 수정하여야 한다.
+[코드 수정](bear://x-callback-url/open-note?id=EA3E01E9-3261-4DCA-9F64-D8BE0EED942D-1851-0000034A8B335907&header=Set%20up)이 부분은 코드를 직접 수정하여야 합니다.
 
 ## Set up
 ### 최초 사용 시 설정 항목 : 단축어 바로가기 버튼 수정
  - number 변경
-   -  `number`는 새로고침 버튼 외의 버튼 개수이다.
-   - 아래 추가하는 `items`  row 수 만큼 입력한다.
+   -  `number`는 새로고침 버튼 외의 버튼 개수입니다.
+   - 아래 추가하는 `items`  row 수 만큼 입력해야 합니다.
  - items 항목 변경
    - Format : `['SF symbol name', 'shortcut name'],`
-   - 첫번째 column은 SF symbol의 name이고, 두번째 column은 iOS **Shortcut**의 이름이다.
-   - 둘 다 띄어쓰기가 정확해야 . 특히, 단축어 바로가기가 url scheme를 이용해서 실행되기 때문에 `shorcut name`은  *대/소문자까지 정확*해야한다.
+   - 첫번째 column은 SF symbol의 name이고, 두번째 column은 iOS **Shortcut**의 이름입니다.
+   - 둘 다 띄어쓰기가 정확해야하며, 특히, 단축어 바로가기가 url scheme를 이용해서 실행되기 때문에 `shorcut name`은  *대/소문자까지 정확*해야합니다.
 ```
   // 0. 위젯에 띄울 단축어 버튼 ---------------------------------
   const buttons = {
