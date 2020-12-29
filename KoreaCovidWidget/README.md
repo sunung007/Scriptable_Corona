@@ -2,7 +2,7 @@
 
 <img src="./image/widget.jpg" width="40%" height="30%" title="Widget Image" alt="Widget Image"></img>
 
-iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.   
+iOS의 **Scriptable** 어플의 위젯에서 작동하는 코드입니다.   
 이 코드는 baisc components와 사용자가 추가하는  custom componets로 구성되어 있습니다.   
 위 이미지에서는 custom components에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있습니다.
 
