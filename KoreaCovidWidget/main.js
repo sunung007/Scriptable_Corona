@@ -3,7 +3,7 @@
   // 0. 위젯에 띄울 단축어 버튼 ---------------------------------
   const buttons = {
     number : 4,  // 버튼의 개수
-    items : [ 
+    items : [
       // 버튼 내용
       // 아래 형식에 맞춰서 추가해주세요. 아래 형식이 한 쌍입니다.
       // 형식 : ['SF symbol 이름', '단축어 이름'],
@@ -17,13 +17,13 @@
       ['dollarsign.circle', '계좌 공유'],
     ]
   }
-  
+
   // 최초 실행 시 자동으로 각 항목의 선택창이 뜹니다.
   // 최초 실행 시에는 아래 값들을 바꾸지 않는 것을 추천합니다.
   // 1. 위젯 배경 --------------------------------------------
     // true : 위젯의 배경을 이미지로 합니다.
     //        처음 설정 시 배경 이미지 선택창이 자동으로 뜹니다.
-    // false : 위젯의 배경을 단색으로 합니다. 
+    // false : 위젯의 배경을 단색으로 합니다.
     //         배경색은 기기의 다크모드 사용 여부에 따라 자동으로 결정됩니다.
     const setBackgroundImage = true
 
@@ -157,22 +157,22 @@ Script.complete()
 function createWidget() {
   container = widget.addStack()
   container.layoutVertically()
-  
+
   box = container.addStack()
   box.layoutHorizontally()
-  
+
   // Create upper part : date, battery, and covid patient number.
-  setLeftWidget()
+  setLeftWidget() // date, battery
   box.addSpacer(100)
-  setRightWidget()
-  
+  setRightWidget() // covid patient number
+
   container.addSpacer(10)
-  
+
   // Create below part : buttons
   box = container.addStack()
   box.layoutHorizontally()
-  
-  setButtons()  
+
+  setButtons()
 }
 
 
@@ -181,22 +181,22 @@ function setLeftWidget() {
   const dayArray = ['일', '월', '화', '수', '목', '금', '토']
   let year, month, date, day
   let stack, line, content
-  
+
   // Date information
   stack = box.addStack()
   stack.layoutVertically()
-  
+
   date = new Date()
   day = dayArray[date.getDay()] + '요일'
   year = String(date.getFullYear()).substring(2) + '년'
   month = date.getMonth() + 1 + '월'
   date = date.getDate() + ''
-  
+
   // 년도 + 월
   content = stack.addText(year + ' ' + month)
-  content.font = Font.caption1()  
+  content.font = Font.caption1()
   content.textColor = contentColor
-  
+
   // 일
   line = stack.addStack()
   line.centerAlignContent()
@@ -229,9 +229,9 @@ function setLeftWidget() {
     else content.tintColor = contentColor
   }
 
-  content = line.addText(Number(batteryLevel*100).toFixed(0) + '%')    
+  content = line.addText(Number(batteryLevel*100).toFixed(0) + '%')
   content.font = Font.systemFont(16)
-  content.textColor = contentColor  
+  content.textColor = contentColor
 }
 
 
@@ -240,12 +240,12 @@ function setRightWidget() {
   let stack, line, content
   let currentNum, currentGap, regionNum, regionGap
   let totalNum, yesterdayNum
-  
-  
+
+
   // Get covid data from 'covid-live.com'
   let overviewData = jsonData['overview']
   let regionData = jsonData['current'][covidRegion]['cases']
-  
+
 
   currentNum = comma(overviewData['current'][0])
   currentGap = overviewData['current'][1]
@@ -253,81 +253,81 @@ function setRightWidget() {
   yesterdayNum = (overviewData['confirmed'][1])
   regionNum = comma(regionData[0])
   regionGap = regionData[1]
-  
+
   stack = box.addStack()
   stack.layoutVertically()
-  
-  
+
+
   // Current realtime patient
   content = stack.addText('현재 (전국/' + regionsArr[covidRegion] + ')')
   content.font = Font.caption2()
   content.textColor = contentColor
-  
+
   // Whole country
   line = stack.addStack()
   line.centerAlignContent()
-  
+
   content = line.addText(currentNum + '')
   content.font = Font.boldSystemFont(20)
   content.textColor = contentColor
-  
+
   content = line.addText(' 명')
   content.font = Font.systemFont(20)
   content.textColor = contentColor
 
   // Compare with yesterday's
-  if(currentGap > 0) {  
+  if(currentGap > 0) {
     content = line.addText(' +' + comma(currentGap))
-    content.textColor = new Color(colorIncrease) 
+    content.textColor = new Color(colorIncrease)
   } else {
     content = line.addText(' ' + comma(currentGap))
     content.textColor = new Color(colorDecrease)
-  }    
+  }
   content.font = Font.systemFont(14)
-  
+
   // Region
   line = stack.addStack()
   line.centerAlignContent()
-  
+
   content = line.addText(regionNum + '')
   content.font = Font.boldSystemFont(20)
   content.textColor = contentColor
-  
+
   content = line.addText(' 명')
   content.font = Font.systemFont(20)
   content.textColor = contentColor
-  
+
   // compare with yesterday's
-  if(regionGap > 0) { 
+  if(regionGap > 0) {
     content = line.addText(' +' + comma(regionGap))
-    content.textColor = new Color(colorIncrease) 
+    content.textColor = new Color(colorIncrease)
   } else {
     content = line.addText(' ' + comma(regionGap))
     content.textColor = new Color(colorDecrease)
-  }      
+  }
   content.font = Font.systemFont(14)
-  
+
   stack.addSpacer(6)
-  
-  
-  // Accumulated number on yesterday-basis.  
+
+
+  // Accumulated number on yesterday-basis.
   content = stack.addText('0시 기준')
   content.font = Font.caption2()
   content.textColor = contentColor
-  
+
   // Total
   line = stack.addStack()
   line.layoutHorizontally()
   line.centerAlignContent()
-  
+
   content = line.addText(totalNum + '')
   content.font = Font.boldSystemFont(20)
   content.textColor = contentColor
-  
+
   content = line.addText(' 명')
   content.font = Font.systemFont(20)
   content.textColor = contentColor
-  
+
   content = line.addText(' +' + yesterdayNum)
   content.textColor = new Color(colorIncrease)
   content.font = Font.systemFont(14)
@@ -338,14 +338,14 @@ function setRightWidget() {
 function setButtons() {
   const shortcutURL = 'shortcuts://run-shortcut?name='
   let stack, url, button
-  
+
   // Add renew button.
   stack = box.addStack()
   button = stack.addImage(SFSymbol.named('arrow.clockwise.circle').image)
   button.url = thisURL
   button.tintColor = contentColor
   button.imageSize = new Size(15, 15)
-  
+
   // Add custom buttons.
   for(let i = 0 ; i < buttons.number ; i++) {
     stack.addSpacer(12)
@@ -361,30 +361,30 @@ function getBatteryImage() {
   if(Device.isCharging()) {
     return SFSymbol.named('battery.100.bolt').image
   }
-  
+
   const batteryWidth = 100
   const batteryHeight = 41
-  
+
   let draw = new DrawContext()
   draw.opaque = false
   draw.respectScreenScale = true
   draw.size = new Size(batteryWidth, batteryHeight)
-  
+
   draw.drawImageInRect(SFSymbol.named("battery.0").image,new Rect(0, 0, batteryWidth, batteryHeight))
-  
+
   // Match the battery level values to the SFSymbol.
   const x = batteryWidth * 0.1525
   const y = batteryHeight * 0.247
   const width = batteryWidth * 0.602
   const height = batteryHeight * 0.505
-  
+
   let level = Device.batteryLevel()
   if(level < 0.05) level = 0.05
-  
+
   // Determine the width and radius of the battery level.
   const current = width * level
   let radius = height / 6.5
-  
+
   // When it gets low, adjust the radius to match.
   if (current < (radius*2)) radius = current / 2
 
@@ -392,7 +392,7 @@ function getBatteryImage() {
   let barPath = new Path()
   barPath.addRoundedRect(new Rect(x, y, current, height), radius, radius)
   draw.addPath(barPath)
-      
+
   draw.setFillColor(contentColor)
   draw.fillPath()
   return draw.getImage()
