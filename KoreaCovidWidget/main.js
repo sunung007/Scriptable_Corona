@@ -11,10 +11,10 @@
       // 원하는 아이콘 사용하시면 됩니다.
       // 단축어 이름은 대소문자, 띄어쓰기 정확히 해야합니다.
       // 쉼표 잊지 마세요!
-      ['headphones', '버즈+지니'],
+      ['headphones', '음악'],
       ['qrcode', 'QR 체크인'],
-      ['house', '집으로 가기'],
-      ['dollarsign.circle', '계좌 공유'],
+      ['house', '집'],
+      ['dollarsign.circle', '계좌'],
     ]
   }
 
