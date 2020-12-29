@@ -6,9 +6,8 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
 이 코드는 baisc components와 사용자가 추가하는  custom componets로 구성되어 있습니다.
 위 이미지에서는 custom components에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있습니다.
 
-최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목, "first")를 눌러주세요.
-
-[업데이트 내용 보기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#업데이트-내용)
+최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목, "first")에서 확인하세요.
+최근 업데이트 내용 확인은 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#업데이트-내용)에서 확인하세요.
 
 ## Basic components
 기본적으로 위젯을 구성하는 요소들입니다.
