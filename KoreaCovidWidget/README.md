@@ -6,7 +6,7 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
 이 코드는 baisc components와 사용자가 추가하는  custom componets로 구성되어 있습니다.
 위 이미지에서는 custom components에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있습니다.
 
-최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목--단축어-바로가기-버튼-수정, "first")를 눌러주세요.
+최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목, "first")를 눌러주세요.
 
 [업데이트 내용 보기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#업데이트-내용)
 
@@ -68,6 +68,7 @@ __SF symbol__과 __단축어 이름__을 이용하여 버튼을 생성합니다.
   1. 코드 중 __단축어 바로가기 버튼__을 수정한 후 바탕화면에 위젯을 만듭니다.
   2. 스크립트와 연결을 하고 스크립트를 실행시켜줍니다.
   
+-----------------------------------
 ### 최초 설정 후 변경을 원할 때
 #### 배경
   - 기본 background는 기기에 저장되어 있는 이미지를 불러오서 설정합니다. 이를 원하지 않을 경우 `setBackgroundImage`를 `false`로 설정해주세요.
