@@ -9,7 +9,8 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
 최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목, "first")에서 확인하세요.   
 최근 업데이트 내용 확인은 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#업데이트-내용)에서 확인하세요.
 
-## Basic components
+## Components
+### Basic components
 기본적으로 위젯을 구성하는 요소들입니다.
 이 basic componets는 `refreshTime`마다 새로 고침되며,  `refreshTime`의 단위는 milisecond입니다.
 -	날짜
@@ -27,12 +28,12 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
         - 각 확진 현황 별 전일 대비 증감 수(빨간색/파란색)
 -	새로고침 버튼
 	-	위 현황들을 수동으로 업데이트 합니다.
-
-## Custom components
+### Custom components
 새로고침 버튼 옆에 사용자가 버튼을 추가할 수 있습니다.
 **SF symbol**과 **단축어 이름**을 이용하여 버튼을 생성합니다.
 
 이 부분은 코드를 직접 수정하여야 합니다.
+
 
 ## Set up
 ### 최초 사용 시 설정 항목
