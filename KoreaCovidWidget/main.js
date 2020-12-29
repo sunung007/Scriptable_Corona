@@ -134,7 +134,7 @@ if(forcedColor) {
   }
 } else {
   contentColor = Device.isUsingDarkAppearance() ?
-      Color.white : Color.black()
+      Color.white() : Color.black()
 }
 
 
