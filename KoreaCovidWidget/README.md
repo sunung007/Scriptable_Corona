@@ -8,6 +8,8 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
 
 최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목--단축어-바로가기-버튼-수정, "first")를 눌러주세요.
 
+[업데이트 내용 보기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#업데이트-내용)
+
 ## Basic components
 기본적으로 위젯을 구성하는 요소들입니다.
 이 basic componets는 `refreshTime`마다 새로 고침되며,  `refreshTime`의 단위는 milisecond입니다.
@@ -121,6 +123,10 @@ __SF symbol__과 __단축어 이름__을 이용하여 버튼을 생성합니다.
 	// 분 단위 수정은 괄호 안에 있는 숫자만 수정하면 됩니다.
 	const refreshTime = 1000 * 60 * (10)	
 	```
+	
+## 업데이트 내용
+12.29 10:07 주석 
+
 ## 참조
 본 위젯의 코로나 현황 데이터는 아래 사이트를 이용하였습니다.
    
