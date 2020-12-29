@@ -11,7 +11,7 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
 
 ## Components
 ### Basic components
-기본적으로 위젯을 구성하는 요소들입니다.
+기본적으로 위젯을 구성하는 요소들입니다.   
 이 basic componets는 `refreshTime`마다 새로 고침되며,  `refreshTime`의 단위는 milisecond입니다.
 -	날짜
 	-	년
@@ -29,9 +29,9 @@ iOS의 *Scriptable* 어플의 위젯에서 작동하는 코드입니다.
 -	새로고침 버튼
 	-	위 현황들을 수동으로 업데이트 합니다.
 ### Custom components
-새로고침 버튼 옆에 사용자가 버튼을 추가할 수 있습니다.
+새로고침 버튼 옆에 사용자가 버튼을 추가할 수 있습니다.   
 **SF symbol**과 **단축어 이름**을 이용하여 버튼을 생성합니다.
-
+   
 이 부분은 코드를 직접 수정하여야 합니다.
 
 
