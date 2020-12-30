@@ -20,8 +20,9 @@ const refreshTime = 60 * 10
 
 // 아래 사이트에 들어가서 활용 신청한 후
 // 발급받은 일반 인증키를 붙여넣으시면 됩니다!
+// 웬만하면 발급 받으시는게 좋을겁니다... 터지면 저는 재발급받을테니까요..
 // https://data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057682
-const appKey = '인증키'
+const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D'
 
 
 // 여기부터는 건들지 마세요.
