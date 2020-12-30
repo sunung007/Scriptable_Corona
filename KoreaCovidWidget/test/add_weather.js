@@ -13,7 +13,7 @@
     
         // 배경, 색상, 지역을 변경하시려면 true로 바꾸고 실행하세요.
         // 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
-        const changeSetting = true
+        const changeSetting = false
     
         // 위젯 새로고침 시간(단위 : 초)
         const refreshTime = 60 * 10
