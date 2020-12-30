@@ -35,7 +35,7 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 
 기기에 **scriptable** 어플이 설치되어 있어야 합니다. [여기](https://apps.apple.com/kr/app/scriptable/id1405459188)를 누르면 앱스토어로 이동합니다.
 
-1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/main.js)에 들어갑니다.   
+1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget)에 들어갑니다.   
 <img src="./image/guide_1.jpeg" width="200"></img>
 2. **RAW** 버튼을 눌러 전체 코드를 복사합니다.
 3. scriptable 어플을 실행합니다.   
@@ -87,7 +87,19 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 
 ---------------
 ## FAQ
+### 투명한 배경 만들기
+mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!   
+필요하신 분들은 [여기](https://github.com/mzeryck/Transparent-Scriptable-Widget/blob/master/mz_transparent_widget.js)를 누르세요.
 
+### Select script in widget configurator
+위젯 편집에 들어가셔서 **script-저장한 스크립트 선택** 하면 됩니다.
+
+### SyntaxError : ~~~
+끝까지 복사 안하신 경우가 거의입니다. 코드가 너무 길어서 그래요ㅠㅠ   
+코드를 **끝까지 복사** 하시고 처음부터 다시 진행해주세요.
+
+### Alerts are not supported in a widget.
+코드 16번째 줄의 `changeSetting`을 `false`로 변경하시고 스크립트 실행-적용 해주세요.
 
 
 업데이트 내용
