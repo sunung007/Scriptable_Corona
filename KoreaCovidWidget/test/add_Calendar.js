@@ -297,7 +297,7 @@ function setBatteryWidget() {
 
 // Function : Set realtime covid patinet number.
 function setCovidWidget() {
-  let line, content
+  let line, content, tstack
   let currentNum, currentGap, regionNum, regionGap
   let totalNum, yesterdayNum
 
@@ -312,171 +312,123 @@ function setCovidWidget() {
   regionNum = comma(regionData[0])
   regionGap = regionData[1]
 
-
-  if(VIEW_MODE == 2) {
-    stack = box.addStack()
-    stack.layoutVertically()
-
-    // Current realtime patient
-    content = stack.addText('현재 (전국/'+getRegionInfo(0, region)+')')
-    content.font = Font.caption2()
-    content.textColor = contentColor
-
-    // Whole country
-    line = stack.addStack()
-    line.centerAlignContent()
-
-    content = line.addText(currentNum + '')
-    content.font = Font.boldSystemFont(18)
-    content.textColor = contentColor
-
-    content = line.addText(' 명')
-    content.font = Font.systemFont(18)
-    content.textColor = contentColor
-
-    // Compare with yesterday's
-    if(currentGap > 0) {
-      content = line.addText(' +' + comma(currentGap))
-      content.textColor = new Color(colorIncrease)
-    } else {
-      content = line.addText(' ' + comma(currentGap))
-      content.textColor = new Color(colorDecrease)
-    }
-    content.font = Font.systemFont(13)
-
-    // Region
-    line = stack.addStack()
-    line.centerAlignContent()
-
-    content = line.addText(regionNum + '')
-    content.font = Font.boldSystemFont(18)
-    content.textColor = contentColor
-
-    content = line.addText(' 명')
-    content.font = Font.systemFont(18)
-    content.textColor = contentColor
-
-    // compare with yesterday's
-    if(regionGap > 0) {
-      content = line.addText(' +' + comma(regionGap))
-      content.textColor = new Color(colorIncrease)
-    } else {
-      content = line.addText(' ' + comma(regionGap))
-      content.textColor = new Color(colorDecrease)
-    }
-    content.font = Font.systemFont(13)
-
-    stack.addSpacer(6)
-
-
-    // Accumulated number on yesterday-basis.
-    content = stack.addText('0시 기준')
-    content.font = Font.caption2()
-    content.textColor = contentColor
-
-    // Total
-    line = stack.addStack()
-    line.layoutHorizontally()
-    line.centerAlignContent()
-
-    content = line.addText(totalNum + '')
-    content.font = Font.boldSystemFont(18)
-    content.textColor = contentColor
-
-    content = line.addText(' 명')
-    content.font = Font.systemFont(18)
-    content.textColor = contentColor
-
-    content = line.addText(' +' + comma(yesterdayNum))
-    content.textColor = new Color(colorIncrease)
-    content.font = Font.systemFont(13)
-    
-  } else if(VIEW_MODE ==3) {
-    let tstack = box.addStack()
+  // Add widget.
+  if(VIEW_MODE == 3) {
+    tstack = box.addStack()
     tstack.layoutHorizontally()
 
     stack = tstack.addStack()
     stack.layoutVertically()
 
-    // Whole country
     content = stack.addText('전국')
     content.textColor = contentColor
     content.font = Font.systemFont(12)
-    
-    line = stack.addStack()
-    line.bottomAlignContent()
-    content = line.addText(currentNum)
-    content.font = Font.boldSystemFont(18)
-    content.textColor = contentColor
-
-    // Compare with yesterday's
-    if(currentGap > 0) {
-      content = line.addText(' +' + comma(currentGap))
-      content.textColor = new Color(colorIncrease)
-    } else {
-      content = line.addText(' ' + comma(currentGap))
-      content.textColor = new Color(colorDecrease)
-    }
-    content.font = Font.systemFont(12)
-    
-    tstack.addSpacer(25)
-    
-    // Region
-    tstack = box.addStack()
-    tstack.layoutHorizontally()
-
-    stack = tstack.addStack()
+  } else if(VIEW_MODE == 2) {
+    stack = box.addStack()
     stack.layoutVertically()
 
-    content = stack.addText(getRegionInfo(0, region))
-    content.textColor = contentColor
+    content = stack.addText('현재 (전국/'+getRegionInfo(0, region)+')')
     content.font = Font.systemFont(12)
-    
-    line = stack.addStack()
-    line.bottomAlignContent()
-
-    content = line.addText(regionNum)
-    content.font = Font.boldSystemFont(18)
     content.textColor = contentColor
-
-    // compare with yesterday's
-    if(regionGap > 0) {
-      content = line.addText(' +' + comma(regionGap))
-      content.textColor = new Color(colorIncrease)
-    } else {
-      content = line.addText(' ' + comma(regionGap))
-      content.textColor = new Color(colorDecrease)
-    }
-    content.font = Font.systemFont(12)
-    
-    
-    tstack.addSpacer(25)
-     
-           
-    // Accumulated number on yesterday-basis.
-    tstack = box.addStack()
-    tstack.layoutHorizontally()
-
-    stack = tstack.addStack()
-    stack.layoutVertically()
-    
-    content = stack.addText('0시 기준')
-    content.font = Font.caption2()
-    content.textColor = contentColor
-
-    // Total
-    line = stack.addStack()
-    line.layoutHorizontally()
-    line.bottomAlignContent()
-
-    content = line.addText(totalNum + '')
-    content.font = Font.boldSystemFont(18)
-    content.textColor = contentColor
-
-    content = line.addText(' +' + comma(yesterdayNum))
-    content.textColor = new Color(colorIncrease)
-    content.font = Font.systemFont(12)    
   }
+
+  // Current realtime patinet number
+  // Whole country
+  line = stack.addStack()
+
+  if(VIEW_MODE == 2) line.centerAlignContent()
+  else if(VIEW_MODE == 3) line.bottomAlignContent()
+
+  content = line.addText(currentNum+'')
+  content.font = Font.boldSystemFont(18)
+  content.textColor = contentColor
+
+  if(VIEW_MODE == 2) {
+    content = line.addText(' 명')
+    content.font = Font.systemFont(18)
+    content.textColor = contentColor
+  }
+
+  // Compare with yesterday's
+  if(currentGap > 0) {
+    content = line.addText(' +' + comma(currentGap))
+    content.textColor = new Color(colorIncrease)
+  } else {
+    content = line.addText(' ' + comma(currentGap))
+    content.textColor = new Color(colorDecrease)
+  }
+  content.font = Font.systemFont(12)
+
+
+  // Region
+  if(VIEW_MODE == 3) {
+     tstack.addSpacer(25)
+     tstack = box.addStack()
+     tstack.layoutHorizontally()
+
+     stack = tstack.addStack()
+     stack.layoutVertically()
+   }
+
+  line = stack.addStack()
+  if(VIEW_MODE == 2) line.centerAlignContent()
+  else if(VIEW_MODE == 3) line.bottomAlignContent()
+
+  content = line.addText(regionNum+'')
+  content.font = Font.boldSystemFont(18)
+  content.textColor = contentColor
+
+  if(VIEW_MODE == 2) {
+    content = line.addText(' 명')
+    content.font = Font.systemFont(18)
+    content.textColor = contentColor
+  }
+
+  // compare with yesterday's
+  if(regionGap > 0) {
+    content = line.addText(' +' + comma(regionGap))
+    content.textColor = new Color(colorIncrease)
+  } else {
+    content = line.addText(' ' + comma(regionGap))
+    content.textColor = new Color(colorDecrease)
+  }
+  content.font = Font.systemFont(12)
+
+
+  // Accumulated number on yesterday-basis.
+  if(VIEW_MODE == 2) stack.addSpacer(6)
+  else if(VIEW_MODE == 3) {
+    tstack.addSpacer(25)
+    tstack = box.addStack()
+    tstack.layoutHorizontally()
+
+    stack = tstack.addStack()
+    stack.layoutVertically()
+  }
+
+  content = stack.addText('0시 기준')
+  content.font = Font.systemFont(12)
+  content.textColor = contentColor
+
+  // Total
+  line = stack.addStack()
+  line.layoutHorizontally()
+  if(VIEW_MODE == 2) line.centerAlignContent()
+  else if(VIEW_MODE == 3) line.bottomAlignContent()
+
+  content = line.addText(totalNum + '')
+  content.font = Font.boldSystemFont(18)
+  content.textColor = contentColor
+
+  if(VIEW_MODE == 2) {
+    content = line.addText(' 명')
+    content.font = Font.systemFont(18)
+    content.textColor = contentColor
+  }
+
+  content = line.addText(' +' + comma(yesterdayNum))
+  content.textColor = new Color(colorIncrease)
+  content.font = Font.systemFont(12)
 }
 
 // Function : make buttons.
