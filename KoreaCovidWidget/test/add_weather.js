@@ -37,6 +37,7 @@ let dateFormatter = new DateFormatter()
 let covidJSON, weatherJSON
 let region
 let contentColor
+let container, box, stack
 
 
 // Set widget's attributes.
@@ -52,7 +53,7 @@ createWidget()
 // Refresh for every minute. Term : 15 minutes.
 widget.refreshAfterDate = new Date(Date.now() + 1000*refreshTime)
 widget.setPadding(0,0,0,0)
-widget.presentLarge()
+widget.presentMedium()
 
 Script.setWidget(widget)
 Script.complete()
@@ -69,8 +70,6 @@ async function setWidgetAttribute() {
 
   let isBackgroundColor, image, isForcedColor
 
-
-
   if(changeSetting) {
     alert = new Alert()
     alert.addAction('지역 설정')
@@ -81,12 +80,9 @@ async function setWidgetAttribute() {
     changeAttribute = await alert.present()
   }
 
-
-
-
   // Set region.
   if(!fileManager.fileExists(path+'region')
-     || changeAttribute == 0) {
+     || changeAttribute == 3 || changeAttribute == 0) {
     alert = new Alert()
     alert.title = '지역 설정'
     alert.message = '실시간 코로나 확진자 현황의 지역을 선택하세요.'
@@ -99,10 +95,9 @@ async function setWidgetAttribute() {
     region = Number(fileManager.readString(path+'region'))
   }
 
-
   // Set background.
   if(!fileManager.fileExists(path+'isBackgroundColor') ||
-     changeAttribute == 1) {
+     changeAttribute == 3 || changeAttribute == 1) {
     alert = new Alert()
     alert.title = '위젯 배경 설정'
     alert.message = '배경 유형을 선택하세요.'
@@ -130,10 +125,9 @@ async function setWidgetAttribute() {
     }
   }
 
-
   // Set contents' color.
   if(!fileManager.fileExists(path+'isForcedColor') ||
-     changeAttribute == 2) {
+     changeAttribute == 3 || changeAttribute == 2) {
     alert = new Alert()
     alert.title = '글씨/아이콘 색상 설정'
     alert.message = '색상 강제 고정 여부를 선택하세요.'
@@ -146,7 +140,7 @@ async function setWidgetAttribute() {
     } else {
       fileManager.writeString(path+'isForcedColor', 'false')
       Device.isUsingDarkAppearance() ?
-        setColor(1, 0) : setColor(1, 1)
+             setColor(1, 0) : setColor(1, 1)
     }
   } else {
     isForcedColor = Boolean(fileManager.
@@ -155,42 +149,44 @@ async function setWidgetAttribute() {
       setColor(1, Number(fileManager.
         readString(path + 'contentColorNumber')))
     } else {
-      Device.isUsingDarkAppearance() ? setColor(1, 0) : setColor(1, 1)
+      Device.isUsingDarkAppearance() ? 
+             setColor(1, 0) : setColor(1, 1)
     }
   }
 }
 
 // Function : create the widget.
 function createWidget() {
-  let container, box, stack
-
   container = widget.addStack()
-  container.layoutVertically()
+  container.layoutHorizontally()
 
+  // 1. Left
   box = container.addStack()
-  box.layoutHorizontally()
+  box.layoutVertically()
 
-  // Create upper part : date, battery, and covid patient number.
-  setDateWidget(box) // date
-//  setBatteryWidget(box) // battery
-  box.addSpacer(100)
-  setCovidWidget(box) // covid patient number
+  setDateWidget()    // date
+  setBatteryWidget() // battry
+  
+  box.addSpacer(14)
+  
+  setButtonsWidget() // buttons
 
-  container.addSpacer(10)
-
-  // Create below part : buttons
+  container.addSpacer(40)
+  
+  
+  // 2. Right
   box = container.addStack()
-  box.layoutHorizontally()
-
-  setButtonsWidget(box)
-
-  // test code.
-  setWeatherWidget()
+  box.layoutVertically()
+  
+  setCovidWidget()   // covid count
+  box.addSpacer(8)
+  setWeatherWidget() // weather
 }
 
+
 // Function : Set date and battery information.
-function setDateWidget(box) {
-  let stack, line, content
+function setDateWidget() {
+  let line, content
 
   // Date information
   stack = box.addStack()
@@ -218,34 +214,37 @@ function setDateWidget(box) {
   stack.addSpacer(8)
 }
 
-function setBatteryWidget(box) {
-  let stack, line, content
+// Function : make battery widget.
+function setBatteryWidget() {
+  let line, content
 
   // Battery information.
   const batteryLevel = Device.batteryLevel()
   let image = getBatteryImage(batteryLevel)
   line = stack.addStack()
+  line.centerAlignContent()
+  
   content = line.addImage(image)
 
   // Coloring and resize battery icon
   if(Device.isCharging()) {
-    content.imageSize = new Size(25, 20)
+    content.imageSize = new Size(25, 14)
     content.tintColor = Color.green()
     line.addText(' ')
   } else {
-    content.imageSize = new Size(35, 20)
+    content.imageSize = new Size(35, 14)
     if(batteryLevel*100 < 20) content.tintColor = Color.red()
     else content.tintColor = contentColor
   }
 
   content = line.addText(Number(batteryLevel*100).toFixed(0) + '%')
-  content.font = Font.systemFont(16)
+  content.font = Font.systemFont(14)
   content.textColor = contentColor
 }
 
 // Function : Set realtime covid patinet number.
-function setCovidWidget(box) {
-  let stack, line, content
+function setCovidWidget() {
+  let line, content
   let currentNum, currentGap, regionNum, regionGap
   let totalNum, yesterdayNum
 
@@ -333,19 +332,20 @@ function setCovidWidget(box) {
   content.font = Font.systemFont(20)
   content.textColor = contentColor
 
-  content = line.addText(' +' + yesterdayNum)
+  content = line.addText(' +' + comma(yesterdayNum))
   content.textColor = new Color(colorIncrease)
   content.font = Font.systemFont(14)
 }
 
 // Function : make buttons.
-function setButtonsWidget(box) {
+function setButtonsWidget() {
   const shortcutURL = 'shortcuts://run-shortcut?name='
-  let stack, url, button
+  let url, button
 
   // Add renew button.
   stack = box.addStack()
-  button = stack.addImage(SFSymbol.named('arrow.clockwise.circle').image)
+  button = stack.addImage(
+                 SFSymbol.named('arrow.clockwise.circle').image)
   button.url = URLScheme.forRunningScript()
   button.tintColor = contentColor
   button.imageSize = new Size(15, 15)
@@ -353,14 +353,16 @@ function setButtonsWidget(box) {
   // Add custom buttons.
   for(let i = 0 ; i < buttons.number ; i++) {
     stack.addSpacer(12)
-    button = stack.addImage(SFSymbol.named(buttons.items[i][0]).image)
+    button = stack.addImage(
+                   SFSymbol.named(buttons.items[i][0]).image)
     button.url = shortcutURL + encodeURI(buttons.items[i][1])
     button.tintColor = contentColor
     button.imageSize = new Size(15, 15)
   }
 }
 
-function setWeatherWidget(box) {
+// Functions : make weather widget
+function setWeatherWidget() {
   let response = weatherJSON['response']
 
   // Error code in loading weather//
@@ -390,11 +392,26 @@ function setWeatherWidget(box) {
       }
     }
   }
-
-
-  getWeatherImage(rain, sky)
-  getWeatherStatus(rain, sky)
-
+  
+  let line, content
+  stack = box.addStack()
+  line = stack.addStack()
+  line.centerAlignContent()
+  content = line.addImage(getWeatherImage(rain, sky)) // icon
+  content.imageSize = new Size(20, 20)
+  content.tintColor = contentColor
+  
+  line.addSpacer(4)
+  
+  content = line.addText(temp) // temperature
+  content.font = Font.systemFont(14)
+  content.textColor = contentColor  
+  
+  /*
+  content = line.addText(getWeatherStatus(rain, sky)) // status
+  content.font = Font.systemFont(12)
+  content.textColor = contentColor  
+  */
 
 }
 
@@ -429,7 +446,6 @@ function getWeatherImage(rain, sky) {
     if(sky == 3) iconIndex = 0
     else iconIndex = sky + 4
   } else {
-    status = rainArr[rain]
     if(rain == 3 || rain == 7) { // 눈(공통)
       iconIndex = 3
     } else if(rain == 2 || rain == 6) { // 비+눈(공통)
@@ -547,7 +563,8 @@ function getRegionInfo(i, j) {
 // Functions -------------------------------------------------
 // Function : write ',' for every 3 digit.
 function comma(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  number += ''
+  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 // Function : Set widget background color or content color
