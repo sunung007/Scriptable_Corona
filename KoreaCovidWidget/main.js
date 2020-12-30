@@ -1,150 +1,57 @@
 // 개인 변경 부분
-  // 최초 실행 시 자동으로 각 항목의 선택창이 뜹니다.
-  // 최초 실행 시에는 "0번 항목"만 변경하시면 됩니다.
-  // 0. 위젯에 띄울 단축어 버튼 ---------------------------------
-  const buttons = {
-    number : 4,  // 버튼의 개수
-    items : [
-      // 버튼 내용
-      // 아래 형식에 맞춰서 추가해주세요. 아래 형식이 한 쌍입니다.
-      // 형식 : ['SF symbol 이름', '단축어 이름'],
-      // SF symbol은 앱스토어에서 'sf symbol' 아무거나 다운받으셔서
-      // 원하는 아이콘 사용하시면 됩니다.
-      // 단축어 이름은 대소문자, 띄어쓰기 정확히 해야합니다.
-      // 쉼표 잊지 마세요!
-      ['headphones', '음악'],
-      ['qrcode', 'QR 체크인'],
-      ['house', '집'],
-      ['dollarsign.circle', '계좌'],
-    ]
-  }
-  
-  
-  // 1. 위젯 배경 --------------------------------------------
-    // true : 위젯의 배경을 이미지로 합니다.
-    //        처음 설정 시 배경 이미지 선택창이 자동으로 뜹니다.
-    // false : 위젯의 배경을 단색으로 합니다.
-    //         배경색은 기기의 다크모드 사용 여부에 따라 자동으로 결정됩니다.
-    const setBackgroundImage = true
+// 위젯에 띄울 단축어 버튼들
+// itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
+const buttons = {
+  number : 4,  // 버튼의 개수
+  items : [ // 버튼 내용
+    ['headphones', '음악'],
+    ['qrcode', 'QR 체크인'],
+    ['house', '집'],
+    ['dollarsign.circle', '계좌'],
+    /*...*/
+  ]}
 
-    // true : 배경 이미지 설정 후 변경을 원할 경우 true로 하십시오.
-    //        이미지 변경 후 false로 바꿔야 합니다.
-    // false : 기본 설정
-    const changeBackgroundImage = false
+// 배경, 색상, 지역을 변경하려면 true로 설정하세요
+// 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
+let changeSetting = false
 
-
-  // 2. 내용 색상 --------------------------------------------
-    // true : 내용 및 아이콘의 색을 설정합니다.
-    //        처음 설정 시 색은 기기의 다크모드 사용 여부에 따라 자동으로 결정됩니다.
-    // false : 기본 설정 값
-    const forcedColor = true
-
-    // true : 내용 및 아이콘의 색을 변경합니다.
-    //        색 변경 후 false로 바꿔야합니다.
-   // false : 기본 설정 값
-   const changeContentColor = false
-
-
-  // 3. 지역 설정 --------------------------------------------
-    // true : 전국 실시간 확진자 수와 함께 볼 지역을 '변경'합니다.
-    //        처음 설정 시 지역 선택창이 자동으로 뜹니다.
-    //        지역 변경 후 false로 바꿔야합니다.
-    // false : 기본 설정 값
-    const changeRegion = false
-
-
-  // 4. 새로고침 시간 -----------------------------------------
-    // refresh time(새로고침 시간)을 결정합니다. 단위는 밀리초(ms)입니다.
-    // 최초 설정은 10분 입니다.
-    // 분 단위 수정은 괄호 안에 있는 숫자만 수정하면 됩니다.
-    const refreshTime = 1000 * 60 * (10)
-
-
-
-
+// 위젯 새로고침 시간(단위 : 초)
+const refreshTime = 60 * 10
 
 
 // 여기부터는 건들지 마세요.
 // =======================================================
-// Part : do not edit.
 // Do not change from this line.
 const colorIncrease = '#F51673'
 const colorDecrease = '#2B69F0'
-const jsonURL = 'https://apiv2.corona-live.com/stats.json'
-const regionsArr = ['서울', '부산', '인천', '대구', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '경북', '경남', '전북', '전남', '제주']
+const covidURL = 'https://apiv2.corona-live.com/stats.json'
 
-const thisURL = URLScheme.forRunningScript()
+
 const fileManager = FileManager.local()
+const directory = fileManager.documentsDirectory()
 
 let widget = new ListWidget()
+let date = new Date()
+let dateFormatter = new DateFormatter()
 
-let contentColor, batteryLevel
-let jsonData, covidRegion
-let box, container
-
-
-// Set region.
-let path = fileManager.joinPath(fileManager.documentsDirectory(), 'covid-region')
-if(!fileManager.fileExists(path) || changeRegion) {
-  /* region JSON
-  const regions = {
-    '서울' : 0, '경기' : 8, '인천' : 2, '경북' : 12, '강원' : 9, '충남' : 11, '부산' : 1, '경남' : 13, '대전' : 5, '광주' : 4, '충북' : 10, '전북' : 14, '울산' : 6, '전남' : 15, '대구' : 3, '세종' : 7, '제주' : 16}
-  */
-  let alert = new Alert()
-  alert.title = '지역 설정'
-  alert.message = '실시간 코로나 확진자 현황의 지역을 선택하세요.'
-  for(let i = 0 ; i < 17 ; i++) alert.addAction(regionsArr[i])
-  covidRegion = await alert.present()
-  fileManager.writeString(path, covidRegion + '')
-}
-covidRegion = fileManager.readString(path)
+let covidJSON, weatherJSON
+let region
+let contentColor
+let container, box, stack
 
 
-// Set background image if 'setBackgroundColor' is false.
-if(setBackgroundImage) {
-  path = fileManager.joinPath(fileManager.documentsDirectory(), 'covid-background')
-  if(!fileManager.fileExists(path) || changeBackgroundImage) {
-    let image = await Photos.fromLibrary()
-    fileManager.writeImage(path, image)
-  }
-  widget.backgroundImage = fileManager.readImage(path)
-}
+// Set widget's attributes.
+await setWidgetAttribute()
 
-
-// Set contents' color.
-if(forcedColor) {
-  path = fileManager.joinPath(fileManager.documentsDirectory(), 'covid-content-color')
-  if(!fileManager.fileExists(path) || changeContentColor) {
-    let alert = new Alert()
-    alert.title = '아이콘 및 텍스트 색상 설정'
-    alert.message = '원하는 색상을 선택해주세요.'
-    alert.addAction('검정색')
-    alert.addAction('흰색')
-    contentColor = await alert.present()
-    fileManager.writeString(path, contentColor + '')
-  }
-  contentColor = Number(fileManager.readString(path))
-  switch(contentColor) {
-    case 0 :
-      contentColor = Color.black()
-      break
-    case 1 :
-      contentColor = Color.white()
-      break
-  }
-} else {
-  contentColor = Device.isUsingDarkAppearance() ?
-      Color.white() : Color.black()
-}
-
+// Bring json data.
+covidJSON = await new Request(covidURL).loadJSON()
+weatherJSON = await new Request(getWeatherURL()).loadJSON()
 
 // Create a widget.
-jsonData = await new Request(jsonURL).loadJSON()
 createWidget()
 
-
 // Refresh for every minute. Term : 15 minutes.
-widget.refreshAfterDate = new Date(Date.now() + Number(refreshTime))
+widget.refreshAfterDate = new Date(Date.now() + 1000*refreshTime)
 widget.setPadding(0,0,0,0)
 widget.presentMedium()
 
@@ -153,99 +60,211 @@ Script.complete()
 
 
 // Functions ==================================================
+// Functions about widget.-------------------------------------
+// Set basic settings of widget.
+async function setWidgetAttribute() {
+  let alert
+  let changeAttribute = -1 //= [false, false, false, false, false]
+  let path = fileManager.joinPath(directory,
+                         'Gofo-covid-widget-data-')
+
+  let isBackgroundColor, image, isForcedColor
+  
+  // If runs in app, do not change any setting.
+  if(!config.runsInApp) changeSetting = false
+
+  if(changeSetting) {
+    alert = new Alert()
+    alert.addAction('지역 설정')
+    alert.addAction('배경 설정')
+    alert.addAction('글씨/아이콘 색상')
+    alert.addAction('전체 초기화')
+    alert.addCancelAction('취소')
+    changeAttribute = await alert.present()
+  }
+
+  // Set region.
+  if(!fileManager.fileExists(path+'region')
+     || changeAttribute == 3 || changeAttribute == 0) {
+    alert = new Alert()
+    alert.title = '지역 설정'
+    alert.message = '실시간 코로나 확진자 현황의 지역을 선택하세요.'
+    for(let i = 0 ; i < 17 ; i++) {
+      alert.addAction(getRegionInfo(0, i))
+    }
+    region = await alert.present()
+    fileManager.writeString(path+'region', region+'')
+  } else {
+    region = Number(fileManager.readString(path+'region'))
+  }
+
+  // Set background.
+  if(!fileManager.fileExists(path+'isBackgroundColor') ||
+     changeAttribute == 3 || changeAttribute == 1) {
+    alert = new Alert()
+    alert.title = '위젯 배경 설정'
+    alert.message = '배경 유형을 선택하세요.'
+    alert.addAction('색상')
+    alert.addAction('이미지')
+    if(await alert.present() == 0) {
+      fileManager.writeString(path+'isBackgroundColor', 'true')
+      fileManager.writeString(path+'backgroundColorNumber',
+                    await setColor(0,-1))
+    } else {
+      image = await Photos.fromLibrary()
+      fileManager.writeString(path+'isBackgroundColor', 'false')
+      fileManager.writeImage(path+'backgroundImage', image)
+      widget.backgroundImage = image
+    }
+  } else {
+    isBackgroundColor = fileManager.readString(
+                        path+'isBackgroundColor') == 'true' ?
+                        true : false
+    if(isBackgroundColor) {
+      setColor(0, Number(fileManager.
+          readString(path+'backgroundColorNumber')))
+    } else {
+      widget.backgroundImage = await fileManager.
+          readImage(path+'backgroundImage')
+    }
+  }
+
+  // Set contents' color.
+  if(!fileManager.fileExists(path+'isForcedColor') ||
+     changeAttribute == 3 || changeAttribute == 2) {
+    alert = new Alert()
+    alert.title = '글씨/아이콘 색상 설정'
+    alert.message = '색상 강제 고정 여부를 선택하세요.'
+    alert.addAction('원하는 색상으로 강제 고정')
+    alert.addAction('자동 설정')
+    if(await alert.present() == 0) {
+      fileManager.writeString(path+'isForcedColor', 'true')
+      fileManager.writeString(
+          path+'contentColorNumber', await setColor(1,-1))
+    } else {
+      fileManager.writeString(path+'isForcedColor', 'false')
+      Device.isUsingDarkAppearance() ?
+             setColor(1, 0) : setColor(1, 1)
+    }
+  } else {
+    isForcedColor = fileManager.
+                    readString(path + 'isForcedColor') == 'true' ?
+                    true : false
+    if(isForcedColor) {
+      setColor(1, Number(fileManager.
+        readString(path + 'contentColorNumber')))
+    } else {
+      Device.isUsingDarkAppearance() ?
+             setColor(1, 0) : setColor(1, 1)
+    }
+  }
+}
+
 // Function : create the widget.
 function createWidget() {
   container = widget.addStack()
-  container.layoutVertically()
+  container.layoutHorizontally()
 
+  // 1. Left
   box = container.addStack()
-  box.layoutHorizontally()
+  box.layoutVertically()
 
-  // Create upper part : date, battery, and covid patient number.
-  setLeftWidget() // date, battery
-  box.addSpacer(100)
-  setRightWidget() // covid patient number
+  setDateWidget()    // date
+  
+  box.addSpacer(14)
+  setWeatherWidget() // weather
+  setBatteryWidget() // battry
+  
+  box.addSpacer(9)
+  
+  setButtonsWidget() // buttons
+  
+  container.addSpacer(60)
+  
 
-  container.addSpacer(10)
 
-  // Create below part : buttons
+  // 2. Right
   box = container.addStack()
-  box.layoutHorizontally()
+  box.layoutVertically()
 
-  setButtons()
+  setCovidWidget()   // covid count
+  //box.addSpacer(8)
+  //setWeatherWidget() // weather
 }
 
 
 // Function : Set date and battery information.
-function setLeftWidget() {
-  const dayArray = ['일', '월', '화', '수', '목', '금', '토']
-  let year, month, date, day
-  let stack, line, content
+function setDateWidget() {
+  let line, content
 
   // Date information
   stack = box.addStack()
   stack.layoutVertically()
 
-  date = new Date()
-  day = dayArray[date.getDay()] + '요일'
-  year = String(date.getFullYear()).substring(2) + '년'
-  month = date.getMonth() + 1 + '월'
-  date = date.getDate() + ''
-
   // 년도 + 월
-  content = stack.addText(year + ' ' + month)
-  content.font = Font.caption1()
+  dateFormatter.dateFormat = 'yy년 MMM'
+  content = stack.addText(dateFormatter.string(date))
+  content.font = Font.regularSystemFont(13)
   content.textColor = contentColor
 
   // 일
+  dateFormatter.dateFormat = 'd'
   line = stack.addStack()
-  line.centerAlignContent()
-  content = line.addText(date + ' ')
-  content.font = Font.boldSystemFont(32)
+  content = line.addText(dateFormatter.string(date))
+  content.font = Font.boldMonospacedSystemFont(32)
   content.textColor = contentColor
-  stack.addSpacer(4)
+ // stack.addSpacer(4)
 
   // 요일
-  content = stack.addText(day)
-  content.font = Font.systemFont(16)
+  dateFormatter.dateFormat = 'EEEE'
+  content = stack.addText(dateFormatter.string(date))
+  content.font = Font.systemFont(13)
   content.textColor = contentColor
-  stack.addSpacer(8)
+  //stack.addSpacer(8)
+  
+  stack.url = 'calshow://'
+}
 
+// Function : make battery widget.
+function setBatteryWidget() {
+  let line, content
 
   // Battery information.
-  batteryLevel = Device.batteryLevel()
-  let image = getBatteryImage()
+  const batteryLevel = Device.batteryLevel()
+  let image = getBatteryImage(batteryLevel)
+  
+  //stack = box.addStack()
   line = stack.addStack()
+  line.centerAlignContent()
+
   content = line.addImage(image)
 
   // Coloring and resize battery icon
   if(Device.isCharging()) {
-    content.imageSize = new Size(25, 20)
+    content.imageSize = new Size(20, 13)
     content.tintColor = Color.green()
-    line.addText(' ')
   } else {
-    content.imageSize = new Size(35, 20)
+    content.imageSize = new Size(26, 13)
     if(batteryLevel*100 < 20) content.tintColor = Color.red()
     else content.tintColor = contentColor
   }
+  line.addSpacer(2)
 
-  content = line.addText(Number(batteryLevel*100).toFixed(0) + '%')
-  content.font = Font.systemFont(16)
+  content = line.addText(Number(batteryLevel*100).toFixed(0) 
+                         + '% ')
+  content.font = Font.systemFont(13)
   content.textColor = contentColor
 }
 
-
 // Function : Set realtime covid patinet number.
-function setRightWidget() {
-  let stack, line, content
+function setCovidWidget() {
+  let line, content
   let currentNum, currentGap, regionNum, regionGap
   let totalNum, yesterdayNum
 
-
   // Get covid data from 'covid-live.com'
-  let overviewData = jsonData['overview']
-  let regionData = jsonData['current'][covidRegion]['cases']
-
+  let overviewData = covidJSON['overview']
+  let regionData = covidJSON['current'][region]['cases']
 
   currentNum = comma(overviewData['current'][0])
   currentGap = overviewData['current'][1]
@@ -257,9 +276,8 @@ function setRightWidget() {
   stack = box.addStack()
   stack.layoutVertically()
 
-
   // Current realtime patient
-  content = stack.addText('현재 (전국/' + regionsArr[covidRegion] + ')')
+  content = stack.addText('현재 (전국/'+getRegionInfo(0, region)+')')
   content.font = Font.caption2()
   content.textColor = contentColor
 
@@ -268,11 +286,11 @@ function setRightWidget() {
   line.centerAlignContent()
 
   content = line.addText(currentNum + '')
-  content.font = Font.boldSystemFont(20)
+  content.font = Font.boldSystemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' 명')
-  content.font = Font.systemFont(20)
+  content.font = Font.systemFont(18)
   content.textColor = contentColor
 
   // Compare with yesterday's
@@ -283,18 +301,18 @@ function setRightWidget() {
     content = line.addText(' ' + comma(currentGap))
     content.textColor = new Color(colorDecrease)
   }
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
 
   // Region
   line = stack.addStack()
   line.centerAlignContent()
 
   content = line.addText(regionNum + '')
-  content.font = Font.boldSystemFont(20)
+  content.font = Font.boldSystemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' 명')
-  content.font = Font.systemFont(20)
+  content.font = Font.systemFont(18)
   content.textColor = contentColor
 
   // compare with yesterday's
@@ -305,7 +323,7 @@ function setRightWidget() {
     content = line.addText(' ' + comma(regionGap))
     content.textColor = new Color(colorDecrease)
   }
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
 
   stack.addSpacer(6)
 
@@ -321,43 +339,184 @@ function setRightWidget() {
   line.centerAlignContent()
 
   content = line.addText(totalNum + '')
-  content.font = Font.boldSystemFont(20)
+  content.font = Font.boldSystemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' 명')
-  content.font = Font.systemFont(20)
+  content.font = Font.systemFont(18)
   content.textColor = contentColor
 
-  content = line.addText(' +' + yesterdayNum)
+  content = line.addText(' +' + comma(yesterdayNum))
   content.textColor = new Color(colorIncrease)
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
 }
 
-
 // Function : make buttons.
-function setButtons() {
+function setButtonsWidget() {
   const shortcutURL = 'shortcuts://run-shortcut?name='
-  let stack, url, button
+  let url, button
 
   // Add renew button.
   stack = box.addStack()
-  button = stack.addImage(SFSymbol.named('arrow.clockwise.circle').image)
-  button.url = thisURL
+  button = stack.addImage(
+                 SFSymbol.named('arrow.clockwise.circle').image)
+  button.url = URLScheme.forRunningScript()
   button.tintColor = contentColor
-  button.imageSize = new Size(15, 15)
+  button.imageSize = new Size(14, 14)
 
   // Add custom buttons.
   for(let i = 0 ; i < buttons.number ; i++) {
-    stack.addSpacer(12)
-    button = stack.addImage(SFSymbol.named(buttons.items[i][0]).image)
+    stack.addSpacer(10)
+    button = stack.addImage(
+                   SFSymbol.named(buttons.items[i][0]).image)
     button.url = shortcutURL + encodeURI(buttons.items[i][1])
     button.tintColor = contentColor
     button.imageSize = new Size(15, 15)
   }
 }
 
+// Functions : make weather widget
+function setWeatherWidget() {
+  let response = weatherJSON['response']
+
+  // Error code in loading weather//
+  if(response['header']['resultCode'] != '00') {
+    console.error('ERROR in weather loading : ' + response['header']['resultCode'])
+    console.error(getWeatherURL())
+    return null
+  }
+
+  // Extract weather data from JSON file.
+  let weatherItems = response['body']['items']['item']
+  let totalCount = Number(response['body']['totalCount'])
+  let fcstTime = weatherItems[0].fcstTime
+  let temp, rain, sky, volume
+
+  for(let i in weatherItems) {
+    if(weatherItems[i].fcstTime == fcstTime) {
+      let category = weatherItems[i].category
+      if(category == 'T1H') {
+        temp = weatherItems[i].fcstValue+'℃'
+      } else if(category == 'SKY') {
+        sky = Number(weatherItems[i].fcstValue) -1
+      } else if(category == 'PTY') {
+        rain = weatherItems[i].fcstValue
+      } else if(category == 'RN1') {
+        volume = weatherItems[i].fcstValue
+      }
+    }
+  }
+
+  let line, content
+  stack = box.addStack()
+  line = stack.addStack()
+  line.centerAlignContent()
+  content = line.addImage(getWeatherImage(rain, sky)) // icon
+  content.imageSize = new Size(14, 15)
+  content.tintColor = contentColor
+
+  line.addSpacer(2)
+
+  content = line.addText(temp) // temperature
+  content.font = Font.systemFont(13)
+  content.textColor = contentColor
+  
+  line.addSpacer(6)
+  line.url = 'http://weather.naver.com'
+
+  /*
+  content = line.addText(getWeatherStatus(rain, sky)) // status
+  content.font = Font.systemFont(12)
+  content.textColor = contentColor
+  */
+}
+
+
+
+
+// Functions for making each widget.---------------------------
+function getWeatherStatus(rain, sky) {
+  const skyArr = ['맑음', '구름조금', '구름많음', '흐림']
+  const rainArr = ['없음', '비', '비/눈', '눈', '소나기', '빗방울',
+                   '빗방울/눈날림', '눈날림']
+
+  if(rain == 0) return skyArr[sky]
+  else return rainArr[rain]
+}
+
+function getWeatherImage(rain, sky) {
+  const iconArr = [
+      // 공통
+      // 0.흐림, 1.많은비(비,소나기), 2.비/눈(빗방울/눈날림), 3.눈(눈날림),
+      'cloud.fill', 'cloud.heavyrain.fill', 'cloud.sleet.fill',
+      'snow',
+      // 아침
+      // 4.맑음 5.구름조금 6.구름많음 7.적은비(비,빗방울)+일반 8.비+구름적음
+      'sun.max.fill', null, 'cloud.sun.fill', 'cloud.drizle.fill',
+      'cloud.sun.rain.fill',
+      // 저녁
+      // 9.맑음 10.구름조금 11.구름많음 12.적은비(비,빗방울) 13.비+구름적음
+      'moon.stars.fill', null, 'cloud.moon.fill',
+      'cloud.moon.rain.fill']
+
+  let iconIndex
+
+  if(rain == 0) { // 맑음, 구름조금, 구름많음, 흐림(공통)
+    if(sky == 3) iconIndex = 0
+    else iconIndex = sky + 4
+  } else {
+    if(rain == 3 || rain == 7) { // 눈(공통)
+      iconIndex = 3
+    } else if(rain == 2 || rain == 6) { // 비+눈(공통)
+      iconIndex= 2
+    } else { // 비
+      if(sky < 2) { // 비+구름적음
+        iconIndex = 8
+      } else if(volume > 5) { // 많은 비
+        iconIndex = 1
+      } else { // 적은 비
+        iconIndex = 7
+      }
+    }
+  }
+
+  // A icon that is changed as time. (ex: sun -> moon)
+  let currentHour = date.getHours()
+  if((currentHour<7||currentHour>18) && iconIndex>3) iconIndex += 5
+
+  return SFSymbol.named(iconArr[iconIndex]).image
+}
+
+// Function : Make and return weather request url.
+function getWeatherURL(numberOfRows) {
+  let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D&dataType=JSON&numOfRows=0&base_date='
+
+  let base_date, base_time, nx, ny
+  dateFormatter.dateFormat = 'yyyyMMddHH30'
+
+  // Match with api's update time.
+  if(date.getMinutes() < 45) {
+    let minus = new Date()
+    minus.setHours(minus.getHours()-1)
+    base_date = dateFormatter.string(minus).substring(0, 8)
+    base_time = dateFormatter.string(minus).substring(8)
+  } else {
+    base_date = dateFormatter.string(date).substring(0, 8)
+    base_time = dateFormatter.string(date).substring(8)
+  }
+
+  // Bring from array.
+  nx = getRegionInfo(1, region)
+  ny = getRegionInfo(2, region)
+
+  // Make url
+  weatherURL += base_date+'&base_time='+base_time
+      +'&nx='+nx+'&ny='+ny
+  return weatherURL
+}
+
 // Function : Make and return battery icon.
-function getBatteryImage() {
+function getBatteryImage(batteryLevel) {
   if(Device.isCharging()) {
     return SFSymbol.named('battery.100.bolt').image
   }
@@ -378,11 +537,8 @@ function getBatteryImage() {
   const width = batteryWidth * 0.602
   const height = batteryHeight * 0.505
 
-  let level = Device.batteryLevel()
-  if(level < 0.05) level = 0.05
-
   // Determine the width and radius of the battery level.
-  const current = width * level
+  const current = width * batteryLevel
   let radius = height / 6.5
 
   // When it gets low, adjust the radius to match.
@@ -398,7 +554,88 @@ function getBatteryImage() {
   return draw.getImage()
 }
 
+// Function : Return region's name
+// type : (0 : name), (1 : x), (2 : y)
+function getRegionInfo(i, j) {
+  let regionsArr = [
+    ['서울', '60', '127'],
+    ['부산', '98', '76'],
+    ['인천', '55', '124'],
+    ['대구', '89', '90'],
+    ['광주', '58', '74'],
+    ['대전', '67', '100'],
+    ['울산', '102', '84'],
+    ['세종', '66', '103'],
+    ['경기', '60', '120'],
+    ['강원', '73', '134'],
+    ['충북', '69', '107'],
+    ['충남', '68', '100'],
+    ['경북', '89', '91'],
+    ['경남', '91', '77'],
+    ['전북', '63', '89'],
+    ['전남', '51', '67'],
+    ['제주', '52', '38'],
+  ]
+  return regionsArr[j][i]
+}
+
+// Functions -------------------------------------------------
 // Function : write ',' for every 3 digit.
 function comma(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  number += ''
+  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+// Function : Set widget background color or content color
+// Arguments : type - 0(set widget background color)
+//                  - 1(set content color)
+//             makeAlert - -1(make alert)
+//                         others(just change color)
+async function setColor(type, colorNumber) {
+  let number
+  if(colorNumber == -1) {
+    let alert = new Alert()
+    if(type == 0) alert.title = '위젯 배경 색상 선택'
+    else alert.title = '텍스트/아이콘 색상 선택'
+    alert.message = '아래에서 색상을 선택하세요.'
+    alert.addAction('검정색')
+    alert.addAction('하얀색')
+    alert.addAction('노란색')
+    alert.addAction('초록색')
+    alert.addAction('파란색')
+    number = await alert.present()
+  } else number = colorNumber
+
+  let color
+  switch (number) {
+    case 0 :
+      color = Color.black()
+      break
+    case 1 :
+      color = Color.white()
+      break
+    case 2 :
+      color = Color.yellow()
+      break
+    case 3 :
+      color = Color.green()
+      break
+    case 4 :
+      color = Color.blue()
+      break
+    default :
+      return
+      break
+  }
+
+  switch (type) {
+    case 0 :
+      widget.backgroundColor = color
+      break
+    case 1 :
+      contentColor = color
+      break
+  }
+
+  return number + ''
 }
