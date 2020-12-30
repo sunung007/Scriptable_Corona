@@ -1,10 +1,22 @@
 위젯 : 전국 및 특정 지역 코로나19 실시간 현황과 날짜, 배터리 정보, 단축어 바로가기 버튼을 담은 위젯
 ===================================================================================================
 
-<img src="./image/widget.jpg" width="40%" height="30%" title="Widget Image" alt="Widget Image"></img>
+<img src="./image/widget.jpg" width="400" height="" title="Widget Image" alt="Widget Image"></img>
 
-iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입니다.  
-이 코드는 baisc components와 사용자가 추가하는 custom componets로 구성되어 있습니다.  
+iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입니다.
+
+### 기본 구성
+
+위젯의 좌측부에는 다음과 같이 구성되어 있습니다. - 날짜 - 현재 날씨 - 배터리 용량 - 기능을 수행하는 버튼들 - 각 버튼들은 단축어 어플과 연동되어 있습니다. - 단, 개인별로 단축어 이름이 다르기 때문에, 이 기능을 수행하기 전에 **코드를 직접 수정**해야 합니다.
+
+위젯의 우측은 다음과 같이 구성되어 있습니다. - 코로나 실시간 현황 - 전국단위 실시간 발생 현황 - 금일 확진자 현황 - 전일 대비 증감 수 - 특정 지역 실시간 발생 현황 - 전일 대비 증감 - 코로나 누적 확진자 수(정부 발표 기준) - 전국 누적 확진자 수 - 전일 증가 수
+
+을 볼 수 있습니다. 전국과 특정 1개 지역의 실시간 현황과 누적 현황을 나타냅니다. 현재 이 코드는 중간 사이즈의 위젯만 지원합니다.
+
+### 위젯 설치 방법
+
+기기에 **scriptable** 어플이 설치되어 있어야 합니다.  
+[여기](https://apps.apple.com/kr/app/scriptable/id1405459188)를 누르면 앱스토어로 이동합니다. 이 코드는 baisc components와 사용자가 추가하는 custom componets로 구성되어 있습니다.  
 위 이미지에서는 custom components에 headphone, QR code, house, dallar의 SF symbol을 가진 버튼들이 추가되어 있습니다.
 
 최초 실행 시 변경해야 하는 사항 안내는 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#최초-사용-시-설정-항목,)에서 확인하세요.  
