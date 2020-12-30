@@ -104,7 +104,5 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 참조
 ----
 
-본 위젯의 코로나 현황 데이터는 아래 사이트를 이용하였습니다.
-[corona-live.com](http://corona-live.com,)
-
-본 위젯의 기상 데이터는 기상청 오픈 API를 이용하였습니다.
+> 본 위젯의 현황 데이터는 [corona-live.com](http://corona-live.com)를 이용하였습니다.
+> 본 위젯의 기상 데이터는 기상청 오픈 API를 이용하였습니다.
