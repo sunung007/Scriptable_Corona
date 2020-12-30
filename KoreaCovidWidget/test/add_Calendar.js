@@ -94,7 +94,7 @@ async function setWidgetAttribute() {
                          'Gofo-covid-widget-data-')
 
   let isBackgroundColor, image, isForcedColor
-  
+
   // If runs in app, do not change any setting.
   if(!config.runsInApp) changeSetting = false
 
@@ -187,11 +187,11 @@ async function setWidgetAttribute() {
 
 
 // Function : create the widget.
-function createWidget() {  
+function createWidget() {
   container = widget.addStack()
   container.layoutVertically()
-  
-  
+
+
   // 1 : Upside
   outbox = container.addStack()
   outbox.layoutHorizontally()
@@ -205,10 +205,10 @@ function createWidget() {
     box.addSpacer(14)
     setWeatherWidget() // weather
 //  } else box.addSpacer(11)
-  
+
   setBatteryWidget() // battry
   box.addSpacer(9)
-  
+
   if(VIEW_MODE == 2) {
     setButtonsWidget() // buttons
     outbox.addSpacer(60)
@@ -256,7 +256,7 @@ function setDateWidget() {
   content.font = Font.systemFont(13)
   content.textColor = contentColor
   //stack.addSpacer(8)
-  
+
   stack.url = 'calshow://'
 }
 
@@ -267,7 +267,7 @@ function setBatteryWidget() {
   // Battery information.
   const batteryLevel = Device.batteryLevel()
   let image = getBatteryImage(batteryLevel)
-  
+
 //  stack = box.addStack()
   line = stack.addStack()
   line.centerAlignContent()
@@ -285,7 +285,7 @@ function setBatteryWidget() {
   }
   line.addSpacer(2)
 
-  content = line.addText(Number(batteryLevel*100).toFixed(0) 
+  content = line.addText(Number(batteryLevel*100).toFixed(0)
                          + '% ')
   content.font = Font.systemFont(13)
   content.textColor = contentColor
@@ -308,82 +308,97 @@ function setCovidWidget() {
   regionNum = comma(regionData[0])
   regionGap = regionData[1]
 
-  stack = box.addStack()
-  stack.layoutVertically()
 
-  // Current realtime patient
-  content = stack.addText('현재 (전국/'+getRegionInfo(0, region)+')')
-  content.font = Font.caption2()
-  content.textColor = contentColor
+  if(VIEW_MODE == 2) {
+    stack = box.addStack()
+    stack.layoutVertically()
 
-  // Whole country
-  line = stack.addStack()
-  line.centerAlignContent()
+    // Current realtime patient
+    content = stack.addText('현재 (전국/'+getRegionInfo(0, region)+')')
+    content.font = Font.caption2()
+    content.textColor = contentColor
 
-  content = line.addText(currentNum + '')
-  content.font = Font.boldSystemFont(18)
-  content.textColor = contentColor
+    // Whole country
+    line = stack.addStack()
+    line.centerAlignContent()
 
-  content = line.addText(' 명')
-  content.font = Font.systemFont(18)
-  content.textColor = contentColor
+    content = line.addText(currentNum + '')
+    content.font = Font.boldSystemFont(18)
+    content.textColor = contentColor
 
-  // Compare with yesterday's
-  if(currentGap > 0) {
-    content = line.addText(' +' + comma(currentGap))
+    content = line.addText(' 명')
+    content.font = Font.systemFont(18)
+    content.textColor = contentColor
+
+    // Compare with yesterday's
+    if(currentGap > 0) {
+      content = line.addText(' +' + comma(currentGap))
+      content.textColor = new Color(colorIncrease)
+    } else {
+      content = line.addText(' ' + comma(currentGap))
+      content.textColor = new Color(colorDecrease)
+    }
+    content.font = Font.systemFont(13)
+
+    // Region
+    line = stack.addStack()
+    line.centerAlignContent()
+
+    content = line.addText(regionNum + '')
+    content.font = Font.boldSystemFont(18)
+    content.textColor = contentColor
+
+    content = line.addText(' 명')
+    content.font = Font.systemFont(18)
+    content.textColor = contentColor
+
+    // compare with yesterday's
+    if(regionGap > 0) {
+      content = line.addText(' +' + comma(regionGap))
+      content.textColor = new Color(colorIncrease)
+    } else {
+      content = line.addText(' ' + comma(regionGap))
+      content.textColor = new Color(colorDecrease)
+    }
+    content.font = Font.systemFont(13)
+
+    stack.addSpacer(6)
+
+
+    // Accumulated number on yesterday-basis.
+    content = stack.addText('0시 기준')
+    content.font = Font.caption2()
+    content.textColor = contentColor
+
+    // Total
+    line = stack.addStack()
+    line.layoutHorizontally()
+    line.centerAlignContent()
+
+    content = line.addText(totalNum + '')
+    content.font = Font.boldSystemFont(18)
+    content.textColor = contentColor
+
+    content = line.addText(' 명')
+    content.font = Font.systemFont(18)
+    content.textColor = contentColor
+
+    content = line.addText(' +' + comma(yesterdayNum))
     content.textColor = new Color(colorIncrease)
-  } else {
-    content = line.addText(' ' + comma(currentGap))
-    content.textColor = new Color(colorDecrease)
+    content.font = Font.systemFont(13)
+  } else if(VIEW_MODE ==3) {
+    let tstack = box.addStack()
+    tstack.layoutHorizontally()
+
+    stack = tstack.addStack()
+    stack.layoutVertically()
+
+    content = stack.addText('전국')
+    content.textColor = contentColor
+    content.font = Font.systemFont(12)
+
+
   }
-  content.font = Font.systemFont(13)
-
-  // Region
-  line = stack.addStack()
-  line.centerAlignContent()
-
-  content = line.addText(regionNum + '')
-  content.font = Font.boldSystemFont(18)
-  content.textColor = contentColor
-
-  content = line.addText(' 명')
-  content.font = Font.systemFont(18)
-  content.textColor = contentColor
-
-  // compare with yesterday's
-  if(regionGap > 0) {
-    content = line.addText(' +' + comma(regionGap))
-    content.textColor = new Color(colorIncrease)
-  } else {
-    content = line.addText(' ' + comma(regionGap))
-    content.textColor = new Color(colorDecrease)
-  }
-  content.font = Font.systemFont(13)
-
-  stack.addSpacer(6)
-
-
-  // Accumulated number on yesterday-basis.
-  content = stack.addText('0시 기준')
-  content.font = Font.caption2()
-  content.textColor = contentColor
-
-  // Total
-  line = stack.addStack()
-  line.layoutHorizontally()
-  line.centerAlignContent()
-
-  content = line.addText(totalNum + '')
-  content.font = Font.boldSystemFont(18)
-  content.textColor = contentColor
-
-  content = line.addText(' 명')
-  content.font = Font.systemFont(18)
-  content.textColor = contentColor
-
-  content = line.addText(' +' + comma(yesterdayNum))
-  content.textColor = new Color(colorIncrease)
-  content.font = Font.systemFont(13)
 }
 
 // Function : make buttons.
@@ -416,7 +431,7 @@ function setWeatherWidget() {
 
   // Error code in loading weather//
   if(response['header']['resultCode'] != '00') {
-    console.error('ERROR in weather loading : ' + 
+    console.error('ERROR in weather loading : ' +
                   response['header']['resultCode'])
     console.error(getWeatherURL())
     return null
@@ -456,7 +471,7 @@ function setWeatherWidget() {
   content = line.addText(temp) // temperature
   content.font = Font.systemFont(13)
   content.textColor = contentColor
-  
+
   line.addSpacer(6)
   line.url = 'http://weather.naver.com'
 
@@ -473,42 +488,42 @@ function setCalendarWidget() {
   let reminderNum = reminderJSON.length
   let title, color
   let line, content
-  
+
   stack = box.addStack()
   stack.layoutVertically()
 
   line = stack.addStack()
-  
+
   content = line.addText('일정 ')
   content.textColor = contentColor
   content.font = Font.boldMonospacedSystemFont(13)
-  
-  
+
+
   if(calendarNum + reminderNum > 6) {
     if(calendarNum > 3 && reminderNum > 3) {
-      
+
     } else if(calendarNum > 3 && reminderNum < 3) {
-      
+
     } else if(calendarNum < 3 && reminderNum > 3) {
-      
+
     }
     content = line.addText('+' + calendarNum - 6)
     content.textColor = new Color(colorIncrease)
     content.font = Font.systemFont(13)
   }
-  
+
   for(let i = 0 ; i < calendarNum && i < 6; i++ ) {
     line =  stack.addStack()
     line.centerAlignContent()
-  
+
     // Get title and bar's color from JSON file.
     title = calendarJSON[i].title
     color = calendarJSON[i].calendar.color.hex
-    
+
     let draw = new DrawContext()
     draw.opaque = false
     draw.fillRect(new Rect(0, 0, 100, 1000))
-  
+
     content = line.addImage(draw.getImage())
     content.imageSize = new Size(10, 13)
     content.tintColor = new Color(color)
@@ -516,12 +531,12 @@ function setCalendarWidget() {
     content.font = Font.systemFont(13)
     content.textColor = contentColor
   }
-      
-  
-  
+
+
+
 }
 
- 
+
 
 
 
