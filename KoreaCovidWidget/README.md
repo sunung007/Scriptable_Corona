@@ -54,12 +54,12 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 	  ]} 
 ```
 
-  5-1. 넣고 싶은 버튼의 개수를 `number`에 입력합니다.
-       `number = {버튼 개수}`
-  5-2. items의 내용에 SF symbol 이름과 기기에 저장된 단축어 이름을 입력합니다.
+    - 넣고 싶은 버튼의 개수를 `number`에 입력합니다.   
+       `number = {버튼 개수}`   
+    - items의 내용에 SF symbol 이름과 기기에 저장된 단축어 이름을 입력합니다.   
        `['{SF Symbold 이름}', '{단축어 이름}'],`
-  5-3. URL scheme을 이용하기 때문에 단축어 이름은 띄어쓰기, 대/소문자 까지 정확해야 합니다.
-  5-4. SF symbol은 [여기](https://github.com/cyanzhong/sf-symbols-online)서 확인할 수 있습니다.
+    - URL scheme을 이용하기 때문에 단축어 이름은 띄어쓰기, 대/소문자 까지 정확해야 합니다.
+    - SF symbol은 [여기](https://github.com/cyanzhong/sf-symbols-online)서 확인할 수 있습니다.
 6. 우측 하단의 재생 버튼을 눌러서 코드를 실행시킨 후 왼쪽 상단의 `Done`을 눌러 적용합니다.
 7. 바탕화면에 scriptable의 중간크기 위젯을 생성합니다.
 8. 편집상태의 위젯을 눌러 방금 추가시킨 스크립트(코드)를 선택합니다.
