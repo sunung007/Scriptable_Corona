@@ -1,7 +1,7 @@
 위젯 : 전국 및 특정 지역 코로나19 실시간 현황과 날짜, 배터리 정보, 단축어 바로가기 버튼을 담은 위젯
 ===================================================================================================
 
-<img src="./image/widget.jpg" width="400" height="" title="Widget Image" alt="Widget Image"></img>
+<img src="./image/widget_intro.jpeg" width="400"></img>
 
 iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입니다.
 
@@ -35,11 +35,14 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 
 기기에 **scriptable** 어플이 설치되어 있어야 합니다. [여기](https://apps.apple.com/kr/app/scriptable/id1405459188)를 누르면 앱스토어로 이동합니다.
 
-1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/main.js)에 들어갑니다.
+1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/main.js)에 들어갑니다.   
+<img src="./image/guide_1.jpeg" width="200"></img>
 2. **RAW** 버튼을 눌러 전체 코드를 복사합니다.
-3. scriptable 어플을 실행합니다.
+3. scriptable 어플을 실행합니다.   
+<img src="./image/guide_2.jpeg" width="200"></img>
 4. `+`버튼을 눌러서 코드를 붙여넣습니다.
-5. 단축어 바로가기를 위해 코드 맨 위의 부분을 수정해야합니다.
+5. 단축어 바로가기를 위해 코드 맨 위의 부분을 수정해야합니다.   
+<img src="./image/guide_3.jpeg" width="200"></img>   
 ```
 	// 위젯에 띄울 단축어 버튼들
 	// itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
@@ -60,9 +63,11 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
      `['{SF Symbold 이름}', '{단축어 이름}'],`
   - URL scheme을 이용하기 때문에 단축어 이름은 띄어쓰기, 대/소문자 까지 정확해야 합니다.
   - SF symbol은 [여기](https://github.com/cyanzhong/sf-symbols-online)서 확인할 수 있습니다.
-6. 우측 하단의 재생 버튼을 눌러서 코드를 실행시킨 후 왼쪽 상단의 `Done`을 눌러 적용합니다.
+6. 우측 하단의 재생 버튼을 눌러서 코드를 실행시킨 후 왼쪽 상단의 `Done`을 눌러 적용합니다.   
+<img src="./image/guide_4.jpeg" width="200"></img> <img src="./image/guide_5.jpeg" width="200"></img>
 7. 바탕화면에 scriptable의 중간크기 위젯을 생성합니다.
-8. 편집상태의 위젯을 눌러 방금 추가시킨 스크립트(코드)를 선택합니다.
+8. 편집상태의 위젯을 눌러 방금 추가시킨 스크립트(코드)를 선택합니다.   
+<img src="./image/guide_6.jpeg" width="200"></img>
 
 ------------------
 ## 설정값 변경 방법
