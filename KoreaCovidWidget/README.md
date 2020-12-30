@@ -42,7 +42,7 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 <img src="./image/guide_2.jpeg" width="200"></img>
 4. `+`버튼을 눌러서 코드를 붙여넣습니다.
 5. 단축어 바로가기를 위해 코드 맨 위의 부분을 수정해야합니다.   
-<img src="./image/guide_3.jpeg" width="200"></img>   
+<img src="./image/guide_3.jpeg" width="200"></img>
 ```
 	// 위젯에 띄울 단축어 버튼들
 	// itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
@@ -67,7 +67,7 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 <img src="./image/guide_4.jpeg" width="200"></img> <img src="./image/guide_5.jpeg" width="200"></img>
 7. 바탕화면에 scriptable의 중간크기 위젯을 생성합니다.
 8. 편집상태의 위젯을 눌러 방금 추가시킨 스크립트(코드)를 선택합니다.   
-<img src="./image/guide_6.jpeg" width="200"></img>
+<img src="./image/guide_6.png" width="200"></img>
 
 ------------------
 ## 설정값 변경 방법
