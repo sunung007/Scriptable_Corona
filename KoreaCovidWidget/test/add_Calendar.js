@@ -215,7 +215,11 @@ function createWidget() {
   } //else outbox.addSpacer(100)
 
   // 1-2. Right
-  box = outbox.addStack()
+  if(VIEW_MODE == 2) box = outbox.addStack()
+  else {
+    outbox = container.addStack()
+    box = outbox.addStack()
+  }
   setCovidWidget()   // covid count
   //box.addSpacer(8)
 
@@ -386,6 +390,7 @@ function setCovidWidget() {
     content = line.addText(' +' + comma(yesterdayNum))
     content.textColor = new Color(colorIncrease)
     content.font = Font.systemFont(13)
+    
   } else if(VIEW_MODE ==3) {
     let tstack = box.addStack()
     tstack.layoutHorizontally()
@@ -393,11 +398,84 @@ function setCovidWidget() {
     stack = tstack.addStack()
     stack.layoutVertically()
 
+    // Whole country
     content = stack.addText('전국')
     content.textColor = contentColor
     content.font = Font.systemFont(12)
+    
+    line = stack.addStack()
+    line.bottomAlignContent()
+    content = line.addText(currentNum)
+    content.font = Font.boldSystemFont(18)
+    content.textColor = contentColor
 
+    // Compare with yesterday's
+    if(currentGap > 0) {
+      content = line.addText(' +' + comma(currentGap))
+      content.textColor = new Color(colorIncrease)
+    } else {
+      content = line.addText(' ' + comma(currentGap))
+      content.textColor = new Color(colorDecrease)
+    }
+    content.font = Font.systemFont(12)
+    
+    tstack.addSpacer(25)
+    
+    // Region
+    tstack = box.addStack()
+    tstack.layoutHorizontally()
 
+    stack = tstack.addStack()
+    stack.layoutVertically()
+
+    content = stack.addText(getRegionInfo(0, region))
+    content.textColor = contentColor
+    content.font = Font.systemFont(12)
+    
+    line = stack.addStack()
+    line.bottomAlignContent()
+
+    content = line.addText(regionNum)
+    content.font = Font.boldSystemFont(18)
+    content.textColor = contentColor
+
+    // compare with yesterday's
+    if(regionGap > 0) {
+      content = line.addText(' +' + comma(regionGap))
+      content.textColor = new Color(colorIncrease)
+    } else {
+      content = line.addText(' ' + comma(regionGap))
+      content.textColor = new Color(colorDecrease)
+    }
+    content.font = Font.systemFont(12)
+    
+    
+    tstack.addSpacer(25)
+     
+           
+    // Accumulated number on yesterday-basis.
+    tstack = box.addStack()
+    tstack.layoutHorizontally()
+
+    stack = tstack.addStack()
+    stack.layoutVertically()
+    
+    content = stack.addText('0시 기준')
+    content.font = Font.caption2()
+    content.textColor = contentColor
+
+    // Total
+    line = stack.addStack()
+    line.layoutHorizontally()
+    line.bottomAlignContent()
+
+    content = line.addText(totalNum + '')
+    content.font = Font.boldSystemFont(18)
+    content.textColor = contentColor
+
+    content = line.addText(' +' + comma(yesterdayNum))
+    content.textColor = new Color(colorIncrease)
+    content.font = Font.systemFont(12)    
   }
 }
 
