@@ -18,6 +18,11 @@ let changeSetting = false
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
 
+// 아래 사이트에 들어가서 활용 신청한 후
+// 발급받은 일반 인증키를 붙여넣으시면 됩니다!
+// https://data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057682
+const appKey = '인증키'
+
 
 // 여기부터는 건들지 마세요.
 // =======================================================
@@ -489,7 +494,7 @@ function getWeatherImage(rain, sky) {
 
 // Function : Make and return weather request url.
 function getWeatherURL(numberOfRows) {
-  let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D&dataType=JSON&numOfRows=0&base_date='
+  let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=' + appKey + '&dataType=JSON&numOfRows=0&base_date='
 
   let base_date, base_time, nx, ny
   dateFormatter.dateFormat = 'yyyyMMddHH30'
