@@ -1,22 +1,22 @@
 // 개인 변경 부분
-    // 위젯에 띄울 단축어 버튼들
-    // itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
-    const buttons = {
-      number : 4,  // 버튼의 개수
-      items : [ // 버튼 내용
-        ['headphones', '음악'],
-        ['qrcode', 'QR 체크인'],
-        ['house', '집'],
-        ['dollarsign.circle', '계좌'],
-        /*...*/
-      ]}
+// 위젯에 띄울 단축어 버튼들
+// itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
+const buttons = {
+  number : 4,  // 버튼의 개수
+  items : [ // 버튼 내용
+    ['headphones', '음악'],
+    ['qrcode', 'QR 체크인'],
+    ['house', '집'],
+    ['dollarsign.circle', '계좌'],
+    /*...*/
+  ]}
 
-    // 배경, 색상, 지역을 변경하시려면 true로 바꾸고 실행하세요.
-    // 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
-    const changeSetting = false
+// 배경, 색상, 지역을 변경하시려면 true로 바꾸고 실행하세요.
+// 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
+const changeSetting = false
 
-    // 위젯 새로고침 시간(단위 : 초)
-    const refreshTime = 60 * 10
+// 위젯 새로고침 시간(단위 : 초)
+const refreshTime = 60 * 10
 
 
 // 여기부터는 건들지 마세요.
