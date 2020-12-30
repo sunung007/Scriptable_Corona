@@ -1,25 +1,22 @@
+// 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
 // 개인 변경 부분
-  // 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
-  // 0. 위젯에 띄울 단축어 버튼 ---------------------------------
-  const buttons = {
-    number : 4,  // 버튼의 개수
-    items : [
-      // 버튼 내용
-      // 아래 형식에 맞춰서 추가해주세요. 아래 형식이 한 쌍입니다.
-      // 형식 : ['SF symbol 이름', '단축어 이름'],
-      // SF symbol은 앱스토어에서 'sf symbol' 아무거나 다운받으셔서
-      // 원하는 아이콘 사용하시면 됩니다.
-      // 단축어 이름은 대소문자, 띄어쓰기 정확히 해야합니다.
-      // 쉼표 잊지 마세요!
-      ['headphones', '음악'],
-      ['qrcode', 'QR 체크인'],
-      ['house', '집'],
-      ['dollarsign.circle', '계좌'],
-    ]
-  }
+    // 위젯에 띄울 단축어 버튼들
+    // itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
+    const buttons = {
+      number : 4,  // 버튼의 개수
+      items : [ // 버튼 내용
+        ['headphones', '음악'],
+        ['qrcode', 'QR 체크인'],
+        ['house', '집'],
+        ['dollarsign.circle', '계좌'],
+        /*...*/
+      ]}
 
-  const changeSetting = false
-  const refreshTime = 60 * 10 // unit : seconds
+    // 배경, 색상, 지역을 변경하시려면 true로 바꾸고 실행하세요.
+    const changeSetting = false
+
+    // 위젯 새로고침 시간(단위 : 초)
+    const refreshTime = 60 * 10
 
 
 // 여기부터는 건들지 마세요.
@@ -43,7 +40,7 @@ let contentColor
 
 
 // Set widget's attributes.
-await widgetSetting()
+await setWidgetAttribute()
 
 // Bring json data.
 covidJSON = await new Request(covidURL).loadJSON()
@@ -62,8 +59,9 @@ Script.complete()
 
 
 // Functions ==================================================
+// Functions about widget.-------------------------------------
 // Set basic settings of widget.
-async function widgetSetting() {
+async function setWidgetAttribute() {
   let alert
   let changeAttribute = -1 //= [false, false, false, false, false]
   let path = fileManager.joinPath(directory,
@@ -72,7 +70,7 @@ async function widgetSetting() {
   let isBackgroundColor, image, isForcedColor
 
 
-    
+
   if(changeSetting) {
     alert = new Alert()
     alert.addAction('지역 설정')
@@ -82,7 +80,7 @@ async function widgetSetting() {
     alert.addCancelAction('취소')
     changeAttribute = await alert.present()
   }
-  
+
 
 
 
@@ -162,60 +160,6 @@ async function widgetSetting() {
   }
 }
 
-// Function : Set widget background color or content color
-// Arguments : type - 0(set widget background color)
-//                  - 1(set content color)
-//             makeAlert - -1(make alert)
-//                         others(just change color)
-async function setColor(type, colorNumber) {
-  let number
-  if(colorNumber == -1) {
-    let alert = new Alert()
-    if(type == 0) alert.title = '위젯 배경 색상 선택'
-    else alert.title = '텍스트/아이콘 색상 선택'
-    alert.message = '아래에서 색상을 선택하세요.'
-    alert.addAction('검정색')
-    alert.addAction('하얀색')
-    alert.addAction('노란색')
-    alert.addAction('초록색')
-    alert.addAction('파란색')
-    number = await alert.present()
-  } else number = colorNumber
-
-  let color
-  switch (number) {
-    case 0 :
-      color = Color.black()
-      break
-    case 1 :
-      color = Color.white()
-      break
-    case 2 :
-      color = Color.yellow()
-      break
-    case 3 :
-      color = Color.green()
-      break
-    case 4 :
-      color = Color.blue()
-      break
-    default :
-      return
-      break
-  }
-
-  switch (type) {
-    case 0 :
-      widget.backgroundColor = color
-      break
-    case 1 :
-      contentColor = color
-      break
-  }
-
-  return number + ''
-}
-
 // Function : create the widget.
 function createWidget() {
   let container, box, stack
@@ -243,7 +187,6 @@ function createWidget() {
   // test code.
   setWeatherWidget()
 }
-
 
 // Function : Set date and battery information.
 function setDateWidget(box) {
@@ -277,7 +220,7 @@ function setDateWidget(box) {
 
 function setBatteryWidget(box) {
   let stack, line, content
-  
+
   // Battery information.
   const batteryLevel = Device.batteryLevel()
   let image = getBatteryImage(batteryLevel)
@@ -299,7 +242,6 @@ function setBatteryWidget(box) {
   content.font = Font.systemFont(16)
   content.textColor = contentColor
 }
-
 
 // Function : Set realtime covid patinet number.
 function setCovidWidget(box) {
@@ -396,7 +338,6 @@ function setCovidWidget(box) {
   content.font = Font.systemFont(14)
 }
 
-
 // Function : make buttons.
 function setButtonsWidget(box) {
   const shortcutURL = 'shortcuts://run-shortcut?name='
@@ -419,10 +360,9 @@ function setButtonsWidget(box) {
   }
 }
 
-
 function setWeatherWidget(box) {
   let response = weatherJSON['response']
-  
+
   // Error code in loading weather//
   if(response['header']['resultCode'] != '00') {
     console.error('ERROR in weather loading : ' + response['header']['resultCode'])
@@ -435,7 +375,7 @@ function setWeatherWidget(box) {
   let totalCount = Number(response['body']['totalCount'])
   let fcstTime = weatherItems[0].fcstTime
   let temp, rain, sky, volume
-  
+
   for(let i in weatherItems) {
     if(weatherItems[i].fcstTime == fcstTime) {
       let category = weatherItems[i].category
@@ -450,19 +390,20 @@ function setWeatherWidget(box) {
       }
     }
   }
-  
-  
+
+
   getWeatherImage(rain, sky)
   getWeatherStatus(rain, sky)
-  
-  
+
+
 }
 
+// Functions for making each widget.---------------------------
 function getWeatherStatus(rain, sky) {
   const skyArr = ['맑음', '구름조금', '구름많음', '흐림']
   const rainArr = ['없음', '비', '비/눈', '눈', '소나기', '빗방울',
                    '빗방울/눈날림', '눈날림']
-                  
+
   if(rain == 0) return skyArr[sky]
   else return rainArr[rain]
 }
@@ -511,7 +452,33 @@ function getWeatherImage(rain, sky) {
   return SFSymbol.named(iconArr[iconIndex]).image
 }
 
+// Function : Make and return weather request url.
+function getWeatherURL(numberOfRows) {
+  let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D&dataType=JSON&numOfRows=0&base_date='
 
+  let base_date, base_time, nx, ny
+  dateFormatter.dateFormat = 'yyyyMMddHH30'
+
+  // Match with api's update time.
+  if(date.getMinutes() < 45) {
+    let minus = new Date()
+    minus.setHours(minus.getHours()-1)
+    base_date = dateFormatter.string(minus).substring(0, 8)
+    base_time = dateFormatter.string(minus).substring(8)
+  } else {
+    base_date = dateFormatter.string(date).substring(0, 8)
+    base_time = dateFormatter.string(date).substring(8)
+  }
+
+  // Bring from array.
+  nx = getRegionInfo(1, region)
+  ny = getRegionInfo(2, region)
+
+  // Make url
+  weatherURL += base_date+'&base_time='+base_time
+      +'&nx='+nx+'&ny='+ny
+  return weatherURL
+}
 
 // Function : Make and return battery icon.
 function getBatteryImage(batteryLevel) {
@@ -552,7 +519,6 @@ function getBatteryImage(batteryLevel) {
   return draw.getImage()
 }
 
-
 // Function : Return region's name
 // type : (0 : name), (1 : x), (2 : y)
 function getRegionInfo(i, j) {
@@ -578,35 +544,62 @@ function getRegionInfo(i, j) {
   return regionsArr[j][i]
 }
 
-// Function : Make and return weather request url.
-function getWeatherURL(numberOfRows) {
-  let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D&dataType=JSON&numOfRows=0&base_date='
-
-  let base_date, base_time, nx, ny
-  dateFormatter.dateFormat = 'yyyyMMddHH30'
-
-  // Match with api's update time.
-  if(date.getMinutes() < 45) {
-    let minus = new Date()
-    minus.setHours(minus.getHours()-1)
-    base_date = dateFormatter.string(minus).substring(0, 8)
-    base_time = dateFormatter.string(minus).substring(8)
-  } else {
-    base_date = dateFormatter.string(date).substring(0, 8)
-    base_time = dateFormatter.string(date).substring(8)
-  }
-
-  // Bring from array.
-  nx = getRegionInfo(1, region)
-  ny = getRegionInfo(2, region)
-
-  // Make url
-  weatherURL += base_date+'&base_time='+base_time
-      +'&nx='+nx+'&ny='+ny
-  return weatherURL
-}
-
+// Functions -------------------------------------------------
 // Function : write ',' for every 3 digit.
 function comma(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+// Function : Set widget background color or content color
+// Arguments : type - 0(set widget background color)
+//                  - 1(set content color)
+//             makeAlert - -1(make alert)
+//                         others(just change color)
+async function setColor(type, colorNumber) {
+  let number
+  if(colorNumber == -1) {
+    let alert = new Alert()
+    if(type == 0) alert.title = '위젯 배경 색상 선택'
+    else alert.title = '텍스트/아이콘 색상 선택'
+    alert.message = '아래에서 색상을 선택하세요.'
+    alert.addAction('검정색')
+    alert.addAction('하얀색')
+    alert.addAction('노란색')
+    alert.addAction('초록색')
+    alert.addAction('파란색')
+    number = await alert.present()
+  } else number = colorNumber
+
+  let color
+  switch (number) {
+    case 0 :
+      color = Color.black()
+      break
+    case 1 :
+      color = Color.white()
+      break
+    case 2 :
+      color = Color.yellow()
+      break
+    case 3 :
+      color = Color.green()
+      break
+    case 4 :
+      color = Color.blue()
+      break
+    default :
+      return
+      break
+  }
+
+  switch (type) {
+    case 0 :
+      widget.backgroundColor = color
+      break
+    case 1 :
+      contentColor = color
+      break
+  }
+
+  return number + ''
 }
