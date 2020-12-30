@@ -19,7 +19,7 @@
   }
 
   const changeSetting = false
-  const refreshTime = 60*10 // unit : seconds
+  const refreshTime = 60 * 10 // unit : seconds
 
 
 // 여기부터는 건들지 마세요.
@@ -28,7 +28,7 @@
 const colorIncrease = '#F51673'
 const colorDecrease = '#2B69F0'
 const covidURL = 'https://apiv2.corona-live.com/stats.json'
-let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D&dataType=JSON&numOfRows=100&base_date='
+
 
 const fileManager = FileManager.local()
 const directory = fileManager.documentsDirectory()
@@ -65,21 +65,25 @@ Script.complete()
 // Set basic settings of widget.
 async function widgetSetting() {
   let alert
-  let changeAttribute = -1
+  let changeAttribute = -1 //= [false, false, false, false, false]
   let path = fileManager.joinPath(directory,
                          'Gofo-covid-widget-data-')
 
   let isBackgroundColor, image, isForcedColor
 
 
+    
   if(changeSetting) {
     alert = new Alert()
     alert.addAction('지역 설정')
     alert.addAction('배경 설정')
     alert.addAction('글씨/아이콘 색상')
+    alert.addAction('전체 초기화')
     alert.addCancelAction('취소')
     changeAttribute = await alert.present()
   }
+  
+
 
 
   // Set region.
@@ -214,7 +218,7 @@ async function setColor(type, colorNumber) {
 
 // Function : create the widget.
 function createWidget() {
-  let container, box
+  let container, box, stack
 
   container = widget.addStack()
   container.layoutVertically()
@@ -256,7 +260,7 @@ function setDateWidget(box) {
   content.textColor = contentColor
 
   // 일
-  dateFormatter.dateFormat = 'd일'
+  dateFormatter.dateFormat = 'd'
   line = stack.addStack()
   content = line.addText(dateFormatter.string(date))
   content.font = Font.boldSystemFont(32)
@@ -273,7 +277,7 @@ function setDateWidget(box) {
 
 function setBatteryWidget(box) {
   let stack, line, content
-
+  
   // Battery information.
   const batteryLevel = Device.batteryLevel()
   let image = getBatteryImage(batteryLevel)
@@ -418,7 +422,7 @@ function setButtonsWidget(box) {
 
 function setWeatherWidget(box) {
   let response = weatherJSON['response']
-
+  
   // Error code in loading weather//
   if(response['header']['resultCode'] != '00') {
     console.error('ERROR in weather loading : ' + response['header']['resultCode'])
@@ -426,29 +430,44 @@ function setWeatherWidget(box) {
     return null
   }
 
-  let weatherInfo = response['body']['items']['item']
+  // Extract weather data from JSON file.
+  let weatherItems = response['body']['items']['item']
   let totalCount = Number(response['body']['totalCount'])
-
-
-  // Extract each information from JSON
-  // 온도
-  let temperature = getWeatherInfo(weatherInfo, totalCount, 'T1H') + '℃'
-  // 강수형태
-  let rainType = getWeatherInfo(weatherInfo, totalCount, 'PTY')
-  // 하늘 상태
-  let sky = Number(getWeatherInfo(weatherInfo, totalCount, 'SKY'))
-  sky--
-  // 강수량
-  let volume = Number(getWeatherInfo(weatherInfo, totalCount, 'RN1'))
-
-  // Error checking
-  if(temperature == 'null℃' || sky == null) {
-    console.error('Error : Load detailed current weather information')
+  let fcstTime = weatherItems[0].fcstTime
+  let temp, rain, sky, volume
+  
+  for(let i in weatherItems) {
+    if(weatherItems[i].fcstTime == fcstTime) {
+      let category = weatherItems[i].category
+      if(category == 'T1H') {
+        temp = weatherItems[i].fcstValue+'℃'
+      } else if(category == 'SKY') {
+        sky = Number(weatherItems[i].fcstValue) -1
+      } else if(category == 'PTY') {
+        rain = weatherItems[i].fcstValue
+      } else if(category == 'RN1') {
+        volume = weatherItems[i].fcstValue
+      }
+    }
   }
+  
+  
+  getWeatherImage(rain, sky)
+  getWeatherStatus(rain, sky)
+  
+  
+}
 
-
+function getWeatherStatus(rain, sky) {
   const skyArr = ['맑음', '구름조금', '구름많음', '흐림']
-  const rainTypeArr = ['없음', '비', '비/눈', '눈', '소나기', '빗방울', '빗방울/눈날림', '눈날림']
+  const rainArr = ['없음', '비', '비/눈', '눈', '소나기', '빗방울',
+                   '빗방울/눈날림', '눈날림']
+                  
+  if(rain == 0) return skyArr[sky]
+  else return rainArr[rain]
+}
+
+function getWeatherImage(rain, sky) {
   const iconArr = [
       // 공통
       // 0.흐림, 1.많은비(비,소나기), 2.비/눈(빗방울/눈날림), 3.눈(눈날림),
@@ -461,20 +480,18 @@ function setWeatherWidget(box) {
       // 저녁
       // 9.맑음 10.구름조금 11.구름많음 12.적은비(비,빗방울) 13.비+구름적음
       'moon.stars.fill', null, 'cloud.moon.fill',
-      'cloud.moon.rain.fill',
-      ]
+      'cloud.moon.rain.fill']
 
-  let status, iconIndex
+  let iconIndex
 
-  if(rainType == 0) { // 맑음, 구름조금, 구름많음, 흐림(공통)
+  if(rain == 0) { // 맑음, 구름조금, 구름많음, 흐림(공통)
     if(sky == 3) iconIndex = 0
     else iconIndex = sky + 4
-    status = skyArr[sky]
   } else {
-    status = rainTypeArr[rainType]
-    if(rainType == 3 || rainType == 7) { // 눈(공통)
+    status = rainArr[rain]
+    if(rain == 3 || rain == 7) { // 눈(공통)
       iconIndex = 3
-    } else if(rainType == 2 || rainType == 6) { // 비+눈(공통)
+    } else if(rain == 2 || rain == 6) { // 비+눈(공통)
       iconIndex= 2
     } else { // 비
       if(sky < 2) { // 비+구름적음
@@ -491,11 +508,7 @@ function setWeatherWidget(box) {
   let currentHour = date.getHours()
   if((currentHour<7||currentHour>18) && iconIndex>3) iconIndex += 5
 
-  let icon = SFSymbol.named(iconArr[iconIndex]).image
-
-
-
-
+  return SFSymbol.named(iconArr[iconIndex]).image
 }
 
 
@@ -540,16 +553,6 @@ function getBatteryImage(batteryLevel) {
 }
 
 
-// Function : Extract weather information from JSON file.
-function getWeatherInfo(weatherInfo, totalCount, code) {
-  for(let i = 0 ; i < totalCount ; i++) {
-    if(weatherInfo[i].category == code) {
-      return weatherInfo[i].fcstValue
-    }
-  }
-  return null
-}
-
 // Function : Return region's name
 // type : (0 : name), (1 : x), (2 : y)
 function getRegionInfo(i, j) {
@@ -576,7 +579,9 @@ function getRegionInfo(i, j) {
 }
 
 // Function : Make and return weather request url.
-function getWeatherURL() {
+function getWeatherURL(numberOfRows) {
+  let weatherURL = 'http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtFcst?serviceKey=e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D&dataType=JSON&numOfRows=0&base_date='
+
   let base_date, base_time, nx, ny
   dateFormatter.dateFormat = 'yyyyMMddHH30'
 
@@ -596,8 +601,9 @@ function getWeatherURL() {
   ny = getRegionInfo(2, region)
 
   // Make url
-  return ( weatherURL + base_date + '&base_time=' + base_time
-      + '&nx=' + nx + '&ny=' + ny )
+  weatherURL += base_date+'&base_time='+base_time
+      +'&nx='+nx+'&ny='+ny
+  return weatherURL
 }
 
 // Function : write ',' for every 3 digit.
