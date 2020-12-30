@@ -11,9 +11,9 @@ const buttons = {
     /*...*/
   ]}
 
-// 배경, 색상, 지역을 변경하시려면 true로 바꾸고 실행하세요.
+// 배경, 색상, 지역을 변경하려면 true로 설정하세요
 // 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
-const changeSetting = false
+let changeSetting = false
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
@@ -69,6 +69,9 @@ async function setWidgetAttribute() {
                          'Gofo-covid-widget-data-')
 
   let isBackgroundColor, image, isForcedColor
+  
+  // If runs in app, do not change any setting.
+  if(!config.runsInApp) changeSetting = false
 
   if(changeSetting) {
     alert = new Alert()
@@ -109,7 +112,6 @@ async function setWidgetAttribute() {
                     await setColor(0,-1))
     } else {
       image = await Photos.fromLibrary()
-      console.log(1)
       fileManager.writeString(path+'isBackgroundColor', 'false')
       fileManager.writeImage(path+'backgroundImage', image)
       widget.backgroundImage = image
@@ -168,13 +170,17 @@ function createWidget() {
   box.layoutVertically()
 
   setDateWidget()    // date
-  setBatteryWidget() // battry
-
+  
   box.addSpacer(14)
-
+  setWeatherWidget() // weather
+  setBatteryWidget() // battry
+  
+  box.addSpacer(9)
+  
   setButtonsWidget() // buttons
-
-  container.addSpacer(40)
+  
+  container.addSpacer(60)
+  
 
 
   // 2. Right
@@ -182,8 +188,8 @@ function createWidget() {
   box.layoutVertically()
 
   setCovidWidget()   // covid count
-  box.addSpacer(8)
-  setWeatherWidget() // weather
+  //box.addSpacer(8)
+  //setWeatherWidget() // weather
 }
 
 
@@ -198,23 +204,25 @@ function setDateWidget() {
   // 년도 + 월
   dateFormatter.dateFormat = 'yy년 MMM'
   content = stack.addText(dateFormatter.string(date))
-  content.font = Font.caption1()
+  content.font = Font.regularSystemFont(13)
   content.textColor = contentColor
 
   // 일
   dateFormatter.dateFormat = 'd'
   line = stack.addStack()
   content = line.addText(dateFormatter.string(date))
-  content.font = Font.boldSystemFont(32)
+  content.font = Font.boldMonospacedSystemFont(32)
   content.textColor = contentColor
-  stack.addSpacer(4)
+ // stack.addSpacer(4)
 
   // 요일
   dateFormatter.dateFormat = 'EEEE'
   content = stack.addText(dateFormatter.string(date))
-  content.font = Font.systemFont(16)
+  content.font = Font.systemFont(13)
   content.textColor = contentColor
-  stack.addSpacer(8)
+  //stack.addSpacer(8)
+  
+  stack.url = 'calshow://'
 }
 
 // Function : make battery widget.
@@ -224,6 +232,8 @@ function setBatteryWidget() {
   // Battery information.
   const batteryLevel = Device.batteryLevel()
   let image = getBatteryImage(batteryLevel)
+  
+  //stack = box.addStack()
   line = stack.addStack()
   line.centerAlignContent()
 
@@ -231,17 +241,18 @@ function setBatteryWidget() {
 
   // Coloring and resize battery icon
   if(Device.isCharging()) {
-    content.imageSize = new Size(25, 14)
+    content.imageSize = new Size(20, 13)
     content.tintColor = Color.green()
-    line.addText(' ')
   } else {
-    content.imageSize = new Size(35, 14)
+    content.imageSize = new Size(26, 13)
     if(batteryLevel*100 < 20) content.tintColor = Color.red()
     else content.tintColor = contentColor
   }
+  line.addSpacer(2)
 
-  content = line.addText(Number(batteryLevel*100).toFixed(0) + '%')
-  content.font = Font.systemFont(14)
+  content = line.addText(Number(batteryLevel*100).toFixed(0) 
+                         + '% ')
+  content.font = Font.systemFont(13)
   content.textColor = contentColor
 }
 
@@ -275,11 +286,11 @@ function setCovidWidget() {
   line.centerAlignContent()
 
   content = line.addText(currentNum + '')
-  content.font = Font.boldSystemFont(20)
+  content.font = Font.boldSystemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' 명')
-  content.font = Font.systemFont(20)
+  content.font = Font.systemFont(18)
   content.textColor = contentColor
 
   // Compare with yesterday's
@@ -290,18 +301,18 @@ function setCovidWidget() {
     content = line.addText(' ' + comma(currentGap))
     content.textColor = new Color(colorDecrease)
   }
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
 
   // Region
   line = stack.addStack()
   line.centerAlignContent()
 
   content = line.addText(regionNum + '')
-  content.font = Font.boldSystemFont(20)
+  content.font = Font.boldSystemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' 명')
-  content.font = Font.systemFont(20)
+  content.font = Font.systemFont(18)
   content.textColor = contentColor
 
   // compare with yesterday's
@@ -312,7 +323,7 @@ function setCovidWidget() {
     content = line.addText(' ' + comma(regionGap))
     content.textColor = new Color(colorDecrease)
   }
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
 
   stack.addSpacer(6)
 
@@ -328,16 +339,16 @@ function setCovidWidget() {
   line.centerAlignContent()
 
   content = line.addText(totalNum + '')
-  content.font = Font.boldSystemFont(20)
+  content.font = Font.boldSystemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' 명')
-  content.font = Font.systemFont(20)
+  content.font = Font.systemFont(18)
   content.textColor = contentColor
 
   content = line.addText(' +' + comma(yesterdayNum))
   content.textColor = new Color(colorIncrease)
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
 }
 
 // Function : make buttons.
@@ -351,11 +362,11 @@ function setButtonsWidget() {
                  SFSymbol.named('arrow.clockwise.circle').image)
   button.url = URLScheme.forRunningScript()
   button.tintColor = contentColor
-  button.imageSize = new Size(15, 15)
+  button.imageSize = new Size(14, 14)
 
   // Add custom buttons.
   for(let i = 0 ; i < buttons.number ; i++) {
-    stack.addSpacer(12)
+    stack.addSpacer(10)
     button = stack.addImage(
                    SFSymbol.named(buttons.items[i][0]).image)
     button.url = shortcutURL + encodeURI(buttons.items[i][1])
@@ -401,22 +412,27 @@ function setWeatherWidget() {
   line = stack.addStack()
   line.centerAlignContent()
   content = line.addImage(getWeatherImage(rain, sky)) // icon
-  content.imageSize = new Size(20, 20)
+  content.imageSize = new Size(14, 15)
   content.tintColor = contentColor
 
-  line.addSpacer(4)
+  line.addSpacer(2)
 
   content = line.addText(temp) // temperature
-  content.font = Font.systemFont(14)
+  content.font = Font.systemFont(13)
   content.textColor = contentColor
+  
+  line.addSpacer(6)
+  line.url = 'http://weather.naver.com'
 
   /*
   content = line.addText(getWeatherStatus(rain, sky)) // status
   content.font = Font.systemFont(12)
   content.textColor = contentColor
   */
-
 }
+
+
+
 
 // Functions for making each widget.---------------------------
 function getWeatherStatus(rain, sky) {
