@@ -256,8 +256,10 @@ function setBatteryWidget() {
   }
   line.addSpacer(2)
 
-  content = line.addText(Number(batteryLevel*100).toFixed(0) 
-                         + '% ')
+  content = line.addText(Math.floor(batteryLevel*100)+'')
+  content.font = Font.systemFont(13)
+  content.textColor = contentColor
+  content = line.addText('%')
   content.font = Font.systemFont(13)
   content.textColor = contentColor
 }
@@ -527,7 +529,7 @@ function getBatteryImage(batteryLevel) {
     return SFSymbol.named('battery.100.bolt').image
   }
 
-  const batteryWidth = 100
+  const batteryWidth = 87
   const batteryHeight = 41
 
   let draw = new DrawContext()
