@@ -47,7 +47,6 @@ async function update() {
   if(!fileManager.isFileStoredIniCloud(path)) {
     console.log('기존에 저장된 스크립트가 없습니다. 새로운 스크립트를 로드합니다.')
     tempScript = newFile
-    return
   } else {
     // 바꿀 예전 스크립트 파일
     let oldFile = fileManager.readString(path)
