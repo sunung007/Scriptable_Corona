@@ -39,7 +39,7 @@ async function update() {
   // 예전 스크립트
   let fileManager = FileManager.iCloud()
   let directory = fileManager.documentsDirectory()
-  let path = fileManager.joinPath(directory, '코로나 구버전 시험.js')
+  let path = fileManager.joinPath(directory, '코로나 위젯.js')
   
   let tempScript
   
