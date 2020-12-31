@@ -16,7 +16,7 @@ async function update() {
   console.log('업데이트를 시작합니다.')
   
   // file link
-  const url = 'https://raw.githubusercontent.com/sunung007/IosScriptable/main/KoreaCovidWidget/test/add_Calendar.js'
+  const url = 'https://raw.githubusercontent.com/sunung007/IosScriptable/main/KoreaCovidWidget/main.js'
   
   console.log('파일 로드 중...')
   
