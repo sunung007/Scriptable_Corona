@@ -7,27 +7,25 @@ const buttons = {
     ['headphones', '버즈+지니'],
     ['qrcode', 'QR 체크인'],
     ['house', '집으로 가기'],
-    ['dollarsign.circle', '계좌 공유'],    
+    ['dollarsign.circle', '계좌 공유'],
     /*...*/
   ]}
 
-// 위젯의 설정을 변경하려면 true로 설정하세요
+// 배경, 색상, 지역을 변경하려면 true로 설정하세요
 // 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
 let changeSetting = false
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
 
-
-// 아래 사이트에 들어가서 활용 신청한 후 발급받은 일반 인증키를 붙여넣으시면 됩니다!
-// 발급은 PC 버전에서만 가능합니다!
+// 아래 사이트에 들어가서 활용 신청한 후
+// 발급받은 일반 인증키를 붙여넣으시면 됩니다!
 // 웬만하면 발급 받으시는게 좋을겁니다... 터지면 저는 재발급받을테니까요..
 // https://data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057682
 const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D'
 
 
-
-// 업데이트 시 변경 부분 : 여기부터는 임의로 건들지 마세요.
+// 여기부터는 건들지 마세요.
 // =======================================================
 // Do not change from this line.
 const scriptVersion = 'covid-widget-v2.1'
@@ -120,8 +118,7 @@ async function setWidgetAttribute() {
           console.log('Remove ' + a[i])
         }
       }  
-      
-      isSameBasetime = false
+      isSmaeBasetime = false
       console.log('2.0 이전 버전의 데이터가 삭제되었습니다.')
       throw error
     }
