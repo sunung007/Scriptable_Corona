@@ -37,6 +37,7 @@ const scriptVersion = 'covid-widget-v2.3'
 
 const colorIncrease = '#F51673'
 const colorDecrease = '#2B69F0'
+const colorGray = '858585'
 const covidURL = 'https://apiv2.corona-live.com/stats.json'
 
 const fileManager = FileManager.local()
@@ -72,7 +73,6 @@ let showCalendar = [true, true, true]
 
 // Set widget's attributes.
 await setWidgetAttribute()
-
 
 // Bring json datas.
 try {covidJSON = await new Request(covidURL).loadJSON()}
@@ -156,21 +156,21 @@ function createWidget() {
     box.layoutVertically()
     setWeatherWidget() // weather
     
-    container.addSpacer(10)
- 
+    container.addSpacer(12)
+    
     // 2nd floor
     outbox = container.addStack()
     box = outbox.addStack()
     setCovidWidget()   // covid count
     
-    container.addSpacer(10)
-    
+    container.addSpacer(12)
+      
     // 3rd floor
     outbox = container.addStack()
     box = outbox.addStack()
     setCalendarWidget()
     
-    container.addSpacer(10) // minimum space
+ //   container.addSpacer(8) // minimum space
     container.addSpacer()
         
     // 4th floor
@@ -474,6 +474,7 @@ function setWeatherWidget() {
     weatherSettingJSON.sky = sky+''
     weatherSettingJSON.rain = rain+''
     weatherSettingJSON.volume = volume+''
+    
     fileManager.writeString(path+'weatherSettingJSON', 
                             JSON.stringify(weatherSettingJSON))
     console.log('Save weather setting and log.')
@@ -528,43 +529,34 @@ function setWeatherWidget() {
   }
 }
 
-function setMonthlyDateWidget() {
-  let line, content
-  
-  box = outbox.addStack()
-  stack = box.addStack()
-  
-  // 월
-  line = stack.addStack()
-  content = line.addText((date.getMonth()+1) + '월')
-  
-  // 달력
-  line = stack.addStack()
-  console.log(date.getDay())
-    
-}
-
 
 function setCalendarWidget() {
   let title, color
   let line, content
-  let maxNum = 4 // max number of line each has
+  let maxNum = 3 // max number of line each has
   
   // default : do not show
   let calendarNum = -1
   let reminderNum = -1
   
   // 0 : calendar / 1 : reminder / 2 : monthly date
-  if(showCalendar[2]) maxNum = 3
   if(showCalendar[0]) {
     calendarNum = calendarJSON.length > maxNum 
                   ? maxNum : calendarJSON.length
   }
   if(showCalendar[1]) {
     reminderNum = reminderJSON.length > maxNum
-                  ? maxNum : remindJSON.length
+                  ? maxNum : reminderJSON.length
   }
   
+  // monthly calendar
+  if(showCalendar[2]) {
+    setMonthlyDateWidget()
+    outbox.addSpacer(10)
+    outbox.addSpacer()
+  }
+  
+  box = outbox.addStack()
   stack = box.addStack()
   stack.layoutVertically()
 
@@ -578,19 +570,13 @@ function setCalendarWidget() {
     
     if(calendarJSON.length > calendarNum) {
       content = line.addText('+'+(calendarJSON.length-calendarNum))
-      content.textColor = new Color(colorIncrease)
-      content.font = Font.systemFont(13)
+      content.textColor = new Color(colorGray)
+      content.font = Font.boldMonospacedSystemFont(13)
     }
     getCalendarContent(calendarNum, calendarJSON)
   }
   
-  // When not show monthly date
-  if(!showCalendar[2] && calendarNum > 0 && reminderNum > 0) {
-    box.addSpacer(10)
-    stack = box.addStack()
-    stack.layoutVertically()
-  }
-  else { stack.addSpacer(10) }
+  stack.addSpacer(10)
   
   
   // Show reminder
@@ -603,14 +589,74 @@ function setCalendarWidget() {
     
     if(reminderJSON.length > reminderNum) {
       content = line.addText('+'+(reminderJSON.length-reminderNum))
-      content.textColor = new Color(colorIncrease)
-      content.font = Font.systemFont(13)
+      content.textColor = new Color(colorGray)
+      content.font = Font.boldMonospacedSystemFont(13)
     }
     getCalendarContent(reminderNum, reminderJSON)
   }
+}
+
+
+function setMonthlyDateWidget() {
+  let line, content
+  box = outbox.addStack()
+  stack = box.addStack()
+  stack.layoutVertically()
   
-  // monthly calendar
-  if(showCalendar[2]) setMonthlyDateWidget()
+  // 월
+  line = stack.addStack()
+  //line.addSpacer()
+  content = line.addText((date.getMonth()+1) + '월')
+  content.font = Font.boldMonospacedSystemFont(13)
+  content.textColor = contentColor
+
+  // 내용
+  let temp = new Date()
+  let nowDate = temp.getDate()
+  temp.setDate(1)
+  let firstDay = temp.getDay()
+  let lastDate
+  temp.setMonth(temp.getMonth()+1)
+  temp.setDate(0)
+  lastDate = temp.getDate()
+  
+  line = stack.addStack()
+  line.layoutHorizontally()
+  let inline
+  
+  const days = ['일', '월', '화', '수', '목', '금', '토']
+  for(let i = 0 ; i < 7 ; i++) {
+    // 줄바꿈
+    inline = line.addStack()
+    inline.layoutVertically()
+    
+    // 요일
+    content = inline.addText(days[i])
+    content.font = Font.systemFont(10)
+    if(i % 6 == 0) content.textColor = new Color(colorGray)
+    else content.textColor = contentColor
+    
+    // 공백
+    if(i < firstDay) {
+      content = inline.addText(' ')
+      content.font = Font.systemFont(10)
+    }
+    
+    // 날짜
+    for(let j = (i<firstDay? 8-firstDay+i : i-firstDay+1)
+        ; j <= lastDate ; j += 7) {
+      content = inline.addText((j<10 ? ' ' : '') + j)
+      if(nowDate == j) {
+        content.font = Font.boldMonospacedSystemFont(10)
+        content.textColor = new Color(colorIncrease)
+      }
+      else { 
+        if(i % 6 == 0) content.textColor = new Color(colorGray)
+        content.font = Font.systemFont(10) 
+      }
+    } 
+    if(i < 6) line.addSpacer(5)
+  }    
 }
 
 function getCalendarContent(num, json) {
@@ -709,6 +755,7 @@ async function setWidgetAttribute() {
     }
     region = await alert.present()
     settingJSON.region = region+''
+    
     if(settingJSON.useCovidLocation == 'true') {
       forceWeatherChange = true
     }
@@ -734,6 +781,7 @@ async function setWidgetAttribute() {
     else {
       settingJSON.useCovidLocation = 'true'
       useCovidLocation = true
+      forceWeatherChange = true
     }
   }
   else {
@@ -833,8 +881,47 @@ async function setWidgetAttribute() {
     settingJSON.widgetSize = VIEW_MODE+''
   }
   else { VIEW_MODE = Number(settingJSON.widgetSize) }
+  
+  if(VIEW_MODE == 3 &&
+     (settingJSON.largeWidgetSetting == null ||
+     changeAttribute == 5 || changeAttribute == 4)) {
+    haveSettingChange = true
+    alert = new Alert()
+    alert.title = '큰 사이즈 위젯 설정'
+    alert.message = '큰 사이즈 위젯의 구성을 설정합니다.'
+                    + '\n큰사이즈 위젯에는 "달력", "캘린더 일정", '
+                    + '"미리알림 일정"을 나타낼 수 있습니다.'                
+    alert.addAction('달력 띄우기')
+    alert.addAction('달력 띄우지 않기')
+    let result = await alert.present()
+    showCalendar[2] = result==0 ? true : false
 
-
+    alert = new Alert()
+    alert.title = '일정 선택'
+    alert.addAction('캘린더 일정만 표시')
+    alert.addAction('미리알림 일정만 표시')
+    alert.addAction('캘린더와 미리알림 모두 표시')
+    result = await alert.present()
+    if(result == 0) {
+      showCalendar[0] = true
+      showCalendar[1] = false
+    }
+    else if(result == 1) {
+      showCalendar[0] = false
+      showCalendar[1] = true
+    }
+    else showCalendar[0] = showCalendar[1] = true
+    
+    settingJSON.largeWidgetSetting = showCalendar.toString()
+  }
+  else {
+    let array = (settingJSON.largeWidgetSetting).split(',')
+    showCalendar[0] = (array[0] == 'true' ? true : false)
+    showCalendar[1] = (array[1] == 'true' ? true : false)
+    showCalendar[2] = (array[2] == 'true' ? true : false)
+  }
+    
+    
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
     fileManager.writeString(path+'settingJSON', 
@@ -936,12 +1023,13 @@ async function getWeatherURL(force) {
 
   // Load weather setting JSON file.
   try {
+    if(forceWeatherChange) {throw error}
+    // If no log
     if(!fileManager.fileExists(path+'weatherSettingJSON')) {
       throw E
     }
     weatherSettingJSON = JSON.parse(fileManager.
                          readString(path+'weatherSettingJSON'))
-
     if(weatherSettingJSON.base_time == null) { throw E }
                                           
     // if use current location
@@ -958,19 +1046,24 @@ async function getWeatherURL(force) {
       nx = grid[0]
       ny = grid[1]
     }
-      
+
     if(weatherSettingJSON.nx == null ||
        weatherSettingJSON.ny == null) { throw E }
     else {
       let onx = Number(weatherSettingJSON.nx)
       let ony = Number(weatherSettingJSON.ny)
+      
+      if(useCovidLocation) {
+        if(nx == null) nx = onx
+        if(ny == null) ny = ony
+      }
       if(nx!=onx || ny!=ony) { throw E }
     }
     return null
   }
   catch { forceWeatherChange = true }
  
-  forceWeatherChange = true
+
   
   // Set grid(x, y)
   if(!useCovidLocation 
@@ -997,6 +1090,7 @@ async function getWeatherURL(force) {
   weatherSettingJSON.nx = nx+''
   weatherSettingJSON.ny = ny+''
   weatherSettingJSON.base_time = base_time+''
+  
 
   // Return weather URL
   return weatherURL
