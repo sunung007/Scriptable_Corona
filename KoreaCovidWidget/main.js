@@ -825,7 +825,7 @@ async function getWeatherURL(force) {
       'VilageFcstInfoService/getUltraSrtFcst?serviceKey=' +
       appKey + '&dataType=JSON&numOfRows=0&base_date='
 
-  let base_date, base_time, nx, ny
+  let base_date, base_time, nx, ny, haveBasetime
   dateFormatter.dateFormat = 'yyyyMMddHH30'
 
   // Match with api's update time.
@@ -839,7 +839,7 @@ async function getWeatherURL(force) {
     base_time = dateFormatter.string(date).substring(8)
   }
 
-  let haveBasetime = fileManager.fileExists(path+'base_time')
+  haveBasetime = fileManager.fileExists(path+'base_time')
   if(force != true) force = false
   
   if(!useCovidLocation) {
