@@ -540,6 +540,9 @@ function setCalendarWidget() {
   let reminderNum = -1
   
   // 0 : calendar / 1 : reminder / 2 : monthly date
+  if(!showCalendar[0] || !showCalendar[1]) {
+    maxNum = 6
+  }
   if(showCalendar[0]) {
     calendarNum = calendarJSON.length > maxNum 
                   ? maxNum : calendarJSON.length
@@ -557,12 +560,14 @@ function setCalendarWidget() {
   }
   
   box = outbox.addStack()
+  box.layoutVertically()
   stack = box.addStack()
   stack.layoutVertically()
+  
 
   // Show calendar
   if(calendarNum > 0) {
-    //stack.url = 'calshow://'
+    stack.url = 'calshow://'    
     line = stack.addStack()
     content = line.addText('일정 ')
     content.textColor = contentColor
@@ -576,12 +581,13 @@ function setCalendarWidget() {
     getCalendarContent(calendarNum, calendarJSON)
   }
   
-  stack.addSpacer(10)
-  
+  if(calendarNum > 0 && reminderNum > 0) stack.addSpacer(10)
   
   // Show reminder
   if(reminderNum > 0) {
-    //stack.url = 'calshow://'
+    stack = box.addStack()
+    stack.layoutVertically()
+    stack.url = 'x-apple-reminderkit://'        
     line = stack.addStack()
     content = line.addText('미리알림 ')
     content.textColor = contentColor
@@ -602,6 +608,7 @@ function setMonthlyDateWidget() {
   box = outbox.addStack()
   stack = box.addStack()
   stack.layoutVertically()
+  stack.url = 'calshow://'
   
   // 월
   line = stack.addStack()
@@ -653,6 +660,7 @@ function setMonthlyDateWidget() {
       else { 
         if(i % 6 == 0) content.textColor = new Color(colorGray)
         content.font = Font.systemFont(10) 
+        content.textColor = contentColor
       }
     } 
     if(i < 6) line.addSpacer(5)
