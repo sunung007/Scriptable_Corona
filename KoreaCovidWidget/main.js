@@ -13,7 +13,7 @@ const buttons = {
 
 // 배경, 색상, 지역을 변경하려면 true로 설정하세요
 // 최초 실행 시 지역, 배경, 글자색 등을 선택하는 창이 뜹니다.
-let changeSetting = false
+let changeSetting = true
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
@@ -47,6 +47,7 @@ let dateFormatter = new DateFormatter()
 let covidJSON, weatherJSON
 let calendarJSON, reminderJSON
 let region, contentColor, useCovidLocation
+let nx, ny
 let isSameBasetime = true
 
 let container, box, outbox, stack
@@ -60,12 +61,16 @@ await setWidgetAttribute()
 try {covidJSON = await new Request(covidURL).loadJSON()}
 catch {console.error('Error : Load covid data')}
 
+let weatherURL
 try {
-  let weatherURL = getWeatherURL(!isSameBasetime)
+  weatherURL = await getWeatherURL(!isSameBasetime)
   if(!isSameBasetime) {
-    weatherJSON = await new Request(await weatherURL).loadJSON()
+    weatherJSON = await new Request(weatherURL).loadJSON()
   }
-} catch {console.error('Error : Load weather data')}
+} catch {
+  console.error('Error : Load weather data')
+  console.error(weatherURL)
+}
 
 if(VIEW_MODE == 3) {
   try {calendarJSON = await CalendarEvent.today()}
@@ -109,7 +114,8 @@ async function setWidgetAttribute() {
     if(!fileManager.fileExists(path+'settingJSON')) {
       let arr = ['region', 'useCovidLocation', 'isBackgroundColor', 
                  'backgroundColorNumber', 'isForcedColor', 
-                 'contentColorNumber', 'widgetSize']
+                 'contentColorNumber', 'widgetSize', 
+                 'base_time', 'temp', 'sky', 'rain', 'volume']
       console.log('2.0 이전 버전의 데이터 삭제를 시작합니다.')
       for(let i in a) {
         // remove data
@@ -649,7 +655,7 @@ function setWeatherWidget() {
     content = line.addImage(getWeatherImage(rain, sky)) // icon
     content.tintColor = contentColor
   
-    content.imageSize = new Size(14, 15)
+    content.imageSize = new Size(16, 15)
     line.centerAlignContent()
     line.addSpacer(2)
     content = line.addText(temp) // temperature
@@ -837,14 +843,24 @@ async function getWeatherURL(force) {
   }
 
   haveBasetime = fileManager.fileExists(path+'base_time')
+  if(!fileManager.fileExists(path+'temp') ||
+     !fileManager.fileExists(path+'sky') ||
+     !fileManager.fileExists(path+'rain') ||
+     !fileManager.fileExists(path+'volume')) {
+    force = true
+  }
+ 
   if(force != true) force = false
   
+  // if use current location
   if(!useCovidLocation) {
     console.log('Use real-time location as weather location.')
     console.log('Loading current location data...')
     let location = await Location.current()
+
     let lat = location.latitude
     let lon = location.longitude
+
     let grid = changeLocationGrid(lat, lon)
     nx = grid[0]
     ny = grid[1]
@@ -853,25 +869,20 @@ async function getWeatherURL(force) {
        !fileManager.fileExists(path+'ny')) {
       force = true
     } else {
-      let onx = fileManager.readString(path+'nx')
-      let ony = fileManager.readString(path+'ny')
+      let onx = Number(fileManager.readString(path+'nx'))
+      let ony = Number(fileManager.readString(path+'ny'))
       
       if(nx != onx || ny != ony) force = true
     }
   }
+  
 
   if(force ||
      !haveBasetime ||
      (haveBasetime && 
-     (fileManager.readString(path+'base_time')!=base_time)) ||
-     !fileManager.fileExists(path+'temp') ||
-     !fileManager.fileExists(path+'sky') ||
-     !fileManager.fileExists(path+'rain') ||
-     !fileManager.fileExists(path+'volume')) {
-      
+     (fileManager.readString(path+'base_time')!=base_time))) {
     isSameBasetime = false
     fileManager.writeString(path+'base_time', base_time)
-
   
     // Set x, y    
     if(useCovidLocation) {
@@ -881,9 +892,10 @@ async function getWeatherURL(force) {
       ny = getRegionInfo(2, region)
     } 
     
-    fileManager.writeString(path+'nx', nx)
-    fileManager.writeString(path+'ny', ny)
-                 
+
+    fileManager.writeString(path+'nx', nx+'')
+    fileManager.writeString(path+'ny', ny+'')
+
     return weatherURL + base_date+'&base_time='+base_time
            +'&nx='+nx+'&ny='+ny
   } else {
