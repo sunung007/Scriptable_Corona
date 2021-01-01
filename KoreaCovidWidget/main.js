@@ -120,6 +120,8 @@ async function setWidgetAttribute() {
           console.log('Remove ' + a[i])
         }
       }  
+      
+      isSameBasetime = false
       console.log('2.0 이전 버전의 데이터가 삭제되었습니다.')
       throw error
     }
