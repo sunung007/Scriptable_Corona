@@ -28,7 +28,7 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // 여기부터는 건들지 마세요.
 // =======================================================
 // Do not change from this line.
-const scriptVersion = 'covid-widget-v2.1'
+const scriptVersion = 'covid-widget-v2.2'
 
 const colorIncrease = '#F51673'
 const colorDecrease = '#2B69F0'
