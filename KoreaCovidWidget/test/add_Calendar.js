@@ -1,13 +1,26 @@
 // 개인 변경 부분
 // 위젯에 띄울 단축어 버튼들
-// itmes 안에는 ['SF symbol name', '단축어 이름']을 넣으세요.
+// itmes 안에는 ['SF symbol name', '단축어 이름이나 앱 url scheme']
+// 을 넣으세요.
 const buttons = {
-  number : 4,  // 버튼의 개수
+  number : 11,  // 버튼의 개수
   items : [ // 버튼 내용
     ['headphones', '버즈+지니'],
-    ['qrcode', 'QR 체크인'],
+    ['qrcode', 'kakaotalk://con/web?url=https://'
+                +'accounts.kakao.com/qr_check_in'], // QR 체크인
     ['house', '집으로 가기'],
     ['dollarsign.circle', '계좌 공유'],
+    ['alarm', '알람 열기'],
+    
+    // 아래는 어플을 실행하는 버튼입니다.
+    // 필요없으시면 지우셔도 됩니다. 대신 위에 number는 줄여주세요!
+    ['photo', 'photos-redirect://'], // 사진
+    ['square.and.pencil', 'mobilenotes://'], // 메모
+    ['folder', 'shareddocuments://'], // 파일
+    ['envelope', 'message://'], // 메일
+    ['gear', 'App-prefs://'], // 설정
+    ['barcode', 'kakaopay://'], // 카카오페이
+    
     /*...*/
   ]}
 
@@ -35,9 +48,9 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // Version of this script.
 const scriptVersion = 'covid-widget-v2.3'
 
-const colorIncrease = '#F51673'
-const colorDecrease = '#2B69F0'
-const colorGray = '858585'
+const colorIncrease = 'F51673'
+const colorDecrease = '2B69F0'
+const colorGray = '545454'
 const covidURL = 'https://apiv2.corona-live.com/stats.json'
 
 const fileManager = FileManager.local()
@@ -63,13 +76,8 @@ let useCovidLocation
 let showCalendar = [true, true, true]
 
 // Start main code. ==============================================
-//fileManager.remove(path+'base_time')
-//fileManager.remove(path+'temp')
-//fileManager.remove(path+'sky')
-//fileManager.remove(path+'rain')
-//fileManager.remove(path+'volume')
-//fileManager.remove(path+'settingJSON')
-//fileManager.remove(path+'weatherSettingJSON')
+// For test : Reset all setting file.
+//removeOldLogs(true)
 
 // Set widget's attributes.
 await setWidgetAttribute()
@@ -101,8 +109,8 @@ createWidget()
 widget.refreshAfterDate = new Date(Date.now() + 1000*refreshTime)
 widget.setPadding(15,15,15,15)
 
-/*if(VIEW_MODE == 1) widget.presentSmall()
-else */ if(VIEW_MODE == 2) widget.presentMedium()
+if(VIEW_MODE == 1) widget.presentSmall()
+else if(VIEW_MODE == 2) widget.presentMedium()
 else widget.presentLarge()
 
 Script.setWidget(widget)
@@ -124,8 +132,17 @@ function createWidget() {
   box.layoutVertically() 
   setDateWidget()    // date
   
+  if(VIEW_MODE == 1) {
+    // 1st floor : Left
+    box.addSpacer(14)
+    setWeatherWidget() // weather
+    setBatteryWidget() // battry
+    
+    outbox.addSpacer()
+   
 
-  if(VIEW_MODE == 2) {
+  }
+  else if(VIEW_MODE == 2) {
     // 1st floor : Left
     box.addSpacer(14)
     setWeatherWidget() // weather
@@ -148,35 +165,34 @@ function createWidget() {
   else if(VIEW_MODE == 3) {
     // 1st floor 
     stack.addSpacer(5)
-    setBatteryWidget() // battry
+    setBatteryWidget()  // battry
       
     // 1st floor : right
     outbox.addSpacer()
     box = outbox.addStack()
     box.layoutVertically()
-    setWeatherWidget() // weather
+    setWeatherWidget()  // weather
     
     container.addSpacer(12)
     
     // 2nd floor
     outbox = container.addStack()
     box = outbox.addStack()
-    setCovidWidget()   // covid count
+    setCovidWidget()    // covid count
     
     container.addSpacer(12)
       
     // 3rd floor
     outbox = container.addStack()
     box = outbox.addStack()
-    setCalendarWidget()
+    setCalendarWidget() // calendar
     
- //   container.addSpacer(8) // minimum space
     container.addSpacer()
         
     // 4th floor
     outbox = container.addStack()
     box = outbox.addStack()
-    setButtonsWidget()
+    setButtonsWidget() // buttons
   }
 }
 
@@ -208,7 +224,7 @@ function setDateWidget() {
   content.font = Font.systemFont(13)
   content.textColor = contentColor
 
-  stack.url = 'calshow://'
+  if(VIEW_MODE == 2) stack.url = 'calshow://'
 }
 
 
@@ -405,9 +421,13 @@ function setButtonsWidget() {
     stack.addSpacer(10)
     button = stack.addImage(
                    SFSymbol.named(buttons.items[i][0]).image)
-    button.url = shortcutURL + encodeURI(buttons.items[i][1])
     button.tintColor = contentColor
     button.imageSize = new Size(15, 15)
+    // If url is url scheme of baisc app
+    if(buttons.items[i][1].indexOf('://') < 0) {
+      button.url = shortcutURL + encodeURI(buttons.items[i][1])
+    }
+    else button.url = buttons.items[i][1]
   }
 }
 
@@ -551,8 +571,6 @@ function setCalendarWidget() {
     reminderNum = reminderJSON.length > maxNum
                   ? maxNum : reminderJSON.length
   }
-  
-  // monthly calendar
   if(showCalendar[2]) {
     setMonthlyDateWidget()
     outbox.addSpacer(10)
@@ -564,7 +582,6 @@ function setCalendarWidget() {
   stack = box.addStack()
   stack.layoutVertically()
   
-
   // Show calendar
   if(calendarNum > 0) {
     stack.url = 'calshow://'    
@@ -604,7 +621,7 @@ function setCalendarWidget() {
 
 
 function setMonthlyDateWidget() {
-  let line, content
+  let line, content, inline
   box = outbox.addStack()
   stack = box.addStack()
   stack.layoutVertically()
@@ -612,7 +629,6 @@ function setMonthlyDateWidget() {
   
   // 월
   line = stack.addStack()
-  //line.addSpacer()
   content = line.addText((date.getMonth()+1) + '월')
   content.font = Font.boldMonospacedSystemFont(13)
   content.textColor = contentColor
@@ -629,14 +645,14 @@ function setMonthlyDateWidget() {
   
   line = stack.addStack()
   line.layoutHorizontally()
-  let inline
   
   const days = ['일', '월', '화', '수', '목', '금', '토']
   for(let i = 0 ; i < 7 ; i++) {
     // 줄바꿈
     inline = line.addStack()
     inline.layoutVertically()
-    
+    inline.centerAlignContent()
+       
     // 요일
     content = inline.addText(days[i])
     content.font = Font.systemFont(10)
@@ -645,7 +661,7 @@ function setMonthlyDateWidget() {
     
     // 공백
     if(i < firstDay) {
-      content = inline.addText(' ')
+      content = inline.addText('')
       content.font = Font.systemFont(10)
     }
     
@@ -653,14 +669,34 @@ function setMonthlyDateWidget() {
     for(let j = (i<firstDay? 8-firstDay+i : i-firstDay+1)
         ; j <= lastDate ; j += 7) {
       content = inline.addText((j<10 ? ' ' : '') + j)
+      content.rightAlignText()
+      // 오늘
       if(nowDate == j) {
+        /*
+        let draw = new DrawContext()
+        draw.opaque = false
+        draw.respectScreenScale = true
+        
+        draw.setTextColor(Color.yellow())
+        draw.setFontSize(10)
+        //draw.drawText('12', new Point(0,0))
+        draw.drawTextInRect('1', new Rect(0,0,100,100))
+        draw.setFillColor(new Color(colorIncrease))
+        draw.fillEllipse(new Rect(0,0,100,100))
+
+        //draw.setFont(Font.boldSystemFont(10))
+        //draw.addPath(circle)
+        //draw.fillPath()
+
+        line.addImage(draw.getImage())
+        */
         content.font = Font.boldMonospacedSystemFont(10)
         content.textColor = new Color(colorIncrease)
       }
-      else { 
-        if(i % 6 == 0) content.textColor = new Color(colorGray)
+      else {
         content.font = Font.systemFont(10) 
-        content.textColor = contentColor
+        if(i % 6 == 0) content.textColor = new Color(colorGray)
+        else content.textColor = contentColor
       }
     } 
     if(i < 6) line.addSpacer(5)
@@ -676,19 +712,21 @@ function getCalendarContent(num, json) {
     title = json[i].title
     color = json[i].calendar.color.hex
 
+    // Draw bar
     let draw = new DrawContext()
     draw.opaque = false
     draw.fillRect(new Rect(0, 0, 100, 1000))
-
     content = line.addImage(draw.getImage())
     content.imageSize = new Size(10, 16)
     content.tintColor = new Color(color)
+    
+    // Add text
     content = line.addText(title)
     content.font = Font.systemFont(13)
     content.textColor = contentColor
+    content.lineLimit = 2
   }
 }
-
 
 
 // Funciton : widget setting ======================================
@@ -705,21 +743,8 @@ async function setWidgetAttribute() {
 
   // Load settingJSON file.
   try {
-    // Remove datas under this version stored in device 
     if(!fileManager.fileExists(path+'settingJSON')) {
-      let arr = ['region', 'useCovidLocation', 'isBackgroundColor', 
-                 'backgroundColorNumber', 'isForcedColor', 
-                 'contentColorNumber', 'widgetSize', 
-                 'base_time', 'temp', 'sky', 'rain', 'volume']
-      console.log('이전 버전의 데이터를 정리합니다.')
-      // remove data
-      for(let i in a) {
-        if(fileManager.fileExists(path+a[i])) {
-          fileManager.remove(path+a[i])
-          console.log('Remove ' + a[i])
-        }
-      }  
-      console.log('이전 버전의 불필요 데이터가 삭제되었습니다.')
+      removeOldLogs()
       throw error
     }
     // Load json file saved setting values.
@@ -734,8 +759,6 @@ async function setWidgetAttribute() {
     console.log('There is no setting file.')
     console.log('위젯 설정을 진행합니다.')
   }
-  
-  
 
   if(changeSetting) {
     alert = new Alert()
@@ -890,6 +913,7 @@ async function setWidgetAttribute() {
   }
   else { VIEW_MODE = Number(settingJSON.widgetSize) }
   
+  // Set widget components if widget size is large.
   if(VIEW_MODE == 3 &&
      (settingJSON.largeWidgetSetting == null ||
      changeAttribute == 5 || changeAttribute == 4)) {
@@ -922,13 +946,12 @@ async function setWidgetAttribute() {
     
     settingJSON.largeWidgetSetting = showCalendar.toString()
   }
-  else {
+  else if(VIEW_MODE == 3) {
     let array = (settingJSON.largeWidgetSetting).split(',')
     showCalendar[0] = (array[0] == 'true' ? true : false)
     showCalendar[1] = (array[1] == 'true' ? true : false)
     showCalendar[2] = (array[2] == 'true' ? true : false)
   }
-    
     
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
@@ -940,33 +963,30 @@ async function setWidgetAttribute() {
 
 
 
-
-
 // Functions for making each widget.---------------------------
 function getWeatherStatus(rain, sky) {
   const skyArr = ['맑음', '구름조금', '구름많음', '흐림']
   const rainArr = ['없음', '비', '비/눈', '눈', '소나기', '빗방울',
                    '비/눈', '눈날림']
-
   if(rain == 0) return skyArr[sky]
   else return rainArr[rain]
 }
 
 function getWeatherImage(rain, sky) {
   const iconArr = [
-      // 공통
-      // 0.흐림, 1.많은비(비,소나기), 2.비/눈(빗방울/눈날림), 3.눈(눈날림),
-      'cloud.fill', 'cloud.heavyrain.fill', 'cloud.sleet.fill',
-      'snow',
-      // 아침
-      // 4.맑음 5.구름조금 6.구름많음 7.적은비(비,빗방울)+일반 8.비+구름적음
-      'sun.max.fill', null, 'cloud.sun.fill', 'cloud.drizzle.fill',
-      'cloud.sun.rain.fill',
-      // 저녁
-      // 9.맑음 10.구름조금 11.구름많음 12.적은비(비,빗방울)+일반 13.비+구름적음
-      'moon.stars.fill', null, 'cloud.moon.fill', 
-      'cloud.drizzle.fill', 'cloud.moon.rain.fill'
-      ]
+    // 공통
+    // 0.흐림, 1.많은비(비,소나기), 2.비/눈(빗방울/눈날림), 3.눈(눈날림)
+    'cloud.fill', 'cloud.heavyrain.fill', 'cloud.sleet.fill',
+    'snow',
+    // 아침
+    // 4.맑음 5.구름조금 6.구름많음 7.적은비(비,빗방울)+일반 8.비+구름적음
+    'sun.max.fill', null, 'cloud.sun.fill', 'cloud.drizzle.fill',
+    'cloud.sun.rain.fill',
+    // 저녁
+    // 9.맑음 10.구름조금 11.구름많음 12.적은비(비,빗방울)+일반 13.비+구름적음
+    'moon.stars.fill', null, 'cloud.moon.fill', 
+    'cloud.drizzle.fill', 'cloud.moon.rain.fill'
+  ]
 
   let iconIndex
   if(rain == 0) { // 맑음, 구름조금, 구름많음, 흐림(공통)
@@ -1027,58 +1047,64 @@ async function getWeatherURL(force) {
     base_date = dateFormatter.string(date).substring(0, 8)
     base_time = dateFormatter.string(date).substring(8)
   }
-  
 
   // Load weather setting JSON file.
   try {
-    if(forceWeatherChange) {throw error}
-    // If no log
-    if(!fileManager.fileExists(path+'weatherSettingJSON')) {
-      throw E
+    // If no log file
+    if(forceWeatherChange ||
+       !fileManager.fileExists(path+'weatherSettingJSON')) {
+      throw error
     }
+    // Load log file.
     weatherSettingJSON = JSON.parse(fileManager.
                          readString(path+'weatherSettingJSON'))
     if(weatherSettingJSON.base_time == null) { throw E }
-                                          
-    // if use current location
+
+    // Compare grid
+    // If use current location
     if(!useCovidLocation) {
       console.log('Use real-time location as weather location.')
       console.log('Loading current location data...')
       // Get current location.
+      Location.setAccuracyToKilometer()
       let location = await Location.current()
       let lat = location.latitude
-      let lon = location.longitude
-      
+      let lon = location.longitude     
       // Change current location to grid(x, y)
       let grid = changeLocationGrid(lat, lon)
       nx = grid[0]
       ny = grid[1]
+    } else {
+      nx = getRegionInfo(1, region)
+      ny = getRegionInfo(2, region)
     }
-
     if(weatherSettingJSON.nx == null ||
-       weatherSettingJSON.ny == null) { throw E }
+       weatherSettingJSON.ny == null) { 
+      throw error 
+    }
     else {
       let onx = Number(weatherSettingJSON.nx)
       let ony = Number(weatherSettingJSON.ny)
-      
-      if(useCovidLocation) {
-        if(nx == null) nx = onx
-        if(ny == null) ny = ony
-      }
       if(nx!=onx || ny!=ony) { throw E }
     }
+    
+    // Compare base time
+    if(weatherSettingJSON.base_time == null) { throw error }
+    if(weatherSettingJSON.base_time != base_time) { throw error }
+    
+    // If all is same, do not load weather information.
     return null
   }
   catch { forceWeatherChange = true }
  
-
-  
+  // If something is change or something is not saved.
   // Set grid(x, y)
   if(!useCovidLocation 
      && !fileManager.fileExists(path+'weatherSettingJSON')){
     console.log('Use real-time location as weather location.')
     console.log('Loading current location data...')
     // Get current location.
+    Location.setAccuracyToKilometer()
     let location = await Location.current()
     let lat = location.latitude
     let lon = location.longitude
@@ -1093,19 +1119,17 @@ async function getWeatherURL(force) {
     nx = getRegionInfo(1, region)
     ny = getRegionInfo(2, region)
   }
-        
+
   // Save changed weather settings
   weatherSettingJSON.nx = nx+''
   weatherSettingJSON.ny = ny+''
   weatherSettingJSON.base_time = base_time+''
-  
 
   // Return weather URL
   return weatherURL
          + base_date + '&base_time=' + base_time
-         +'&nx='+nx+'&ny='+ny
+         + '&nx=' + nx + '&ny=' + ny
 }
-
 
 
 // Function : Make and return battery icon.
@@ -1203,24 +1227,20 @@ function getRegionInfo(i, j) {
     ['충북', '69', '107'], ['충남', '68', '100'],
     ['경북', '89', '91' ], ['경남', '91', '77' ],
     ['전북', '63', '89' ], ['전남', '51', '67' ],
-    ['제주', '52', '38' ],
-  ]
+    ['제주', '52', '38' ]]
   return regionsArr[j][i]
 }
 
-
-
-// Functions -------------------------------------------------
+// etc Functions ============================================
 // Function : write ',' for every 3 digit.
 function comma(number) {
   return String(number).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 // Function : Set widget background color or content color
-// Arguments : type - 0(set widget background color)
-//                  - 1(set content color)
-//             colorNumber - -1(make alert)
-//                         others(just change color)
+// Argument
+// type - 0(set widget background color) - 1(set content color)
+// colorNumber - -1(make alert) others(just change color)
 async function setColor(type, colorNumber) {
   let number
   if(colorNumber == -1) {
@@ -1247,4 +1267,48 @@ async function setColor(type, colorNumber) {
   else if(type == 1) contentColor = color
   
   return number + ''
+}
+
+// Function : test code. =========================================
+function removeOldLogs(all) {
+  const testArr = ['settingJSON', 'weatherSettingJSON']
+
+  const arr = ['region', 'useCovidLocation', 'isBackgroundColor', 
+               'backgroundColorNumber', 'isForcedColor', 
+               'contentColorNumber', 'widgetSize', 
+               'base_time', 'temp', 'sky', 'rain', 'volume']
+  const old_path_arr = ['covid-region', 'covid-background', 
+                        'covid-content-color']
+  
+  console.log('이전 버전의 데이터를 정리합니다.')
+  
+  // Remove first vesion's log.
+  for(let i in old_path_arr) {
+    let j = fileManager.joinPath(directory, old_path_arr[i])
+    if(fileManager.fileExists(j)) {
+      console.log('Remove 1.0s ' + old_path_arr[i])
+      fileManager.remove(j)
+    }
+  }
+ 
+  // Remove data
+  for(let i in arr) {
+    if(fileManager.fileExists(path+arr[i])) {
+      fileManager.remove(path+arr[i])
+      console.log('Remove 2.0s ' + arr[i])
+    }
+  }  
+  
+  console.log('이전 버전의 불필요 데이터가 삭제되었습니다.')
+  
+  if(all) {
+    console.log('현재 데이터를 삭제합니다.')
+    for(let i in testArr) {
+      if(fileManager.fileExists(path+testArr[i])) {
+        fileManager.remove(path+testArr[i])
+        console.log('Remove current ' + testArr[i])
+      }
+    }
+    console.log('현재 데이터가 삭제되었습니다.')
+  }  
 }
