@@ -60,10 +60,10 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 2. RAW를 눌러 전체 코드를 복사합니다.
 3. scriptable 어플을 실행합니다.   
 4. `+`버튼을 눌러서 코드를 붙여넣습니다.    
-<img src="./image/guide_2.jpeg" width="200"></img>
 5. 화면 우측 하단의 재생 버튼을 눌러 코드를 실행시킨 후, 좌측 상단의 `DONE`을 눌러 저장합니다.
 6. 새로 생성된 코로나 위젯을 눌러 실행합니다.
-7. 바탕화면에 scriptable 위젯을 생성한 후 위젯 편집에 들어가서 script를 **코로나 위젯**으로 지정합니다.
+7. 바탕화면에 scriptable 위젯을 생성한 후 위젯 편집에 들어가서 script를 **코로나 위젯**으로 지정합니다.   
+<img src="./image/guide_2.jpeg" width="200"></img>
 
 ### 방법 2. 코드 복사하기
 1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget)에 들어갑니다.  
