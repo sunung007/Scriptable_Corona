@@ -654,7 +654,7 @@ function setMonthlyDateWidget() {
     // 날짜
     for(let j = (i<firstDay? 8-firstDay+i : i-firstDay+1)
         ; j <= lastDate ; j += 7) {
-      content = inline.addText((j<10 ? ' ' : '') + j)
+      content = inline.addText(j+'')
       content.rightAlignText()
       // 오늘
       if(nowDate == j) {
