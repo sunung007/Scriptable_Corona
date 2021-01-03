@@ -67,6 +67,7 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 <img src="./image/guide_2.jpeg" width="200"></img>
 <img src="./image/guide_1_2.jpg" width="200"></img>
 <img src="./image/guide_1_3.jpg" width="200"></img>
+<img src="./image/guide_1_6.jpg" width="200"></img>
 <img src="./image/guide_1_4.jpg" width="200"></img>
 <img src="./image/guide_1_5.jpg" width="200"></img>
 
