@@ -68,14 +68,18 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 ### 방법 2. 코드 복사하기
 1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget)에 들어갑니다.  
 2. **RAW** 버튼을 눌러 전체 코드를 복사합니다.   
-<img src="./image/guide_1.jpeg" width="200"></img>   
 3. scriptable 어플을 실행합니다.   
 4. `+`버튼을 눌러서 코드를 붙여넣습니다.   
-<img src="./image/guide_2.jpeg" width="200"></img>   
 5. 우측 하단의 재생 버튼을 눌러서 코드를 실행시킨 후 왼쪽 상단의 `Done`을 눌러 적용합니다.   
-<img src="./image/guide_4.jpeg" width="200"></img> <img src="./image/guide_5.jpeg" width="200"></img>
 6. scriptable 위젯을 추가하고, 위젯 편집에 들어가 script를 방금 추가시킨 것으로 선택합니다.   
+
+<img src="./image/guide_1.jpeg" width="200"></img>
+<img src="./image/guide_2.jpeg" width="200"></img>
+<img src="./image/guide_3.png" width="200"></img>
+<img src="./image/guide_4.jpeg" width="200"></img>
+<img src="./image/guide_5.jpeg" width="200"></img>
 <img src="./image/guide_6.png" width="200"></img>
+
 --------------------
 ## 업데이트 방법
 ### 업데이트 파일을 이용하면 어떤 점이 좋나요?
