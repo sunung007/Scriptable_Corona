@@ -1,4 +1,4 @@
-위젯 : 전국 및 특정 지역 코로나19 실시간 현황과 날짜, 배터리 정보, 단축어 바로가기 버튼을 담은 위젯
+위젯 : 코로나 
 ===================================================================================================
 ## 목차
 - [소개](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#소개)
@@ -49,30 +49,30 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 
 ## 위젯 설치 및 적용 방법
 
-아래 방법 1과 방법 2 중 편하신 방법을 이용하세요. 초심자들에게는 **방법 1**을 추천합니다.   
+아래 방법 1과 방법 2 중 편하신 방법을 이용하세요.    
+초심자들에게는 **방법 1**을 추천합니다.   
 ※ 기기에 **scriptable** 어플이 설치되어 있어야합니다. [여기](https://apps.apple.com/kr/app/scriptable/id1405459188)를 누르면 앱스토어로 이동합니다.
 
-### 방법 1. 업데이트 파일 이용하기
+### 방법 1. 업데이트 파일 이용하기(설치 가능)
 1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/update_covid_widget.js)로 들어갑니다.
 2. RAW를 눌러 전체 코드를 복사합니다.
 3. scriptable 어플을 실행합니다.   
-4. `+`버튼을 눌러서 코드를 붙여넣습니다.
+4. `+`버튼을 눌러서 코드를 붙여넣습니다.    
 <img src="./image/guide_2.jpeg" width="200"></img>
-5. 화면 우측 하단의 재생 버튼을 눌러 코드를 실행시킨 후, 좌측 상단의 DONE을 눌러 저장합니다.
+5. 화면 우측 하단의 재생 버튼을 눌러 코드를 실행시킨 후, 좌측 상단의 `DONE`을 눌러 저장합니다.
 6. 새로 생성된 코로나 위젯을 눌러 실행합니다.
-7. 바탕화면에 scriptable 위젯을 생성한 후 위젯 편집에 들어가서 script를 "코로나 위젯"으로 지정합니다.
+7. 바탕화면에 scriptable 위젯을 생성한 후 위젯 편집에 들어가서 script를 **"코로나 위젯"**으로 지정합니다.
 
 ### 방법 2. 코드 복사하기
 1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget)에 들어갑니다.  
-2. **RAW** 버튼을 눌러 전체 코드를 복사합니다.
+2. **RAW** 버튼을 눌러 전체 코드를 복사합니다.   
 <img src="./image/guide_1.jpeg" width="200"></img>   
 3. scriptable 어플을 실행합니다.   
 4. `+`버튼을 눌러서 코드를 붙여넣습니다.   
 <img src="./image/guide_2.jpeg" width="200"></img>   
 5. 우측 하단의 재생 버튼을 눌러서 코드를 실행시킨 후 왼쪽 상단의 `Done`을 눌러 적용합니다.   
 <img src="./image/guide_4.jpeg" width="200"></img> <img src="./image/guide_5.jpeg" width="200"></img>
-6. 바탕화면에 scriptable의 중간크기 위젯을 생성합니다.
-7. 위젯 편집에 들어가 script를 방금 추가시킨 것으로 선택합니다.   
+6. scriptable 위젯을 추가하고, 위젯 편집에 들어가 script를 방금 추가시킨 것으로 선택합니다.   
 <img src="./image/guide_6.png" width="200"></img>
 --------------------
 ## 업데이트 방법
@@ -80,9 +80,10 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 업데이트 파일을 이용하면 더이상 긴 코드를 복사/붙여넣기 하지 않아도 됩니다!   
 기존의 버튼에 관한 설정 내용이 그대로 유지됩니다.
 ### 업데이트 방법
-**업데이트 전 위젯 script의 이름이 "코로나 위젯"으로 되어있는지 확인하세요**   
+**※업데이트 전 위젯 script의 이름이 "코로나 위젯"으로 되어있는지 확인하세요**   
+업데이트 script를 통해 설치하셨다면 자동으로 script의 이름이 "코로나 위젯"으로 설정됩니다.   
 처음 위젯 설치 시 추가했던 '업데이트' 코드를 실행시키기만 하면 됩니다.   
-만약 업데이트 script를 삭제했다면 [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/update_covid_widget.js)에서 코드를 복사하여 업데이트 script를 다시 추가하십시오.
+만약 업데이트 script를 삭제했다면, [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/update_covid_widget.js)에서 코드를 복사하여 업데이트 script를 다시 추가하십시오.
 
 ------------------
 ## 설정값 변경 방법
@@ -109,9 +110,9 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 3. URL scheme을 이용하기 때문에 단축어 이름은 띄어쓰기, 대/소문자 까지 정확해야 합니다.
 4. SF symbol은 [여기](https://github.com/cyanzhong/sf-symbols-online)서 확인할 수 있습니다.
 5. 예시 : 'cloud' 이미지를 버튼으로 하고 '업데이트'라는 단축어를 실행시키기
-  - `number`를 5로 바꾼 후
-  - `items` 안에 `/*...*/`의 부분에 `['cloud', '업데이트'],`을 추가합니다.
-  - 추가할 때 컴마(,)를 잊지 마세요!
+     - `number`를 5로 바꾼 후
+     - `items` 안에 `/*...*/`의 부분에 `['cloud', '업데이트'],`을 추가합니다.
+     - 추가할 때 컴마(,)를 잊지 마세요!
   
 <img src="./image/guide_3.jpeg" width="200"></img>
 ```
