@@ -42,7 +42,7 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v2.3'
+const scriptVersion = 'covid-widget-v2.4'
 
 const colorIncrease = 'F51673'
 const colorDecrease = '2B69F0'
@@ -640,7 +640,7 @@ function setMonthlyDateWidget() {
     inline.centerAlignContent()
        
     // 요일
-    content = inline.addText(' '+days[i])
+    content = inline.addText(days[i])
     content.font = Font.systemFont(10)
     if(i % 6 == 0) content.textColor = new Color(colorGray)
     else content.textColor = contentColor
@@ -655,7 +655,6 @@ function setMonthlyDateWidget() {
     for(let j = (i<firstDay? 8-firstDay+i : i-firstDay+1)
         ; j <= lastDate ; j += 7) {
       content = inline.addText(j+'')
-      content.rightAlignText()
       // 오늘
       if(nowDate == j) {
         content.font = Font.boldMonospacedSystemFont(10)
