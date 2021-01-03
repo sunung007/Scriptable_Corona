@@ -114,9 +114,7 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
 5. 예시 : 'cloud' 이미지를 버튼으로 하고 '업데이트'라는 단축어를 실행시키기
      - `number`를 5로 바꾼 후
      - `items` 안에 `/*...*/`의 부분에 `['cloud', '업데이트'],`을 추가합니다.
-     - 추가할 때 컴마(,)를 잊지 마세요!
-  
-<img src="./image/guide_3.jpeg" width="200"></img>
+     - 추가할 때 컴마(,)를 잊지 마세요!   
 ```
 // 위젯에 띄울 단축어 버튼들
 // itmes 안에는 ['SF symbol name', '단축어 이름 혹은 url scheme']을 넣으세요.
@@ -132,6 +130,8 @@ const buttons = {
 ```
 **이제는 단축어 뿐만 아니라 모든 어플의 url scheme도 지원합니다!**   
 (단, 해당 url의 끝에는 `://` 형식으로 끝나야 합니다.)
+- 코드 위치 참고   
+<img src="./image/guide_3.jpeg" width="200"></img>   
 
 ---------------
 ## FAQ
