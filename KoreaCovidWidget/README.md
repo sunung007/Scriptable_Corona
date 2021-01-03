@@ -13,7 +13,11 @@
 
 ## 소개
 
-<img src="./image/widget_intro.jpeg" width="400"></img>
+<img src="./image/widget_medium.jpg" width="300"></img>   
+<img src="./image/widget_large_1.jpg" width="300"></img>
+<img src="./image/widget_large_2.jpg" width="300"></img>
+<img src="./image/widget_large_3.jpg" width="300"></img>
+
 
 iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입니다.
 
@@ -45,7 +49,6 @@ iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입�
   - 전일 증가 수
 
 전국과 특정 1개 지역의 실시간 현황과 누적 현황을 나타냅니다.    
-현재 이 코드는 중간 사이즈의 위젯만 지원합니다.(곧 모든 사이즈 지원 예정)
 
 ----------------
 
