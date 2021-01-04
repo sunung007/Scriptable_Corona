@@ -42,7 +42,7 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v2.4'
+const scriptVersion = 'covid-widget-v2.41'
 
 const colorIncrease = 'F51673'
 const colorDecrease = '2B69F0'
@@ -559,8 +559,7 @@ function setCalendarWidget() {
   }
   if(showCalendar[2]) {
     setMonthlyDateWidget()
-    outbox.addSpacer(10)
-    outbox.addSpacer()
+    outbox.addSpacer(12)
   }
   
   box = outbox.addStack()
