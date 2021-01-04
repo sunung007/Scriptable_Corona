@@ -3,9 +3,12 @@
 ## 목차
 - [소개](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#소개)
 - [기본 구성](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#기본-구성)
+   
 - [위젯 설치 및 적용 방법](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#위젯-설치-및-적용-방법)
 - [업데이트 방법](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8-%EB%B0%A9%EB%B2%95)
-- [위젯 설정 변경, 단축어 ](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#설정값-변경-방법)
+   
+- [위젯 설정 변경, 단축어 설정](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#설정값-변경-방법)
+   
 - [오류 대처](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#FAQ)
 - [자주묻는 질문](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#FAQ)
 
