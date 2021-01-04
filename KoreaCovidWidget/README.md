@@ -22,7 +22,8 @@
 <img src="./image/widget_large_3.jpg" width="300"></img>
 
 
-iOS의 **Scriptable** 어플의 midium size 위젯에서 작동하는 코드입니다.
+iOS의 **Scriptable** 어플의 midium size와 large 위젯에서 작동하는 코드입니다.   
+small 사이즈 지원 예정입니다.
 
 ------------------------
 
