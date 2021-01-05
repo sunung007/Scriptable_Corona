@@ -16,14 +16,13 @@
 
 ## 소개
 
+iOS의 **Scriptable** 어플의 midium size와 large size의 위젯에서 작동하는 코드입니다.   
+small 사이즈 지원 예정입니다.   
+
 <img src="./image/widget_medium.jpg" width="300"></img>   
 <img src="./image/widget_large_1.jpg" width="300"></img>
 <img src="./image/widget_large_2.jpg" width="300"></img>
 <img src="./image/widget_large_3.jpg" width="300"></img>
-
-
-iOS의 **Scriptable** 어플의 midium size와 large 위젯에서 작동하는 코드입니다.   
-small 사이즈 지원 예정입니다.
 
 ------------------------
 
@@ -143,7 +142,7 @@ const buttons = {
     ['house', '집'],
     ['dollarsign.circle', '계좌'],
     /*...*/
-	  ]} 
+  ]} 
 ```
 **이제는 단축어 뿐만 아니라 모든 어플의 url scheme도 지원합니다!**   
 (단, 해당 url의 끝에는 `://` 형식으로 끝나야 합니다.)   
