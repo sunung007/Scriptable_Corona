@@ -880,9 +880,9 @@ async function setWidgetAttribute() {
   else { VIEW_MODE = Number(settingJSON.widgetSize) }
   
   // Set widget components if widget size is large.
-  if(settingJSON.largeWidgetSetting == null ||
-     VIEW_MODE == 3 &&
-     (changeAttribute == 5 || changeAttribute == 4)) {
+  if(VIEW_MODE == 3 &&
+     (settingJSON.largeWidgetSetting == null ||
+      changeAttribute == 5 || changeAttribute == 4)) {
     haveSettingChange = true
     alert = new Alert()
     alert.title = '큰 사이즈 위젯 설정'
