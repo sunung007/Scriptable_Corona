@@ -42,7 +42,7 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v2.42'
+const scriptVersion = 'covid-widget-v2.43'
 
 const colorIncrease = 'F51673'
 const colorDecrease = '2B69F0'
