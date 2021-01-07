@@ -23,7 +23,7 @@ const buttons = {
 
 // 위젯 세팅 설정값 변경
 // 최초 실행 시에는 false로 두시고, 이후 설정 변경 시 true로 바꾸세요.
-let changeSetting = false
+let changeSetting = true
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
@@ -129,24 +129,16 @@ function createWidget() {
   setDateWidget()    // date
   
   if(VIEW_MODE == 1) {
-    outbox.addSpacer()
+    box.addSpacer()
     
-    // 1st floor : Right
-    box = outbox.addStack()
-    box.layoutVertically()
-    
+    // 1st floor : left
     setWeatherWidget() // weather
-    stack.addSpacer(4) // spacer
+    box.addSpacer(2)
+    stack = box.addStack() // change line
     setBatteryWidget() // battry
-
-    // 2nd floor
-    container.addSpacer()
     
-    outbox = container.addStack()
-    outbox.layoutHorizontally()
+    // 1st floor : right
     box = outbox.addStack()
-    box.layoutVertically()
-    
     setCovidWidget()   // covid count
     
     widget.url = URLScheme.forRunningScript()
@@ -248,8 +240,7 @@ function setBatteryWidget() {
   line = stack.addStack()
   line.layoutHorizontally()
   
-  if(VIEW_MODE == 1) line.addSpacer()
-  else line.centerAlignContent()
+  line.centerAlignContent()
 
   // Add battery icon.
   content = line.addImage(image)
@@ -264,14 +255,9 @@ function setBatteryWidget() {
     else content.tintColor = contentColor
   }
   
-  // Add text that shows persentage of battery.
-  if(VIEW_MODE == 1) {
-    stack.layoutVertically()
-    line = stack.addStack()
-    line.addSpacer()
-  }
-  else line.addSpacer(2)
+  line.addSpacer(2)
 
+  // Text
   content = line.addText(Math.floor(batteryLevel*100)+'')
   content.font = Font.systemFont(13)
   content.textColor = contentColor
@@ -300,25 +286,42 @@ function setCovidWidget() {
   // Add widget.
   if(VIEW_MODE == 1) {
     stack = box.addStack()
-    stack.layoutHorizontally()
-    /*
+    stack.layoutVertically()
+    
     line = stack.addStack()
+    line.addSpacer()
     content = line.addText('전국')
     content.font = Font.systemFont(12)
+        
+    line = stack.addStack()
     line.addSpacer()
-    content = line.addText(getRegionInfo(0, region))
-    content.font = Font.systemFont(12)
-    */
-    stack = box.addStack()
-    stack.layoutHorizontally()
+    content = line.addText(currentNum+'') // 전국
+    content.font = Font.boldSystemFont(16)
+
+    stack.addSpacer() // 줄간격
     
     line = stack.addStack()
-    content = line.addText(currentNum+'')
-    content.font = Font.boldSystemFont(18)
     line.addSpacer()
-    content = line.addText(regionNum+'')
-    content.font = Font.boldSystemFont(18)
+    content = line.addText(getRegionInfo(0, region)) // 지역명
+    content.font = Font.systemFont(12)
     
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText(regionNum+'') // 지역
+    content.font = Font.boldSystemFont(16)
+    
+    stack.addSpacer() // 줄간격
+    
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText('어제')
+    content.font = Font.systemFont(12)
+    
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText(yesterdayNum+'') // 전체
+    content.font = Font.boldSystemFont(16)
+
     return 
   }
   
@@ -547,23 +550,29 @@ function setWeatherWidget() {
   let line, content
   stack = box.addStack()
   line = stack.addStack()
-
+/*
   if(VIEW_MODE == 1) {
+    stack.layoutVertically()
+    content = line.addText(' ')
+    content.font = Font.systemFont(13)
+    
+    line = stack.addStack()
     line.layoutHorizontally()
     line.addSpacer()
     
     content = line.addImage(getWeatherImage(rain, sky)) // icon
     content.tintColor = contentColor
-    content.imageSize = new Size(25, 25)
+    content.imageSize = new Size(30, 30)
     
+    stack.addSpacer(6)
     line = stack.addStack()
     line.addSpacer()
     
     content = line.addText(temp) // temperature
     content.font = Font.systemFont(13)
     content.textColor = contentColor
-  }
-  else if(VIEW_MODE == 2) {
+  }*/
+  if(VIEW_MODE != 3) {
     content = line.addImage(getWeatherImage(rain, sky)) // icon
     content.tintColor = contentColor
   
@@ -868,11 +877,71 @@ async function setWidgetAttribute() {
     alert = new Alert()
     alert.title = '위젯 배경 설정'
     alert.message = '배경 유형을 선택하세요.'
-    alert.addAction('이미지')
+    alert.addAction('이미지'/* 또는 투명 배경'*/)
     alert.addAction('원하는 색상으로 강제 고정')
     alert.addAction('자동 설정')
     let result = await alert.present()  
+    
     if(result == 0) {
+      /*
+      alert = new Alert()
+      alert.title = '위젯 배경 설정'
+      alert.addAction('투명 배경 설정')
+      alert.addAction('기존 이미지 선택')
+      
+      if((await alert.present()) == 0) {        
+        // Bring mzeryck's script.
+        console.log('투명 배경 설정을 위한 스크립트를 설치합니다.')
+        console.log('mzeryck님의 코드를 가져옵니다.')
+        
+        const turl = 'https://gist.githubusercontent.com/mzeryck/'
+                     + '3a97ccd1e059b3afa3c6666d27a496c9/raw/'
+                     + '54587f26d0b1ca7830c8d102cd786382248ff16f/'
+                     + 'mz_invisible_widget.js'
+        let trequest = await new Request(turl).loadString()
+        
+        // Edit code.
+        let tstart = trequest.
+            indexOf('message = "Your widget background is ready')
+        let tend = trequest.
+            indexOf('Script.complete', tstart)
+        trequest = trequest.substring(0, tstart)
+                   + 'Photos.save(imgCrop); ' // save image
+                   + '\n'
+                   + "WebView.loadURL('"
+                   + URLScheme.forRunningScript() 
+                   + "'); " // run this script again 
+                   + trequest.substring(tend)      
+        
+        // Save new script
+        try {
+          let icloudfm = FileManager.iCloud()
+          const tpath = fileManager.joinPath(
+                                    icloudfm.documentsDirectory(),
+                                    '배경화면 잘라내기.js')
+          fileManager.writeString(tpath, trequest)
+          console.log('스크립트를 성공적으로 설치하였습니다.')
+        }
+        catch {
+          console.log('스크립트 설치에 실패하였습니다.')
+          return
+        }
+        
+        alert = new Alert()
+        alert.title = '투명 위젯 설정'
+        alert.message = '진행하기 전 현재 배경화면의 스크린샷을 준비해주세요.'
+            + '\n편집상태에 들어가서 아무것도 없는 페이지의 스크린샷이 필요합니다!'
+        alert.addAction('계속')
+        alert.addCancelAction('취소')
+        if((await alert.present()) == -1) return
+        
+        // Run mzeryck's script.
+        let tname = encodeURI('배경화면 잘라내기')
+        let turlScheme = 'scriptable:///run/' + tname
+        //WebView.loadURL(turlScheme)
+        eval(trequest)
+      }
+      */
       image = await Photos.fromLibrary()
       settingJSON.isBackgroundColor = 'background'
       fileManager.writeImage(path+'backgroundImage', image)
