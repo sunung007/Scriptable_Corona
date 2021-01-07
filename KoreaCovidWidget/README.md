@@ -17,9 +17,12 @@
 ## 소개
 
 iOS의 **Scriptable** 어플의 midium size와 large size의 위젯에서 작동하는 코드입니다.   
-small 사이즈 지원 예정입니다.   
 
+### 작은 사이즈 위젯   
+<img src="./image/widget_small.jpg" width="150"></img>   
+### 중간 사이즈 위젯
 <img src="./image/widget_medium.jpg" width="300"></img>   
+### 큰 사이즈 위젯
 <img src="./image/widget_large_1.jpg" width="300"></img>
 <img src="./image/widget_large_2.jpg" width="300"></img>
 <img src="./image/widget_large_3.jpg" width="300"></img>
@@ -51,6 +54,17 @@ small 사이즈 지원 예정입니다.
   - 전국 누적 확진자 수
   - 전일 증가 수
 
+### 위젯의 하단부
+- 캘린더
+  - 큰 사이즈 위젯을 선택했을 경우만 나타납니다.
+  - 달력
+    - 사용자가 On/Off할 수 있습니다.
+  - 캘린더/리마인더 일정
+    - 사용자가 선택할 수 있습니다.
+    - 둘 중 하나는 반드시 보여야 합니다.
+    - 캘린더 일정의 경우 [오늘, 이번주, 이번달] 일정 중 선택할 수 있습니다.
+- 버튼
+  - url scheme을 이용하여 단축어, 어플 등으로 직접 연결할 수 있습니다.
 전국과 특정 1개 지역의 실시간 현황과 누적 현황을 나타냅니다.    
 
 ----------------
