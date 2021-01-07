@@ -23,7 +23,7 @@ const buttons = {
 
 // 위젯 세팅 설정값 변경
 // 최초 실행 시에는 false로 두시고, 이후 설정 변경 시 true로 바꾸세요.
-let changeSetting = true
+let changeSetting = false
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
@@ -101,7 +101,7 @@ if(VIEW_MODE == 3) {
 // Create a widget.
 createWidget()
 
-// Refresh for every minute. Term : 15 minutes.
+// Refresh for every minute.
 widget.refreshAfterDate = new Date(Date.now() + 1000*refreshTime)
 widget.setPadding(15,15,15,15)
 
@@ -129,13 +129,27 @@ function createWidget() {
   setDateWidget()    // date
   
   if(VIEW_MODE == 1) {
-    // 1st floor : Left
-    box.addSpacer(14)
-    setWeatherWidget() // weather
-    setBatteryWidget() // battry
-    
     outbox.addSpacer()
+    
+    // 1st floor : Right
+    box = outbox.addStack()
+    box.layoutVertically()
+    
+    setWeatherWidget() // weather
+    stack.addSpacer(4) // spacer
+    setBatteryWidget() // battry
 
+    // 2nd floor
+    container.addSpacer()
+    
+    outbox = container.addStack()
+    outbox.layoutHorizontally()
+    box = outbox.addStack()
+    box.layoutVertically()
+    
+    setCovidWidget()   // covid count
+    
+    widget.url = URLScheme.forRunningScript()
   }
   else if(VIEW_MODE == 2) {
     // 1st floor : Left
@@ -232,11 +246,15 @@ function setBatteryWidget() {
   let image = getBatteryImage(batteryLevel)
 
   line = stack.addStack()
-  line.centerAlignContent()
+  line.layoutHorizontally()
+  
+  if(VIEW_MODE == 1) line.addSpacer()
+  else line.centerAlignContent()
 
+  // Add battery icon.
   content = line.addImage(image)
 
-  // Coloring and resize battery icon
+  // Coloring and resize battery icon.
   if(Device.isCharging()) {
     content.imageSize = new Size(20, 13)
     content.tintColor = Color.green()
@@ -245,7 +263,14 @@ function setBatteryWidget() {
     if(batteryLevel*100 < 20) content.tintColor = Color.red()
     else content.tintColor = contentColor
   }
-  line.addSpacer(2)
+  
+  // Add text that shows persentage of battery.
+  if(VIEW_MODE == 1) {
+    stack.layoutVertically()
+    line = stack.addStack()
+    line.addSpacer()
+  }
+  else line.addSpacer(2)
 
   content = line.addText(Math.floor(batteryLevel*100)+'')
   content.font = Font.systemFont(13)
@@ -273,6 +298,30 @@ function setCovidWidget() {
   regionGap = regionData[1]
 
   // Add widget.
+  if(VIEW_MODE == 1) {
+    stack = box.addStack()
+    stack.layoutHorizontally()
+    /*
+    line = stack.addStack()
+    content = line.addText('전국')
+    content.font = Font.systemFont(12)
+    line.addSpacer()
+    content = line.addText(getRegionInfo(0, region))
+    content.font = Font.systemFont(12)
+    */
+    stack = box.addStack()
+    stack.layoutHorizontally()
+    
+    line = stack.addStack()
+    content = line.addText(currentNum+'')
+    content.font = Font.boldSystemFont(18)
+    line.addSpacer()
+    content = line.addText(regionNum+'')
+    content.font = Font.boldSystemFont(18)
+    
+    return 
+  }
+  
   if(VIEW_MODE == 3) {
     tstack = box.addStack()
     tstack.layoutHorizontally()
@@ -499,7 +548,22 @@ function setWeatherWidget() {
   stack = box.addStack()
   line = stack.addStack()
 
-  if(VIEW_MODE == 2) {
+  if(VIEW_MODE == 1) {
+    line.layoutHorizontally()
+    line.addSpacer()
+    
+    content = line.addImage(getWeatherImage(rain, sky)) // icon
+    content.tintColor = contentColor
+    content.imageSize = new Size(25, 25)
+    
+    line = stack.addStack()
+    line.addSpacer()
+    
+    content = line.addText(temp) // temperature
+    content.font = Font.systemFont(13)
+    content.textColor = contentColor
+  }
+  else if(VIEW_MODE == 2) {
     content = line.addImage(getWeatherImage(rain, sky)) // icon
     content.tintColor = contentColor
   
