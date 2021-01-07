@@ -68,8 +68,9 @@ let weatherSettingJSON = {}
 let forceWeatherChange = false
 let useCovidLocation
 
-// About calendar
+// About calendar [calendar, reminder, monthly]
 let showCalendar = [true, true, true]
+let calendarPeriod
 
 // Start main code. ==============================================
 // For test : Reset all setting file.
@@ -92,10 +93,31 @@ try {
 catch {console.error('Error : Load weather data')}
 
 if(VIEW_MODE == 3) {
-  try { calendarJSON = await CalendarEvent.today() }
-  catch { console.error('Error : Load calendar data') }
-  try { reminderJSON = await Reminder.allIncomplete() }
-  catch { console.error('Error : Load reminder data') }
+  try {
+    if(showCalendar[0]) {
+      if(calendarPeriod == 'thisMonth') {
+        let end = new Date()
+        end.setMonth(end.getMonth() + 1)
+        end.setDate(-1)
+        calendarJSON = await CalendarEvent.between(new Date(), end)
+      }
+      else if(calendarPeriod == 'thisWeek') {
+        let end = new Date()
+        end.setDate(end.getDate()+6-end.getDay())
+        calendarJSON = await CalendarEvent.between(new Date(), end)
+      }
+      else {
+        calendarJSON = await CalendarEvent.today()
+      }
+      
+    }
+    if(showCalendar[1]) {
+      reminderJSON = await Reminder.allIncomplete()
+    }
+  }
+  catch {
+    console.error('Error : Load calendar data')
+  }
 }
 
 // Create a widget.
@@ -650,7 +672,18 @@ function setCalendarWidget() {
   stack.layoutVertically()
   
   // Show calendar
-  if(calendarNum > 0) {
+  if(showCalendar[0] && calendarNum == 0) {
+    stack.url = 'calshow://'    
+    line = stack.addStack()
+    content = line.addText('일정 ')
+    content.textColor = contentColor
+    content.font = Font.boldMonospacedSystemFont(13)
+    
+    content = line.addText('0')
+    content.textColor = new Color(colorGray)
+    content.font = Font.boldMonospacedSystemFont(13)
+  }
+  else if(calendarNum > 0) {
     stack.url = 'calshow://'    
     line = stack.addStack()
     content = line.addText('일정 ')
@@ -665,9 +698,22 @@ function setCalendarWidget() {
     getCalendarContent(calendarNum, calendarJSON)
   }
   
-  if(calendarNum > 0 && reminderNum > 0) stack.addSpacer(10)
+  if(reminderNum > 0) stack.addSpacer(10)
   
   // Show reminder
+  if(showCalendar[1] && reminderNum == 0) {
+    stack = box.addStack()
+    stack.layoutVertically()
+    stack.url = 'x-apple-reminderkit://'        
+    line = stack.addStack()
+    content = line.addText('미리알림 ')
+    content.textColor = contentColor
+    content.font = Font.boldMonospacedSystemFont(13)
+    
+    content = line.addText('0')
+    content.textColor = new Color(colorGray)
+    content.font = Font.boldMonospacedSystemFont(13)
+  }
   if(reminderNum > 0) {
     stack = box.addStack()
     stack.layoutVertically()
@@ -768,8 +814,24 @@ function getCalendarContent(num, json) {
     content.imageSize = new Size(10, 16)
     content.tintColor = new Color(color)
     
+    // Set period
+    let period = ''
+    if(calendarPeriod == 'thisWeek' ||
+       calendarPeriod == 'thisMonth') {
+      let startDate = json[i].startDate
+      let endDate = json[i].endDate
+      if(startDate != null && endDate != null) {
+        dateFormatter.dateFormat = 'd'
+        startDate = dateFormatter.string(startDate)
+        endDate = dateFormatter.string(endDate)
+        if(startDate == endDate) period += startDate // 당일
+        else period = startDate + '-' + endDate
+        period += ' | '
+      }
+    }
+    
     // Add text
-    content = line.addText(title)
+    content = line.addText(period + title)
     content.font = Font.systemFont(13)
     content.textColor = contentColor
     content.lineLimit = 2
@@ -808,15 +870,7 @@ async function setWidgetAttribute() {
     console.log('위젯 설정을 진행합니다.')
   }
 
-  if(settingJSON.backgroundCourse == 'true') {
-    haveSettingChange = true
-    settingJSON.backgroundCourse = 'false'
-    settingJSON.isBackgroundColor = 'background'
-    image = await Photos.fromLibrary()
-    fileManager.writeImage(path+'backgroundImage', image)
-    widget.backgroundImage = image
-  }
-  else if(changeSetting) {
+  if(changeSetting) {
     alert = new Alert()
     alert.addAction('코로나 알림 지역 설정')
     alert.addAction('날씨 정보 지역 설정')
@@ -826,8 +880,7 @@ async function setWidgetAttribute() {
     alert.addAction('전체 초기화')
     if(haveSettingFile) alert.addCancelAction('취소')
     changeAttribute = await alert.present()
-  }
-  
+  }  
 
   // Set region.
   if(settingJSON.region == null || 
@@ -885,75 +938,12 @@ async function setWidgetAttribute() {
     alert = new Alert()
     alert.title = '위젯 배경 설정'
     alert.message = '배경 유형을 선택하세요.'
-    alert.addAction('이미지 또는 투명 배경')
+    alert.addAction('이미지')
     alert.addAction('원하는 색상으로 강제 고정')
     alert.addAction('자동 설정')
     result = await alert.present()  
     
     if(result == 0) {
-      alert = new Alert()
-      alert.title = '위젯 배경 설정'
-      alert.addAction('투명 배경 설정')
-      alert.addAction('기존 이미지 선택')
-    
-      if((await alert.present()) == 0) {        
-        // Bring mzeryck's script.
-        console.log('투명 배경 설정을 위한 스크립트를 설치합니다.')
-        console.log('mzeryck님의 코드를 가져옵니다.')
-        
-        const turl = 'https://gist.githubusercontent.com/'
-                     + 'mzeryck/'
-                     + '3a97ccd1e059b3afa3c6666d27a496c9/raw/'
-                     + '54587f26d0b1ca7830c8d102cd786382248ff16f'
-                     + '/mz_invisible_widget.js'
-        let trequest = await new Request(turl).loadString()
-        
-        // Edit code.
-        let tstart = trequest.
-            indexOf('message = "Your widget background is ready')
-        let tend = trequest.
-            indexOf('Script.complete', tstart)
-        trequest = trequest.substring(0, tstart)
-                   + 'Photos.save(imgCrop); ' // save image
-                   + '\n'
-                   + "WebView.loadURL('"
-                   + URLScheme.forRunningScript() 
-                   + "'); " // run this script again 
-                   + trequest.substring(tend)      
-       
-        // Save new script
-        try {
-          let icloudfm = FileManager.iCloud()
-          const tpath = fileManager.joinPath(
-                                   icloudfm.documentsDirectory(),
-                                   '배경화면 잘라내기.js')
-          fileManager.writeString(tpath, trequest)
-          console.log('스크립트를 성공적으로 설치하였습니다.')
-        }
-        catch {
-          console.log('스크립트 설치에 실패하였습니다.')
-          return
-        }
-         
-        alert = new Alert()
-        alert.title = '투명 위젯 설정'
-        alert.message = '진행하기 전 현재 배경화면의 스크린샷을 준비해주세요.'
-            + '\n편집상태에 들어가서 아무것도 없는 페이지의 스크린샷이 필요합니다!'
-        alert.addAction('계속')
-        alert.addCancelAction('취소')
-        if((await alert.present()) == -1) return
-      
-        // Save setting
-        settingJSON.backgroundCourse = 'true'
-        fileManager.writeString(path+'settingJSON', 
-                                JSON.stringify(settingJSON))
-        console.log('Save changed setting')
-
-        // Run mzeryck's script.
-        let tname = encodeURI('배경화면 잘라내기')
-        let turlScheme = 'scriptable:///run/' + tname
-        await WebView.loadURL(turlScheme)
-      }
       image = await Photos.fromLibrary()
       settingJSON.isBackgroundColor = 'background'
       fileManager.writeImage(path+'backgroundImage', image)
@@ -961,7 +951,7 @@ async function setWidgetAttribute() {
     }
     else if(result == 1) {
       settingJSON.isBackgroundColor = 'color'
-      settingJSON.backgroundColorNumber = await setColor(0,-1)
+      settingJSON.backgroundColorNumber = await setColor(0, -1)
     } 
     else {
       settingJSON.isBackgroundColor = 'auto_color'
@@ -1065,12 +1055,30 @@ async function setWidgetAttribute() {
     else showCalendar[0] = showCalendar[1] = true
     
     settingJSON.largeWidgetSetting = showCalendar.toString()
+    
+    if(showCalendar[0]) {
+      alert = new Alert()
+      alert.title = '캘린더 일정 설정'
+      alert.addAction('오늘 일정만 보기')
+      alert.addAction('이번 주 일정 보기')
+      alert.addAction('이번 달 일정 보기')
+      
+      result = await alert.present()
+      
+      if(result == 0) calendarPeriod = 'today'
+      else if(result == 1) calendarPeriod = 'thisWeek'
+      else if(result == 2) calendarPeriod = 'thisMonth'
+      
+      settingJSON.calendarPeriod = calendarPeriod
+    }
   }
   else if(VIEW_MODE == 3) {
     let array = (settingJSON.largeWidgetSetting).split(',')
     showCalendar[0] = (array[0] == 'true' ? true : false)
     showCalendar[1] = (array[1] == 'true' ? true : false)
     showCalendar[2] = (array[2] == 'true' ? true : false)
+    
+    if(showCalendar[0]) calendarPeriod = settingJSON.calendarPeriod
   }
     
   // Save changes
