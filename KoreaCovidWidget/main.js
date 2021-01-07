@@ -5,9 +5,9 @@
 const buttons = {
   number : 4,  // 버튼의 개수
   items : [ // 버튼 내용
-    ['headphones', '단축어1'],
+    ['headphones', '버즈+지니'],
     ['house', '단축어2'],
-    ['dollarsign.circle', '단축어3'],
+    ['dollarsign.circle', '계좌 공유'],
     ['qrcode', 'kakaotalk://con/web?url=https://'
                 +'accounts.kakao.com/qr_check_in'], // QR 체크인
     // 아래는 어플을 실행하는 버튼입니다.
@@ -23,7 +23,7 @@ const buttons = {
 
 // 위젯 세팅 설정값 변경
 // 최초 실행 시에는 false로 두시고, 이후 설정 변경 시 true로 바꾸세요.
-let changeSetting = false
+let changeSetting = true
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
@@ -42,7 +42,7 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v2.43'
+const scriptVersion = 'covid-widget-v3.0'
 
 const colorIncrease = 'F51673'
 const colorDecrease = '2B69F0'
@@ -68,8 +68,9 @@ let weatherSettingJSON = {}
 let forceWeatherChange = false
 let useCovidLocation
 
-// About calendar
+// About calendar [calendar, reminder, monthly]
 let showCalendar = [true, true, true]
+let calendarPeriod
 
 // Start main code. ==============================================
 // For test : Reset all setting file.
@@ -92,21 +93,42 @@ try {
 catch {console.error('Error : Load weather data')}
 
 if(VIEW_MODE == 3) {
-  try { calendarJSON = await CalendarEvent.today() }
-  catch { console.error('Error : Load calendar data') }
-  try { reminderJSON = await Reminder.allIncomplete() }
-  catch { console.error('Error : Load reminder data') }
+  try {
+    if(showCalendar[0]) {
+      if(calendarPeriod == 'thisMonth') {
+        let end = new Date()
+        end.setMonth(end.getMonth() + 1)
+        end.setDate(-1)
+        calendarJSON = await CalendarEvent.between(new Date(), end)
+      }
+      else if(calendarPeriod == 'thisWeek') {
+        let end = new Date()
+        end.setDate(end.getDate()+6-end.getDay())
+        calendarJSON = await CalendarEvent.between(new Date(), end)
+      }
+      else {
+        calendarJSON = await CalendarEvent.today()
+      }
+      
+    }
+    if(showCalendar[1]) {
+      reminderJSON = await Reminder.allIncomplete()
+    }
+  }
+  catch {
+    console.error('Error : Load calendar data')
+  }
 }
 
 // Create a widget.
 createWidget()
 
-// Refresh for every minute. Term : 15 minutes.
+// Refresh for every minute.
 widget.refreshAfterDate = new Date(Date.now() + 1000*refreshTime)
 widget.setPadding(15,15,15,15)
 
-/*if(VIEW_MODE == 1) widget.presentSmall()
-else */if(VIEW_MODE == 2) widget.presentMedium()
+if(VIEW_MODE == 1) widget.presentSmall()
+else if(VIEW_MODE == 2) widget.presentMedium()
 else widget.presentLarge()
 
 Script.setWidget(widget)
@@ -128,7 +150,22 @@ function createWidget() {
   box.layoutVertically() 
   setDateWidget()    // date
   
-  if(VIEW_MODE == 2) {
+  if(VIEW_MODE == 1) {
+    box.addSpacer()
+    
+    // 1st floor : left
+    setWeatherWidget() // weather
+    box.addSpacer(2)
+    stack = box.addStack() // change line
+    setBatteryWidget() // battry
+    
+    // 1st floor : right
+    box = outbox.addStack()
+    setCovidWidget()   // covid count
+    
+    widget.url = URLScheme.forRunningScript()
+  }
+  else if(VIEW_MODE == 2) {
     // 1st floor : Left
     box.addSpacer(14)
     setWeatherWidget() // weather
@@ -223,11 +260,14 @@ function setBatteryWidget() {
   let image = getBatteryImage(batteryLevel)
 
   line = stack.addStack()
+  line.layoutHorizontally()
+  
   line.centerAlignContent()
 
+  // Add battery icon.
   content = line.addImage(image)
 
-  // Coloring and resize battery icon
+  // Coloring and resize battery icon.
   if(Device.isCharging()) {
     content.imageSize = new Size(20, 13)
     content.tintColor = Color.green()
@@ -236,8 +276,10 @@ function setBatteryWidget() {
     if(batteryLevel*100 < 20) content.tintColor = Color.red()
     else content.tintColor = contentColor
   }
+  
   line.addSpacer(2)
 
+  // Text
   content = line.addText(Math.floor(batteryLevel*100)+'')
   content.font = Font.systemFont(13)
   content.textColor = contentColor
@@ -264,6 +306,53 @@ function setCovidWidget() {
   regionGap = regionData[1]
 
   // Add widget.
+  if(VIEW_MODE == 1) {
+    stack = box.addStack()
+    stack.layoutVertically()
+    
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText('전국')
+    content.font = Font.systemFont(12)
+    content.textColor = contentColor
+        
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText(currentNum+'') // 전국
+    content.font = Font.boldSystemFont(16)
+    content.textColor = contentColor
+    
+    stack.addSpacer() // 줄간격
+    
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText(getRegionInfo(0, region)) // 지역명
+    content.font = Font.systemFont(12)
+    content.textColor = contentColor
+        
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText(regionNum+'') // 지역
+    content.font = Font.boldSystemFont(16)
+    content.textColor = contentColor
+    
+    stack.addSpacer() // 줄간격
+    
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText('어제')
+    content.font = Font.systemFont(12)
+    content.textColor = contentColor
+    
+    line = stack.addStack()
+    line.addSpacer()
+    content = line.addText(yesterdayNum+'') // 전체
+    content.font = Font.boldSystemFont(16)
+    content.textColor = contentColor
+    
+    return 
+  }
+  
   if(VIEW_MODE == 3) {
     tstack = box.addStack()
     tstack.layoutHorizontally()
@@ -490,7 +579,7 @@ function setWeatherWidget() {
   stack = box.addStack()
   line = stack.addStack()
 
-  if(VIEW_MODE == 2) {
+  if(VIEW_MODE != 3) {
     content = line.addImage(getWeatherImage(rain, sky)) // icon
     content.tintColor = contentColor
   
@@ -568,7 +657,18 @@ function setCalendarWidget() {
   stack.layoutVertically()
   
   // Show calendar
-  if(calendarNum > 0) {
+  if(showCalendar[0] && calendarNum == 0) {
+    stack.url = 'calshow://'    
+    line = stack.addStack()
+    content = line.addText('일정 ')
+    content.textColor = contentColor
+    content.font = Font.boldMonospacedSystemFont(13)
+    
+    content = line.addText('0')
+    content.textColor = new Color(colorGray)
+    content.font = Font.boldMonospacedSystemFont(13)
+  }
+  else if(calendarNum > 0) {
     stack.url = 'calshow://'    
     line = stack.addStack()
     content = line.addText('일정 ')
@@ -583,9 +683,22 @@ function setCalendarWidget() {
     getCalendarContent(calendarNum, calendarJSON)
   }
   
-  if(calendarNum > 0 && reminderNum > 0) stack.addSpacer(10)
+  if(reminderNum > 0) stack.addSpacer(10)
   
   // Show reminder
+  if(showCalendar[1] && reminderNum == 0) {
+    stack = box.addStack()
+    stack.layoutVertically()
+    stack.url = 'x-apple-reminderkit://'        
+    line = stack.addStack()
+    content = line.addText('미리알림 ')
+    content.textColor = contentColor
+    content.font = Font.boldMonospacedSystemFont(13)
+    
+    content = line.addText('0')
+    content.textColor = new Color(colorGray)
+    content.font = Font.boldMonospacedSystemFont(13)
+  }
   if(reminderNum > 0) {
     stack = box.addStack()
     stack.layoutVertically()
@@ -686,8 +799,24 @@ function getCalendarContent(num, json) {
     content.imageSize = new Size(10, 16)
     content.tintColor = new Color(color)
     
+    // Set period
+    let period = ''
+    if(calendarPeriod == 'thisWeek' ||
+       calendarPeriod == 'thisMonth') {
+      let startDate = json[i].startDate
+      let endDate = json[i].endDate
+      if(startDate != null && endDate != null) {
+        dateFormatter.dateFormat = 'd'
+        startDate = dateFormatter.string(startDate)
+        endDate = dateFormatter.string(endDate)
+        if(startDate == endDate) period += startDate // 당일
+        else period = startDate + '-' + endDate
+        period += ' | '
+      }
+    }
+    
     // Add text
-    content = line.addText(title)
+    content = line.addText(period + title)
     content.font = Font.systemFont(13)
     content.textColor = contentColor
     content.lineLimit = 2
@@ -736,8 +865,7 @@ async function setWidgetAttribute() {
     alert.addAction('전체 초기화')
     if(haveSettingFile) alert.addCancelAction('취소')
     changeAttribute = await alert.present()
-  }
-  
+  }  
 
   // Set region.
   if(settingJSON.region == null || 
@@ -791,14 +919,15 @@ async function setWidgetAttribute() {
   if(settingJSON.isBackgroundColor == null ||
      changeAttribute == 5 || changeAttribute == 2) {
     haveSettingChange = true
-    
+    let result = -1
     alert = new Alert()
     alert.title = '위젯 배경 설정'
     alert.message = '배경 유형을 선택하세요.'
     alert.addAction('이미지')
     alert.addAction('원하는 색상으로 강제 고정')
     alert.addAction('자동 설정')
-    let result = await alert.present()  
+    result = await alert.present()  
+    
     if(result == 0) {
       image = await Photos.fromLibrary()
       settingJSON.isBackgroundColor = 'background'
@@ -807,7 +936,7 @@ async function setWidgetAttribute() {
     }
     else if(result == 1) {
       settingJSON.isBackgroundColor = 'color'
-      settingJSON.backgroundColorNumber = await setColor(0,-1)
+      settingJSON.backgroundColorNumber = await setColor(0, -1)
     } 
     else {
       settingJSON.isBackgroundColor = 'auto_color'
@@ -871,18 +1000,18 @@ async function setWidgetAttribute() {
     alert = new Alert()
     alert.title = '위젯 크기 설정'
     alert.message = '사용할 위젯의 크기를 선택하세요'
-    //alert.addAction('작은 사이즈 위젯')
+    alert.addAction('작은 사이즈 위젯')
     alert.addAction('중간 사이즈 위젯')
     alert.addAction('큰 사이즈 위젯')
-    VIEW_MODE = (await alert.present()) + 2
+    VIEW_MODE = (await alert.present()) + 1
     settingJSON.widgetSize = VIEW_MODE+''
   }
   else { VIEW_MODE = Number(settingJSON.widgetSize) }
   
   // Set widget components if widget size is large.
-  if(VIEW_MODE == 3 &&
-     (settingJSON.largeWidgetSetting == null ||
-      changeAttribute == 5 || changeAttribute == 4)) {
+  if(settingJSON.largeWidgetSetting == null ||
+     VIEW_MODE == 3 &&
+     (changeAttribute == 5 || changeAttribute == 4)) {
     haveSettingChange = true
     alert = new Alert()
     alert.title = '큰 사이즈 위젯 설정'
@@ -911,12 +1040,30 @@ async function setWidgetAttribute() {
     else showCalendar[0] = showCalendar[1] = true
     
     settingJSON.largeWidgetSetting = showCalendar.toString()
+    
+    if(showCalendar[0]) {
+      alert = new Alert()
+      alert.title = '캘린더 일정 설정'
+      alert.addAction('오늘 일정만 보기')
+      alert.addAction('이번 주 일정 보기')
+      alert.addAction('이번 달 일정 보기')
+      
+      result = await alert.present()
+      
+      if(result == 0) calendarPeriod = 'today'
+      else if(result == 1) calendarPeriod = 'thisWeek'
+      else if(result == 2) calendarPeriod = 'thisMonth'
+      
+      settingJSON.calendarPeriod = calendarPeriod
+    }
   }
   else if(VIEW_MODE == 3) {
     let array = (settingJSON.largeWidgetSetting).split(',')
     showCalendar[0] = (array[0] == 'true' ? true : false)
     showCalendar[1] = (array[1] == 'true' ? true : false)
     showCalendar[2] = (array[2] == 'true' ? true : false)
+    
+    if(showCalendar[0]) calendarPeriod = settingJSON.calendarPeriod
   }
     
   // Save changes
