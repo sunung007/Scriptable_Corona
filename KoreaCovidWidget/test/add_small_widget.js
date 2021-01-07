@@ -808,7 +808,15 @@ async function setWidgetAttribute() {
     console.log('위젯 설정을 진행합니다.')
   }
 
-  if(changeSetting) {
+  if(settingJSON.backgroundCourse == 'true') {
+    haveSettingChange = true
+    settingJSON.backgroundCourse = 'false'
+    settingJSON.isBackgroundColor = 'background'
+    image = await Photos.fromLibrary()
+    fileManager.writeImage(path+'backgroundImage', image)
+    widget.backgroundImage = image
+  }
+  else if(changeSetting) {
     alert = new Alert()
     alert.addAction('코로나 알림 지역 설정')
     alert.addAction('날씨 정보 지역 설정')
@@ -873,31 +881,31 @@ async function setWidgetAttribute() {
   if(settingJSON.isBackgroundColor == null ||
      changeAttribute == 5 || changeAttribute == 2) {
     haveSettingChange = true
-    
+    let result = -1
     alert = new Alert()
     alert.title = '위젯 배경 설정'
     alert.message = '배경 유형을 선택하세요.'
-    alert.addAction('이미지'/* 또는 투명 배경'*/)
+    alert.addAction('이미지 또는 투명 배경')
     alert.addAction('원하는 색상으로 강제 고정')
     alert.addAction('자동 설정')
-    let result = await alert.present()  
+    result = await alert.present()  
     
     if(result == 0) {
-      /*
       alert = new Alert()
       alert.title = '위젯 배경 설정'
       alert.addAction('투명 배경 설정')
       alert.addAction('기존 이미지 선택')
-      
+    
       if((await alert.present()) == 0) {        
         // Bring mzeryck's script.
         console.log('투명 배경 설정을 위한 스크립트를 설치합니다.')
         console.log('mzeryck님의 코드를 가져옵니다.')
         
-        const turl = 'https://gist.githubusercontent.com/mzeryck/'
+        const turl = 'https://gist.githubusercontent.com/'
+                     + 'mzeryck/'
                      + '3a97ccd1e059b3afa3c6666d27a496c9/raw/'
-                     + '54587f26d0b1ca7830c8d102cd786382248ff16f/'
-                     + 'mz_invisible_widget.js'
+                     + '54587f26d0b1ca7830c8d102cd786382248ff16f'
+                     + '/mz_invisible_widget.js'
         let trequest = await new Request(turl).loadString()
         
         // Edit code.
@@ -912,13 +920,13 @@ async function setWidgetAttribute() {
                    + URLScheme.forRunningScript() 
                    + "'); " // run this script again 
                    + trequest.substring(tend)      
-        
+       
         // Save new script
         try {
           let icloudfm = FileManager.iCloud()
           const tpath = fileManager.joinPath(
-                                    icloudfm.documentsDirectory(),
-                                    '배경화면 잘라내기.js')
+                                   icloudfm.documentsDirectory(),
+                                   '배경화면 잘라내기.js')
           fileManager.writeString(tpath, trequest)
           console.log('스크립트를 성공적으로 설치하였습니다.')
         }
@@ -926,7 +934,7 @@ async function setWidgetAttribute() {
           console.log('스크립트 설치에 실패하였습니다.')
           return
         }
-        
+         
         alert = new Alert()
         alert.title = '투명 위젯 설정'
         alert.message = '진행하기 전 현재 배경화면의 스크린샷을 준비해주세요.'
@@ -934,14 +942,18 @@ async function setWidgetAttribute() {
         alert.addAction('계속')
         alert.addCancelAction('취소')
         if((await alert.present()) == -1) return
-        
+      
+        // Save setting
+        settingJSON.backgroundCourse = 'true'
+        fileManager.writeString(path+'settingJSON', 
+                                JSON.stringify(settingJSON))
+        console.log('Save changed setting')
+
         // Run mzeryck's script.
         let tname = encodeURI('배경화면 잘라내기')
         let turlScheme = 'scriptable:///run/' + tname
-        //WebView.loadURL(turlScheme)
-        eval(trequest)
+        await WebView.loadURL(turlScheme)
       }
-      */
       image = await Photos.fromLibrary()
       settingJSON.isBackgroundColor = 'background'
       fileManager.writeImage(path+'backgroundImage', image)
