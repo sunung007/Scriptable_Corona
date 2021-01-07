@@ -314,23 +314,27 @@ function setCovidWidget() {
     line.addSpacer()
     content = line.addText('전국')
     content.font = Font.systemFont(12)
+    content.textColor = contentColor
         
     line = stack.addStack()
     line.addSpacer()
     content = line.addText(currentNum+'') // 전국
     content.font = Font.boldSystemFont(16)
-
+    content.textColor = contentColor
+    
     stack.addSpacer() // 줄간격
     
     line = stack.addStack()
     line.addSpacer()
     content = line.addText(getRegionInfo(0, region)) // 지역명
     content.font = Font.systemFont(12)
-    
+    content.textColor = contentColor
+        
     line = stack.addStack()
     line.addSpacer()
     content = line.addText(regionNum+'') // 지역
     content.font = Font.boldSystemFont(16)
+    content.textColor = contentColor
     
     stack.addSpacer() // 줄간격
     
@@ -338,12 +342,14 @@ function setCovidWidget() {
     line.addSpacer()
     content = line.addText('어제')
     content.font = Font.systemFont(12)
+    content.textColor = contentColor
     
     line = stack.addStack()
     line.addSpacer()
     content = line.addText(yesterdayNum+'') // 전체
     content.font = Font.boldSystemFont(16)
-
+    content.textColor = contentColor
+    
     return 
   }
   
@@ -572,28 +578,7 @@ function setWeatherWidget() {
   let line, content
   stack = box.addStack()
   line = stack.addStack()
-/*
-  if(VIEW_MODE == 1) {
-    stack.layoutVertically()
-    content = line.addText(' ')
-    content.font = Font.systemFont(13)
-    
-    line = stack.addStack()
-    line.layoutHorizontally()
-    line.addSpacer()
-    
-    content = line.addImage(getWeatherImage(rain, sky)) // icon
-    content.tintColor = contentColor
-    content.imageSize = new Size(30, 30)
-    
-    stack.addSpacer(6)
-    line = stack.addStack()
-    line.addSpacer()
-    
-    content = line.addText(temp) // temperature
-    content.font = Font.systemFont(13)
-    content.textColor = contentColor
-  }*/
+
   if(VIEW_MODE != 3) {
     content = line.addImage(getWeatherImage(rain, sky)) // icon
     content.tintColor = contentColor
