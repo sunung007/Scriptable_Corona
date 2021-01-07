@@ -169,7 +169,7 @@ const buttons = {
 ## FAQ
 ### 투명한 배경 만들기
 mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!   
-필요하신 분들은 [여기](https://github.com/mzeryck/Transparent-Scriptable-Widget/blob/master/mz_transparent_widget.js)를 누르세요.
+필요하신 분들은 [여기](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 누르세요.
 1. 위의 사이트에서 raw 클릭 후 전체 코드 복사
 2. 새로운 스크립트 만든 후 실행(재생버튼 클릭) -> 사진 앱에 저장(파일 저장 X)
 3. 코로나 위젯 코드에 들어가서 `changeSetting`을 `true`로 변경 후 실행(재생버튼 클릭)
