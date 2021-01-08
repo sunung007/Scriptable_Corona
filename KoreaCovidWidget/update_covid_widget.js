@@ -63,7 +63,7 @@ async function update() {
     }
     else {
       newIndex = newFile.indexOf('// Do not change from this line')
-      oldIndex = newFile.indexOf('// Do not change from this line')
+      oldIndex = oldFile.indexOf('// Do not change from this line')
     }
     
     newScript = newFile.substring(newIndex)
