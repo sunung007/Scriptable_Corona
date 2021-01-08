@@ -29,6 +29,14 @@ let changeSetting = true
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
 
+// 글자 크기
+const fontSizeExtraSmall = 12 //코로나 전국,지역명,증감 / 큰사이즈 날씨
+const fontSizeSmall = 13      //날짜의 년,월,요일 / 배터리 / 중간사이즈 날씨
+const fontSizeMedium = 16     //작은 사이즈 코로나 정보
+const fontSizeLarge = 18      //중간과 큰사이즈 코로나 정보
+const fontSizeDate = 32       //날짜 '일'
+const fontSizeMonthly = 10    //큰사이즈 달력
+
 // 아래 사이트에 들어가서 활용 신청한 후
 // 발급받은 일반 인증키를 붙여넣으시면 됩니다!
 // 웬만하면 발급 받으시는게 좋을겁니다... 터지면 저는 재발급받을테니까요..
@@ -43,15 +51,6 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 // Do not change from this line.
 // Version of this script.
 const scriptVersion = 'covid-widget-v2.6'
-
-// Font size
-const fontSizeExtraSmall = 12 //코로나 전국,지역명,증감 / 큰사이즈 날씨
-const fontSizeSmall = 13      //날짜의 년,월,요일 / 배터리 / 중간사이즈 날씨
-const fontSizeMedium = 16     //작은 사이즈 코로나 정보
-const fontSizeLarge = 18      //중간과 큰사이즈 코로나 정보
-
-const fontSizeDate = 32       //날짜 '일'
-const fontSizeMonthly = 10    //큰사이즈 달력
 
 // Content color
 const colorIncrease = 'F51673'
