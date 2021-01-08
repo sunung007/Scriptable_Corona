@@ -167,15 +167,13 @@ const buttons = {
 
 ### 글자 크기 조절 방법
 코드의 내용을 수정해야합니다.   
-수정 부분은 기본 코드의 49-55번째 줄에 위치합니다.   
-혹시 코드를 수정하신 분들은 **여기부터는 건들지 마세요.** 부분의 바로 아래쪽부터 살펴주세요.   
+수정 부분은 개인 변경 부분의 하단부에 위치합니다.  
 1. 기본 코드 내용
 ```
 const fontSizeExtraSmall = 12
 const fontSizeSmall = 13
 const fontSizeMedium = 16
 const fontSizeLarge = 18
-
 const fontSizeData = 32
 const fontSizeMonthly = 10
 ```
