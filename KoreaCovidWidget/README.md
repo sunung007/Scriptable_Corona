@@ -188,17 +188,24 @@ const fontSizeMonthly = 10
   - 날짜의 년, 월, 요일을 나타냅니다.
   - 배터리 정보를 나타냅니다.
   - 중간 크기에서의 날씨 온도를 나타냅니다.
+  - 큰 크기 달력에서의 월을 나타냅니다.
 - `fontSizeMedium`
   - 작은 크기에서의 코로나 정보를 나타냅니다.
 - `fontSizeLarge`
   - 중간 크기와 큰 크기의 코로나 정보 중 발생 수를 나타냅니다.(몇명인지)
 - `fontSizeDate`
   - 날짜의 일(day)을 나타냅니다.
-- `fontSizeMonthly1
+- `fontSizeMonthly`
   - 큰 크기 달력을 나타냅니다.
 
 ---------------
 ## FAQ
+### 버튼 내용 추가/삭제/변경
+[여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#위젯-버튼들-수정하기)에서 확인하세요.
+
+### 글자 크기 조절
+[여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#글자-크기-조절-방법)에서 확인하세요.
+
 ### 투명한 배경 만들기
 mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!   
 필요하신 분들은 [여기](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 누르세요.
@@ -207,7 +214,6 @@ mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!
 3. 코로나 위젯 코드에 들어가서 `changeSetting`을 `true`로 변경 후 실행(재생버튼 클릭)
 4. 배경 이미지를 방금 만든 이미지로 선택
 5. 실행이 끝나면 `changeSetting`을 `false`로 변경 후 좌측 상단의 `DONE` 클릭
-
 
 ### 오류 : Select script in widget configurator
 위젯 편집에 들어가셔서 **script-저장한 스크립트 선택** 하면 됩니다.
