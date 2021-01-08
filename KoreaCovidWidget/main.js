@@ -49,7 +49,7 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v2.6'
+const scriptVersion = 'covid-widget-v3.1'
 
 // Content color
 const colorIncrease = 'F51673'
