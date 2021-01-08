@@ -29,11 +29,6 @@ async function update() {
   let newVersion = newFile.substring(vstart, vend)
   console.log('새로 로드한 파일의 버전 : ' + newVersion)
   
-  // 바꿀 기준점
-  let newIndex = newFile.indexOf('// Do not change from this line.')
-  // 바꿀 새로운 스크립트 부분
-  let newScript = newFile.substring(newIndex)
-  
   // ------------------------------------------------------------
   
   // 예전 스크립트
@@ -41,7 +36,9 @@ async function update() {
   let directory = fileManager.documentsDirectory()
   let path = fileManager.joinPath(directory, '코로나 위젯.js')
   
-  let tempScript
+  let tempScript // 새로운 스크립트
+  let newIndex, newScript // 바꿀 새로운 스크립트 부분   
+  let oldIndex, oldScript // 바꾸면 안되는 부분(단축어, api, 글자크기)
   
   // 파일 확인
   if(!fileManager.isFileStoredIniCloud(path)) {
@@ -56,12 +53,21 @@ async function update() {
     vend = oldFile.indexOf("'", vstart)
     let oldVersion = vstart<0 ? 
         null : oldFile.substring(vstart, vend)
-    console.log('현재 버전 : ' + oldVersion)
+    console.log('현재 버전 : ' + oldVersion)   
     
-    // 바꾸면 안되는 부분(단축어)
-    let oldIndex = oldFile.indexOf(
-                           '// Do not change from this line.')
-    let oldScript = oldFile.substring(0, oldIndex)
+    
+    if(Number(oldVersion.substring(oldVersion.indexOf('-v')+2))
+       < 2.6) {
+      newIndex = newFile.indexOf('// 글자 크기')
+      oldIndex = oldFile.indexOf('// 여기부터는 건들지 마세요.')
+    }
+    else {
+      newIndex = newFile.indexOf('// Do not change from this line')
+      oldIndex = newFile.indexOf('// Do not change from this line')
+    }
+    
+    newScript = newFile.substring(newIndex)
+    oldScript = oldFile.substring(0, oldIndex)
     
     // ---------------------------------------------------------
     
