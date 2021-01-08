@@ -3,11 +3,11 @@
 // itmes 안에는 ['SF symbol name', '단축어 이름이나 앱 url scheme']
 // 을 넣으세요.
 const buttons = {
-  number :11,  // 버튼의 개수
+  number : 4,  // 버튼의 개수
   items : [ // 버튼 내용
-    ['headphones', '버즈+지니'],
-    ['house', '집으로 가기'],
-    ['dollarsign.circle', '계좌 공유'],
+    ['headphones', '단축어1'],
+    ['house', '단축어2'],
+    ['dollarsign.circle', '단축어3'],
     ['qrcode', 'kakaotalk://con/web?url=https://'
                 +'accounts.kakao.com/qr_check_in'], // QR 체크인
     ['alarm', '알람 열기'],
