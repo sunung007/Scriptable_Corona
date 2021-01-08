@@ -51,13 +51,13 @@ async function update() {
     // 예전 파일의 버전
     vstart = oldFile.indexOf('covid-widget-v')
     vend = oldFile.indexOf("'", vstart)
-    let oldVersion = vstart<0 ? 
+    let oldVersion = vstart < 0 ? 
         null : oldFile.substring(vstart, vend)
     console.log('현재 버전 : ' + oldVersion)   
     
     
     if(Number(oldVersion.substring(oldVersion.indexOf('-v')+2))
-       < 2.6) {
+       <= 3.0 && oldFile.indexOf('// 글자 크기') < 0) {
       newIndex = newFile.indexOf('// 글자 크기')
       oldIndex = oldFile.indexOf('// 여기부터는 건들지 마세요.')
     }
