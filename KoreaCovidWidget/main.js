@@ -1,23 +1,24 @@
 // 개인 변경 부분
 // 위젯에 띄울 단축어 버튼들
 // itmes 안에는 ['SF symbol name', '단축어 이름이나 앱 url scheme']
-// 을 넣으세요.
+// 의 형식으로 추가하세요.
 const buttons = {
   number : 4,  // 버튼의 개수
-  items : [ // 버튼 내용
-    ['headphones', '버즈+지니'],
+  items : [ // 버튼 아이템
+    ['headphones', '단축어1'],
     ['house', '단축어2'],
-    ['dollarsign.circle', '계좌 공유'],
+    ['dollarsign.circle', '단축어2'],
     ['qrcode', 'kakaotalk://con/web?url=https://'
                 +'accounts.kakao.com/qr_check_in'], // QR 체크인
+    
     // 아래는 어플을 실행하는 버튼입니다.
-    // 필요없으시면 지우셔도 됩니다. 대신 위에 number는 줄여주세요!
-    ['photo', 'photos-redirect://'], // 사진
-    ['square.and.pencil', 'mobilenotes://'], // 메모
-    ['folder', 'shareddocuments://'], // 파일
-    ['envelope', 'message://'], // 메일
-    ['gear', 'App-prefs://'], // 설정
-    ['barcode', 'kakaopay://'], // 카카오페이
+    // 필요없는 내용은 지우시면 됩니다.
+    ['photo', 'photos-redirect://'], // 사진 어플 실행
+    ['square.and.pencil', 'mobilenotes://'], // 메모 어플 실행
+    ['folder', 'shareddocuments://'], // 파일 어플 실행
+    ['envelope', 'message://'], // 메일 어플 실행
+    ['gear', 'App-prefs://'], // 설정 실행
+    ['barcode', 'kakaopay://'], // 카카오페이 어플 실행
     /*...*/
   ]}
 
