@@ -1,24 +1,24 @@
 // 개인 변경 부분
 // 위젯에 띄울 단축어 버튼들
 // itmes 안에는 ['SF symbol name', '단축어 이름이나 앱 url scheme']
-// 의 형식으로 추가하세요.
+// 을 넣으세요.
 const buttons = {
-  number : 4,  // 버튼의 개수
-  items : [ // 버튼 아이템
-    ['headphones', '단축어1'],
-    ['house', '단축어2'],
-    ['dollarsign.circle', '단축어2'],
+  number :11,  // 버튼의 개수
+  items : [ // 버튼 내용
+    ['headphones', '버즈+지니'],
+    ['house', '집으로 가기'],
+    ['dollarsign.circle', '계좌 공유'],
     ['qrcode', 'kakaotalk://con/web?url=https://'
                 +'accounts.kakao.com/qr_check_in'], // QR 체크인
-    
+    ['alarm', '알람 열기'],
     // 아래는 어플을 실행하는 버튼입니다.
-    // 필요없는 내용은 지우시면 됩니다.
-    ['photo', 'photos-redirect://'], // 사진 어플 실행
-    ['square.and.pencil', 'mobilenotes://'], // 메모 어플 실행
-    ['folder', 'shareddocuments://'], // 파일 어플 실행
-    ['envelope', 'message://'], // 메일 어플 실행
-    ['gear', 'App-prefs://'], // 설정 실행
-    ['barcode', 'kakaopay://'], // 카카오페이 어플 실행
+    // 필요없으시면 지우셔도 됩니다. 대신 위에 number는 줄여주세요!
+    ['photo', 'photos-redirect://'], // 사진
+    ['square.and.pencil', 'mobilenotes://'], // 메모
+    ['folder', 'shareddocuments://'], // 파일
+    ['envelope', 'message://'], // 메일
+    ['gear', 'App-prefs://'], // 설정
+    ['barcode', 'kakaopay://'], // 카카오페이
     /*...*/
   ]}
 
@@ -29,6 +29,14 @@ let changeSetting = true
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
 
+// 글자 크기
+const fontSizeExtraSmall = 12 //코로나 전국,지역명,증감 / 큰사이즈 날씨
+const fontSizeSmall = 13      //날짜의 년,월,요일 / 배터리 / 중간사이즈 날씨
+const fontSizeMedium = 16     //작은 사이즈 코로나 정보
+const fontSizeLarge = 18      //중간과 큰사이즈 코로나 정보
+const fontSizeDate = 32       //날짜 '일'
+const fontSizeMonthly = 10    //큰사이즈 달력
+
 // 아래 사이트에 들어가서 활용 신청한 후
 // 발급받은 일반 인증키를 붙여넣으시면 됩니다!
 // 웬만하면 발급 받으시는게 좋을겁니다... 터지면 저는 재발급받을테니까요..
@@ -38,13 +46,13 @@ const appKey = 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o
 
 
 
-
 // 여기부터는 건들지 마세요.
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.0'
+const scriptVersion = 'covid-widget-v2.6'
 
+// Content color
 const colorIncrease = 'F51673'
 const colorDecrease = '2B69F0'
 const colorGray = '545454'
@@ -81,9 +89,8 @@ let calendarPeriod
 await setWidgetAttribute()
 
 // Bring json datas.
-try {covidJSON = await new Request(covidURL).loadJSON()}
-catch {console.error('Error : Load covid data')}
-
+try { covidJSON = await new Request(covidURL).loadJSON() }
+catch { console.error('Error : Load covid data') }
 
 try {
   let weatherURL = await getWeatherURL(forceWeatherChange)
@@ -107,18 +114,18 @@ if(VIEW_MODE == 3) {
         end.setDate(end.getDate()+6-end.getDay())
         calendarJSON = await CalendarEvent.between(new Date(), end)
       }
-      else {
-        calendarJSON = await CalendarEvent.today()
+      else if(calendarPeriod == '7days') {
+        let end = new Date()
+        end.setDate(end.getDate()+7)
+        calendarJSON = await CalendarEvent.between(new Date(), end)
       }
-      
+      else { calendarJSON = await CalendarEvent.today() }
     }
     if(showCalendar[1]) {
       reminderJSON = await Reminder.allIncomplete()
     }
   }
-  catch {
-    console.error('Error : Load calendar data')
-  }
+  catch { console.error('Error : Load calendar data') }
 }
 
 // Create a widget.
@@ -231,22 +238,17 @@ function setDateWidget() {
 
   // 년도 + 월
   dateFormatter.dateFormat = 'yy년 MMM'
-  content = stack.addText(dateFormatter.string(date))
-  content.font = Font.regularSystemFont(13)
-  content.textColor = contentColor
+  setText(stack.addText(dateFormatter.string(date)), fontSizeSmall)
 
   // 일
   dateFormatter.dateFormat = 'd'
   line = stack.addStack()
-  content = line.addText(dateFormatter.string(date))
-  content.font = Font.boldMonospacedSystemFont(32)
-  content.textColor = contentColor
+  setText(line.addText(dateFormatter.string(date)),
+          fontSizeDate, true)
 
   // 요일
   dateFormatter.dateFormat = 'EEEE'
-  content = stack.addText(dateFormatter.string(date))
-  content.font = Font.systemFont(13)
-  content.textColor = contentColor
+  setText(stack.addText(dateFormatter.string(date)), fontSizeSmall)
 
   if(VIEW_MODE == 2) stack.url = 'calshow://'
 }
@@ -262,13 +264,10 @@ function setBatteryWidget() {
 
   line = stack.addStack()
   line.layoutHorizontally()
-  
   line.centerAlignContent()
 
-  // Add battery icon.
+  // Add, color, and resize battery icon.
   content = line.addImage(image)
-
-  // Coloring and resize battery icon.
   if(Device.isCharging()) {
     content.imageSize = new Size(20, 13)
     content.tintColor = Color.green()
@@ -281,12 +280,9 @@ function setBatteryWidget() {
   line.addSpacer(2)
 
   // Text
-  content = line.addText(Math.floor(batteryLevel*100)+'')
-  content.font = Font.systemFont(13)
-  content.textColor = contentColor
-  content = line.addText('%')
-  content.font = Font.systemFont(13)
-  content.textColor = contentColor
+  setText(line.addText(Math.floor(batteryLevel*100)+''),
+          fontSizeSmall)
+  setText(line.addText('%'), fontSizeSmall)
 }
 
 // Function : Set realtime covid patinet number.
@@ -311,135 +307,98 @@ function setCovidWidget() {
     stack = box.addStack()
     stack.layoutVertically()
     
+    // 전국
     line = stack.addStack()
     line.addSpacer()
-    content = line.addText('전국')
-    content.font = Font.systemFont(12)
-    content.textColor = contentColor
-        
+    setText(line.addText('전국'), fontSizeExtraSmall)
     line = stack.addStack()
     line.addSpacer()
-    content = line.addText(currentNum+'') // 전국
-    content.font = Font.boldSystemFont(16)
-    content.textColor = contentColor
+    setText(line.addText(currentNum+''), fontSizeMedium, true) 
     
     stack.addSpacer() // 줄간격
     
+    // 지역명
     line = stack.addStack()
     line.addSpacer()
-    content = line.addText(getRegionInfo(0, region)) // 지역명
-    content.font = Font.systemFont(12)
-    content.textColor = contentColor
-        
+    setText(line.addText(getRegionInfo(0,region)), 
+            fontSizeExtraSmall)        
     line = stack.addStack()
     line.addSpacer()
-    content = line.addText(regionNum+'') // 지역
-    content.font = Font.boldSystemFont(16)
-    content.textColor = contentColor
+    setText(line.addText(regionNum+''), fontSizeMedium, true)
     
     stack.addSpacer() // 줄간격
     
+    // 어제
     line = stack.addStack()
     line.addSpacer()
-    content = line.addText('어제')
-    content.font = Font.systemFont(12)
-    content.textColor = contentColor
-    
+    setText(line.addText('어제'), fontSizeExtraSmall)
     line = stack.addStack()
     line.addSpacer()
-    content = line.addText(yesterdayNum+'') // 전체
-    content.font = Font.boldSystemFont(16)
-    content.textColor = contentColor
-    
+    setText(line.addText(yesterdayNum+''), fontSizeMedium, true)
     return 
   }
   
-  if(VIEW_MODE == 3) {
+  box.url = 'https://corona-live.com'
+  
+  if(VIEW_MODE == 2) {
+    stack = box.addStack()
+    stack.layoutVertically() 
+    setText(stack.addText('현재 (전국/'+getRegionInfo(0,region)+')'),
+            fontSizeExtraSmall)
+  }
+  else if(VIEW_MODE == 3) {
     tstack = box.addStack()
     tstack.layoutHorizontally()
-
     stack = tstack.addStack()
     stack.layoutVertically()
-
-    content = stack.addText('전국')
-    content.textColor = contentColor
-    content.font = Font.systemFont(12)
-  } else if(VIEW_MODE == 2) {
-    stack = box.addStack()
-    stack.layoutVertically()
-
-    content = stack.addText('현재 (전국/'+
-                             getRegionInfo(0, region)+')')
-    content.font = Font.systemFont(12)
-    content.textColor = contentColor
+    setText(stack.addText('전국'), fontSizeExtraSmall)
   }
 
   // Current realtime patinet number
   // Whole country
   line = stack.addStack()
-
   if(VIEW_MODE == 2) line.centerAlignContent()
   else if(VIEW_MODE == 3) line.bottomAlignContent()
 
-  content = line.addText(currentNum+'')
-  content.font = Font.boldSystemFont(18)
-  content.textColor = contentColor
-
-  if(VIEW_MODE == 2) {
-    content = line.addText(' 명')
-    content.font = Font.systemFont(18)
-    content.textColor = contentColor
-  }
+  setText(line.addText(currentNum+''), fontSizeLarge, true)
+  if(VIEW_MODE == 2) setText(line.addText(' 명'), fontSizeLarge)
 
   // Compare with yesterday's
   if(currentGap > 0) {
-    content = line.addText(' +' + comma(currentGap))
-    content.textColor = new Color(colorIncrease)
+    setText(line.addText(' +'+comma(currentGap)),
+            fontSizeSmall, false, colorIncrease)
   } else {
-    content = line.addText(' ' + comma(currentGap))
-    content.textColor = new Color(colorDecrease)
+    setText(line.addText(' '+comma(currentGap)),
+            fontSizeSmall, false, colorDecrease)
   }
-  content.font = Font.systemFont(12)
-
 
   // Region
   if(VIEW_MODE == 3) {
      tstack = box.addStack()
      tstack.layoutHorizontally()
      tstack.addSpacer()
-    
      stack = tstack.addStack()
      stack.layoutVertically()
     
-     content = stack.addText(getRegionInfo(0, region))
-     content.font = Font.systemFont(12)
-     content.textColor = contentColor
+     setText(stack.addText(getRegionInfo(0, region)),
+             fontSizeExtraSmall)
    }
-  
   
   line = stack.addStack()
   if(VIEW_MODE == 2) line.centerAlignContent()
   else if(VIEW_MODE == 3) line.bottomAlignContent()
 
-  content = line.addText(regionNum+'')
-  content.font = Font.boldSystemFont(18)
-  content.textColor = contentColor
-
-  if(VIEW_MODE == 2) {
-    content = line.addText(' 명')
-    content.font = Font.systemFont(18)
-    content.textColor = contentColor
-  }
+  setText(line.addText(regionNum+''), fontSizeLarge, true)
+  if(VIEW_MODE == 2) setText(line.addText(' 명'), fontSizeLarge)
 
   // compare with yesterday's
   if(regionGap > 0) {
-    content = line.addText(' +' + comma(regionGap))
-    content.textColor = new Color(colorIncrease)
+    setText(line.addText(' +' + comma(regionGap)), fontSizeSmall,
+            false, colorIncrease)
   } else {
-    content = line.addText(' ' + comma(regionGap))
-    content.textColor = new Color(colorDecrease)
+    setText(line.addText(' ' + comma(regionGap)), fontSizeSmall,
+            false, colorDecrease)
   }
-  content.font = Font.systemFont(12)
 
 
   // Accumulated number on yesterday-basis.
@@ -452,10 +411,7 @@ function setCovidWidget() {
     stack = tstack.addStack()
     stack.layoutVertically()
   }
-
-  content = stack.addText('0시 기준')
-  content.font = Font.systemFont(12)
-  content.textColor = contentColor
+  setText(stack.addText('0시 기준'), fontSizeExtraSmall)
 
   // Total
   line = stack.addStack()
@@ -463,19 +419,11 @@ function setCovidWidget() {
   if(VIEW_MODE == 2) line.centerAlignContent()
   else if(VIEW_MODE == 3) line.bottomAlignContent()
 
-  content = line.addText(totalNum + '')
-  content.font = Font.boldSystemFont(18)
-  content.textColor = contentColor
+  setText(line.addText(totalNum+''), fontSizeLarge, true)
+  if(VIEW_MODE == 2) setText(line.addText(' 명'), fontSizeLarge)
 
-  if(VIEW_MODE == 2) {
-    content = line.addText(' 명')
-    content.font = Font.systemFont(18)
-    content.textColor = contentColor
-  }
-
-  content = line.addText(' +' + comma(yesterdayNum))
-  content.textColor = new Color(colorIncrease)
-  content.font = Font.systemFont(12)
+  setText(line.addText(' +' + comma(yesterdayNum)), 
+          fontSizeSmall, false, colorIncrease)
 }
 
 
@@ -581,19 +529,20 @@ function setWeatherWidget() {
   line = stack.addStack()
 
   if(VIEW_MODE != 3) {
-    content = line.addImage(getWeatherImage(rain, sky)) // icon
+    // icon
+    content = line.addImage(getWeatherImage(rain, sky))
     content.tintColor = contentColor
-  
     content.imageSize = new Size(16, 15)
     line.centerAlignContent()
     line.addSpacer(2)
-    content = line.addText(temp) // temperature
-    content.font = Font.systemFont(13)
-    content.textColor = contentColor
+    
+    // temperature
+    setText(line.addText(temp), fontSizeSmall)
     line.addSpacer(6)
     line.url = 'http://weather.naver.com'
   }
   else if(VIEW_MODE == 3) {
+    // icon
     stack.bottomAlignContent()
     stack.size = new Size(60, 0)
     stack.url = 'http://weather.naver.com'
@@ -602,7 +551,7 @@ function setWeatherWidget() {
     line.layoutVertically()
 
     let inline = line.addStack()
-    content = inline.addImage(getWeatherImage(rain, sky)) // icon
+    content = inline.addImage(getWeatherImage(rain, sky))
     content.tintColor = contentColor
     content.imageSize = new Size(60, 60)
     
@@ -610,18 +559,15 @@ function setWeatherWidget() {
     let max = temp.length>status.length ? 
               temp.length : status.length
     
-    
+    // temperature
     inline = line.addStack()
     inline.addSpacer()
-    content = inline.addText(temp) // temperature
-    content.font = Font.systemFont(12)
-    content.textColor = contentColor
+    setText(inline.addText(temp), fontSizeExtraSmall)
 
+    // status
     inline = line.addStack()
     inline.addSpacer()
-    content = inline.addText(status) // status
-    content.font = Font.systemFont(12)
-    content.textColor = contentColor
+    setText(inline.addText(status), fontSizeExtraSmall)
   }
 }
 
@@ -636,9 +582,7 @@ function setCalendarWidget() {
   let reminderNum = -1
   
   // 0 : calendar / 1 : reminder / 2 : monthly date
-  if(!showCalendar[0] || !showCalendar[1]) {
-    maxNum = 6
-  }
+  if(!showCalendar[0] || !showCalendar[1]) maxNum = 6
   if(showCalendar[0]) {
     calendarNum = calendarJSON.length > maxNum 
                   ? maxNum : calendarJSON.length
@@ -661,58 +605,44 @@ function setCalendarWidget() {
   if(showCalendar[0] && calendarNum == 0) {
     stack.url = 'calshow://'    
     line = stack.addStack()
-    content = line.addText('일정 ')
-    content.textColor = contentColor
-    content.font = Font.boldMonospacedSystemFont(13)
-    
-    content = line.addText('0')
-    content.textColor = new Color(colorGray)
-    content.font = Font.boldMonospacedSystemFont(13)
+    setText(line.addText('일정 '), fontSizeSmall, true)
+    setText(line.addText('0'), fontSizeSmall, true, colorGray)
   }
   else if(calendarNum > 0) {
     stack.url = 'calshow://'    
     line = stack.addStack()
-    content = line.addText('일정 ')
-    content.textColor = contentColor
-    content.font = Font.boldMonospacedSystemFont(13)
+    setText(line.addText('일정 '), fontSizeSmall, true)
     
     if(calendarJSON.length > calendarNum) {
-      content = line.addText('+'+(calendarJSON.length-calendarNum))
-      content.textColor = new Color(colorGray)
-      content.font = Font.boldMonospacedSystemFont(13)
+      setText(line.addText('+'+(calendarJSON.length-calendarNum)),
+              fontSizeSmall, true, colorGray)
     }
     getCalendarContent(calendarNum, calendarJSON)
   }
   
-  if(reminderNum > 0) stack.addSpacer(10)
+  if(showCalendar[0] && showCalendar[1]) {
+    stack.addSpacer(10)
+    stack = box.addStack()
+    stack.layoutVertically()
+  }
   
   // Show reminder
   if(showCalendar[1] && reminderNum == 0) {
-    stack = box.addStack()
-    stack.layoutVertically()
     stack.url = 'x-apple-reminderkit://'        
     line = stack.addStack()
-    content = line.addText('미리알림 ')
-    content.textColor = contentColor
-    content.font = Font.boldMonospacedSystemFont(13)
-    
-    content = line.addText('0')
-    content.textColor = new Color(colorGray)
-    content.font = Font.boldMonospacedSystemFont(13)
+    setText(line.addText('미리알림 '), fontSizeSmall, true)
+    setText(line.addText('0'), fontSizeSmall, true, colorGray)
   }
   if(reminderNum > 0) {
     stack = box.addStack()
     stack.layoutVertically()
     stack.url = 'x-apple-reminderkit://'        
     line = stack.addStack()
-    content = line.addText('미리알림 ')
-    content.textColor = contentColor
-    content.font = Font.boldMonospacedSystemFont(13)
+    setText(line.addText('미리알림 '), fontSizeSmall, true)
     
     if(reminderJSON.length > reminderNum) {
-      content = line.addText('+'+(reminderJSON.length-reminderNum))
-      content.textColor = new Color(colorGray)
-      content.font = Font.boldMonospacedSystemFont(13)
+      setText(line.addText('+'+(reminderJSON.length-reminderNum)),
+              fontSizeSmall, true, colorGray)
     }
     getCalendarContent(reminderNum, reminderJSON)
   }
@@ -728,9 +658,8 @@ function setMonthlyDateWidget() {
   
   // 월
   line = stack.addStack()
-  content = line.addText((date.getMonth()+1) + '월')
-  content.font = Font.boldMonospacedSystemFont(13)
-  content.textColor = contentColor
+  setText(line.addText((date.getMonth()+1) + '월'),
+          fontSizeSmall, true)
 
   // 내용
   let temp = new Date()
@@ -753,30 +682,25 @@ function setMonthlyDateWidget() {
     inline.centerAlignContent()
        
     // 요일
-    content = inline.addText(days[i])
-    content.font = Font.systemFont(10)
-    if(i % 6 == 0) content.textColor = new Color(colorGray)
-    else content.textColor = contentColor
-    
-    // 공백
-    if(i < firstDay) {
-      content = inline.addText(' ')
-      content.font = Font.systemFont(10)
+    if(i%6 == 0) {
+      setText(inline.addText(days[i]), fontSizeMonthly,
+              false, colorGray)
     }
+    else { setText(inline.addText(days[i]), fontSizeMonthly) }
+
+    // 공백
+    if(i < firstDay) setText(inline.addText(' '), fontSizeMonthly)
     
     // 날짜
     for(let j = (i<firstDay? 8-firstDay+i : i-firstDay+1)
         ; j <= lastDate ; j += 7) {
-      content = inline.addText(j+'')
-      // 오늘
       if(nowDate == j) {
-        content.font = Font.boldMonospacedSystemFont(10)
-        content.textColor = new Color(colorIncrease)
+        setText(inline.addText(j+''), fontSizeMonthly,
+                true, colorIncrease)
       }
       else {
-        content.font = Font.systemFont(10) 
-        if(i % 6 == 0) content.textColor = new Color(colorGray)
-        else content.textColor = contentColor
+        setText(inline.addText(j+''), fontSizeMonthly,
+                false, (i%6==0 ? colorGray:null))
       }
     } 
     if(i < 6) line.addSpacer(5)
@@ -802,8 +726,7 @@ function getCalendarContent(num, json) {
     
     // Set period
     let period = ''
-    if(calendarPeriod == 'thisWeek' ||
-       calendarPeriod == 'thisMonth') {
+    if(calendarPeriod != 'today') {
       let startDate = json[i].startDate
       let endDate = json[i].endDate
       if(startDate != null && endDate != null) {
@@ -818,9 +741,8 @@ function getCalendarContent(num, json) {
     
     // Add text
     content = line.addText(period + title)
-    content.font = Font.systemFont(13)
-    content.textColor = contentColor
     content.lineLimit = 2
+    setText(content, fontSizeSmall)
   }
 }
 
@@ -832,7 +754,7 @@ async function setWidgetAttribute() {
   let haveSettingChange = false
   let changeAttribute = -1
   let settingJSON = {}             
-  let alert, isBackgroundColor, isForcedColor, image
+  let isBackgroundColor, isForcedColor, image
                                    
   // If runs in widget, do not change any setting.
   if(!config.runsInApp) changeSetting = false
@@ -857,15 +779,10 @@ async function setWidgetAttribute() {
   }
 
   if(changeSetting) {
-    alert = new Alert()
-    alert.addAction('코로나 알림 지역 설정')
-    alert.addAction('날씨 정보 지역 설정')
-    alert.addAction('배경 설정')
-    alert.addAction('글씨/아이콘 색상')
-    alert.addAction('위젯 크기 변경')
-    alert.addAction('전체 초기화')
-    if(haveSettingFile) alert.addCancelAction('취소')
-    changeAttribute = await alert.present()
+    let alert = ['코로나 알림 지역 설정', '날씨 정보 지역 설정', '배경 설정',
+                 '글씨/아이콘 색상', '위젯 크기 변경', '전체 초기화']
+    if(haveSettingFile) alert.push('취소')
+    changeAttribute = await setAlert(alert)
   }  
 
   // Set region.
@@ -873,13 +790,10 @@ async function setWidgetAttribute() {
      changeAttribute == 5 || changeAttribute == 0) {
     haveSettingChange = true
     
-    alert = new Alert()
-    alert.title = '코로나 알림 지역 설정'
-    alert.message = '실시간 코로나 확진자 현황의 지역을 선택하세요.'
-    for(let i = 0 ; i < 17 ; i++) {
-      alert.addAction(getRegionInfo(0, i))
-    }
-    region = await alert.present()
+    let alert = []
+    for(let i = 0 ; i < 17 ; i++) alert.push(getRegionInfo(0,i))
+    region = await setAlert(alert, '코로나 알림 지역 설정',
+                            '실시간 코로나 확진자 현황의 지역을 선택하세요.')
     settingJSON.region = region+''
     
     if(settingJSON.useCovidLocation == 'true') {
@@ -893,14 +807,12 @@ async function setWidgetAttribute() {
   if(settingJSON.useCovidLocation == null ||
      changeAttribute == 5 || changeAttribute == 1) {
     haveSettingChange = true
-    
-    alert = new Alert()
-    alert.title = '날씨 정보 지역 설정'
-    alert.message = '날씨 정보를 얻을 지역 정보를 설정하세요.\n' +
-                    '실시간 위치를 사용할 경우 로딩 시간이 길어질 수 있습니다.'
-    alert.addAction('실시간 위치 사용')
-    alert.addAction('코로나 정보의 위치와 같게 설정')
-    if(await alert.present() == 0) {
+    let alert = await setAlert(
+                    ['실시간 위치 사용', '코로나 정보의 위치와 같게 설정'],
+                    '날씨 정보 지역 설정',
+                    '날씨 정보를 얻을 지역 정보를 설정하세요.\n' +
+                    '실시간 위치를 사용할 경우 로딩 시간이 길어질 수 있습니다.')
+    if(alert == 0) {
       settingJSON.useCovidLocation = 'false'
       useCovidLocation = false
     }
@@ -921,14 +833,11 @@ async function setWidgetAttribute() {
      changeAttribute == 5 || changeAttribute == 2) {
     haveSettingChange = true
     let result = -1
-    alert = new Alert()
-    alert.title = '위젯 배경 설정'
-    alert.message = '배경 유형을 선택하세요.'
-    alert.addAction('이미지')
-    alert.addAction('원하는 색상으로 강제 고정')
-    alert.addAction('자동 설정')
-    result = await alert.present()  
-    
+    result = await setAlert(
+                   ['이미지','원하는 색상으로 강제 고정','자동 설정'],
+                   '위젯 배경 설정',
+                   '배경 유형을 선택하세요.')
+
     if(result == 0) {
       image = await Photos.fromLibrary()
       settingJSON.isBackgroundColor = 'background'
@@ -965,13 +874,10 @@ async function setWidgetAttribute() {
   if(settingJSON.isForcedColor == null ||
      changeAttribute == 5 || changeAttribute == 3) {
     haveSettingChange = true
-    
-    alert = new Alert()
-    alert.title = '글씨/아이콘 색상 설정'
-    alert.message = '색상 강제 고정 여부를 선택하세요.'
-    alert.addAction('원하는 색상으로 강제 고정')
-    alert.addAction('자동 설정')
-    if(await alert.present() == 0) {
+    let alert = await setAlert(['원하는 색상으로 강제 고정','자동 설정'],
+                               '글씨/아이콘 색상 설정',
+                               '색상 강제 고정 여부를 선택하세요.')
+    if(alert == 0) {
       settingJSON.isForcedColor = 'true'
       settingJSON.contentColorNumber = await setColor(1,-1)
     }
@@ -997,14 +903,10 @@ async function setWidgetAttribute() {
   if(settingJSON.widgetSize == null ||
      changeAttribute == 5 || changeAttribute == 4) {
     haveSettingChange = true
-    
-    alert = new Alert()
-    alert.title = '위젯 크기 설정'
-    alert.message = '사용할 위젯의 크기를 선택하세요'
-    alert.addAction('작은 사이즈 위젯')
-    alert.addAction('중간 사이즈 위젯')
-    alert.addAction('큰 사이즈 위젯')
-    VIEW_MODE = (await alert.present()) + 1
+    VIEW_MODE = 1 + await setAlert(
+                     ['작은 사이즈 위젯','중간 사이즈 위젯','큰 사이즈 위젯'],
+                     '위젯 크기 설정',
+                     '사용할 위젯의 크기를 선택하세요')
     settingJSON.widgetSize = VIEW_MODE+''
   }
   else { VIEW_MODE = Number(settingJSON.widgetSize) }
@@ -1014,46 +916,33 @@ async function setWidgetAttribute() {
      VIEW_MODE == 3 &&
      (changeAttribute == 5 || changeAttribute == 4)) {
     haveSettingChange = true
-    alert = new Alert()
-    alert.title = '큰 사이즈 위젯 설정'
-    alert.message = '큰 사이즈 위젯의 구성을 설정합니다.'
-                    + '\n큰사이즈 위젯에는 "달력", "캘린더 일정", '
-                    + '"미리알림 일정"을 나타낼 수 있습니다.'                
-    alert.addAction('달력 띄우기')
-    alert.addAction('달력 띄우지 않기')
-    let result = await alert.present()
+    let result = await setAlert(['달력 띄우기', '달력 띄우지 않기'],
+                            '큰 사이즈 위젯 설정',
+                            '큰 사이즈 위젯의 구성을 설정합니다.'
+                            + '\n큰사이즈 위젯에는 "달력", "캘린더 일정", '
+                            + '"미리알림 일정"을 나타낼 수 있습니다.')
+                            
     showCalendar[2] = result==0 ? true : false
 
-    alert = new Alert()
-    alert.title = '일정 선택'
-    alert.addAction('캘린더 일정만 표시')
-    alert.addAction('미리알림 일정만 표시')
-    alert.addAction('캘린더와 미리알림 모두 표시')
-    result = await alert.present()
-    if(result == 0) {
-      showCalendar[0] = true
-      showCalendar[1] = false
+    result = await setAlert(['캘린더 일정만 표시', '미리알림 일정만 표시',
+                            '캘린더와 미리알림 모두 표시'],
+                            '일정 선택')
+    if(result == 2) showCalendar[0] = showCalendar[1] = true
+    else {
+      showCalendar[result] = true
+      showCalendar[1-result] = false
     }
-    else if(result == 1) {
-      showCalendar[0] = false
-      showCalendar[1] = true
-    }
-    else showCalendar[0] = showCalendar[1] = true
     
     settingJSON.largeWidgetSetting = showCalendar.toString()
     
     if(showCalendar[0]) {
-      alert = new Alert()
-      alert.title = '캘린더 일정 설정'
-      alert.addAction('오늘 일정만 보기')
-      alert.addAction('이번 주 일정 보기')
-      alert.addAction('이번 달 일정 보기')
-      
-      result = await alert.present()
-      
+      result = await setAlert(['오늘 일정만 보기','이번 주 일정 보기',
+                               '7일간 일정 보기','이번 달 일정 보기'],
+                              '캘린더 일정 설정')
       if(result == 0) calendarPeriod = 'today'
       else if(result == 1) calendarPeriod = 'thisWeek'
-      else if(result == 2) calendarPeriod = 'thisMonth'
+      else if(result == 2) calendarPeriod = '7days'
+      else if(result == 3) calendarPeriod = 'thisMonth'
       
       settingJSON.calendarPeriod = calendarPeriod
     }
@@ -1172,7 +1061,7 @@ async function getWeatherURL(force) {
     // Load log file.
     weatherSettingJSON = JSON.parse(fileManager.
                          readString(path+'weatherSettingJSON'))
-    if(weatherSettingJSON.base_time == null) { throw E }
+    if(weatherSettingJSON.base_time == null) { throw error }
 
     // Compare grid
     // If use current location
@@ -1214,7 +1103,7 @@ async function getWeatherURL(force) {
   // If something is change or something is not saved.
   // Set grid(x, y)
   if(!useCovidLocation 
-     && !fileManager.fileExists(path+'weatherSettingJSON')){
+     && !fileManager.fileExists(path+'weatherSettingJSON')) {
     console.log('Use real-time location as weather location.')
     console.log('Loading current location data...')
     // Get current location.
@@ -1351,6 +1240,15 @@ function comma(number) {
   return String(number).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+// Function : make alert
+async function setAlert(content, title, message) {
+  let alert = new Alert()
+  if(title != null) alert.title = title
+  if(message != null) alert.message = message
+  for(let i in content) alert.addAction(content[i])
+  return await alert.present()  
+}
+
 // Function : Set widget background color or content color
 // Argument
 // type - 0(set widget background color) - 1(set content color)
@@ -1358,16 +1256,9 @@ function comma(number) {
 async function setColor(type, colorNumber) {
   let number
   if(colorNumber == -1) {
-    let alert = new Alert()
-    if(type == 0) alert.title = '위젯 배경 색상 선택'
-    else alert.title = '텍스트/아이콘 색상 선택'
-    alert.message = '아래에서 색상을 선택하세요.'
-    alert.addAction('검정색')
-    alert.addAction('하얀색')
-    alert.addAction('노란색')
-    alert.addAction('초록색')
-    alert.addAction('파란색')
-    number = await alert.present()
+    number = await setAlert(['검정색','하얀색','노란색','초록색','파란색'],
+                            (type==0?'위젯 배경 색상 선택':null),
+                            '아래에서 색상을 선택하세요.')
   } else number = colorNumber
 
   let color
@@ -1383,10 +1274,23 @@ async function setColor(type, colorNumber) {
   return number + ''
 }
 
+function setText(content, size, bold, colorHex) {
+  if(bold != true) bold = false
+  
+  // bold and size
+  if(bold) content.font = Font.boldSystemFont(size)
+  else content.font = Font.systemFont(size)
+  
+  // color
+  if(colorHex == null) content.textColor = contentColor
+  else content.textColor = new Color(colorHex)
+  
+}
+
+
 // Function : test code. =========================================
 function removeOldLogs(all) {
   const testArr = ['settingJSON', 'weatherSettingJSON']
-
   const arr = ['region', 'useCovidLocation', 'isBackgroundColor', 
                'backgroundColorNumber', 'isForcedColor', 
                'contentColorNumber', 'widgetSize', 
