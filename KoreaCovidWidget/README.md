@@ -218,6 +218,9 @@ const boldFont = 'NanumSquare ExtraBold'
 ### 글자 크기 조절
 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#글자-크기-조절-방법)에서 확인하세요.
 
+### 폰트 설정 및 변경
+[여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#글꼴-변경-방법)에서 확인하세요.
+
 ### 투명한 배경 만들기
 mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!   
 필요하신 분들은 [여기](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 누르세요.
