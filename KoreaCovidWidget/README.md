@@ -196,6 +196,20 @@ const fontSizeMonthly = 10
 - `fontSizeMonthly`
   - 큰 크기 달력을 나타냅니다.
 
+### 글꼴 변경 방법
+설정 전 반드시 **글꼴 프로파일이 설치되어있어야 합니다.**
+1. 코드
+```
+// 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
+// 프로파일 : 설정 > 일반 > 프로파일
+const font = 'NanumSquare_ac Regular'
+const boldFont = 'NanumSquare ExtraBold'
+```
+2. 코드 상세 설명
+- `font` : 주로 사용될 폰트의 프로파일명을 넣으세요.
+- `boldFont` : **굵은** 글씨에 사용될 폰트의 프로파일명을 넣으세요.
+- 프로파일 이름 확인방법 : 설정 > 일반 > 
+
 ---------------
 ## FAQ
 ### 버튼 내용 추가/삭제/변경
