@@ -18,6 +18,8 @@
 
 iOS의 **Scriptable** 어플의 midium size와 large size의 위젯에서 작동하는 코드입니다.   
 
+### 한눈에 보기
+<img src="./image/widget_mockup.JPG"></img>   
 ### 작은 사이즈 위젯   
 <img src="./image/widget_small.jpg" width="150"></img>   
 ### 중간 사이즈 위젯
