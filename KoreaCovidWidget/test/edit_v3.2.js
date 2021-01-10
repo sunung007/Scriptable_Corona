@@ -5,15 +5,14 @@ itmes 안에는 아래 형식으로 추가/변경해주세요.
 ['SF symbol name', '단축어 이름이나 앱 url scheme']
 */
 const buttons = {
-  number : 5,  // 버튼의 개수
+  number : 4,  // 버튼의 개수
   items : [     // 버튼 내용
-    ['headphones', '버즈+지니'],
-    ['house', '집으로 가기'],
-    ['dollarsign.circle', '계좌 공유'],
+    ['headphones', '단축어1'],
+    ['house', '단축어2'],
+    ['dollarsign.circle', '단축어3'],
     ['qrcode', 'kakaotalk://con/web?url=https://'
-                +'accounts.kakao.com/qr_check_in'], // QR 체크인
-    ['alarm', '알람 열기'],
-
+                +'accounts.kakao.com/qr_check_in'], // QR 체크
+    
     // 아래는 어플을 실행하는 버튼입니다.
     // 필요없으시면 지우셔도 됩니다. 대신 위에 number는 줄여주세요!
     ['photo', 'photos-redirect://'],         // 사진
@@ -29,7 +28,7 @@ const buttons = {
 위젯 세팅 설정값 변경
 최초 실행 시에는 false로 두시고, 이후 설정 변경 시 true로 바꾸세요.
 */
-let changeSetting = true
+let changeSetting = false
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
