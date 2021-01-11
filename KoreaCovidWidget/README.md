@@ -250,6 +250,6 @@ const boldFont = 'NanumSquare ExtraBold'
 참조
 ----
 
-> 본 위젯의 현황 데이터는 [corona-live.com](http://corona-live.com)를 이용하였습니다.   
-> 본 위젯의 기상 데이터는 기상청 오픈 API를 이용하였습니다.    
-> 본 위젯의 투명 배경 소스는 [mzeryck님의 배경화면 자르는 스크립트](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 이용했습니다.   
+- 본 위젯의 현황 데이터는 [corona-live.com](http://corona-live.com)를 이용하였습니다.   
+- 본 위젯의 기상 데이터는 기상청 오픈 API를 이용하였습니다.    
+- 본 위젯의 투명 배경 소스는 [mzeryck님의 배경화면 자르는 스크립트](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 이용했습니다.   
