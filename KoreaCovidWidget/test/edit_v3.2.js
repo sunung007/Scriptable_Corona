@@ -1293,6 +1293,16 @@ async function fetchInvisibleScript() {
                      ('message = "Your widget background is ready')
   let tailCode = "await FileManager.local().writeImage('"
                  + (path+'backgroundImage') + "',imgCrop)\n\n"
+                 + 'let noti = new Notification()\n\n'
+                 + 'noti.title = "[Gofo] 코로나 위젯"\n\n'
+                 + 'noti.subtitle = "투명배경화면 설정이 완료되었습니다. "'
+                 +           '+ "코로나 위젯 스크립트를 실행해주세요."\n\n'
+                 + 'noti.openURL = "'+URLScheme.forRunningScript()
+                 + '"\n\n'
+                 + 'let date = new Date()\n\n'
+                 + 'date.setSeconds(date.getSeconds()+1)\n\n'
+                 + 'noti.setTriggerDate(date)\n\n'
+                 + 'noti.schedule()\n\n\n'
                  + "WebView.loadURL('scriptable:///run/'"
                  + "+ encodeURI('코로나 위젯_업데이트중_투명배경'))\n\n"
   let functions = request.substring(
@@ -1368,8 +1378,8 @@ async function setWidgetAttribute() {
   }
 
   if(changeSetting) {
-    let alert = ['코로나 알림 지역 설정', '날씨 정보 지역 설정', '배경 설정',
-                 '텍스트/아이콘 색상 설정', '위젯 크기 및 구성 변경', '언어 설정',
+    let alert = ['코로나 알림 지역 설정','날씨 정보 지역 설정','배경 설정',
+                 '텍스트/아이콘 색상 설정','위젯 크기 및 구성 변경','언어 설정',
                  '전체 초기화']
     if(haveSettingFile) alert.push('취소')
     changeAttribute = await setAlert(alert)
