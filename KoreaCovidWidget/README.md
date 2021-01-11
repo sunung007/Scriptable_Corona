@@ -223,15 +223,6 @@ const boldFont = 'NanumSquare ExtraBold'
 ### 폰트 설정 및 변경
 [여기](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/README.md#글꼴-변경-방법)에서 확인하세요.
 
-### 투명한 배경 만들기
-mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!   
-필요하신 분들은 [여기](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 누르세요.
-1. 위의 사이트에서 raw 클릭 후 전체 코드 복사
-2. 새로운 스크립트 만든 후 실행(재생버튼 클릭) -> 사진 앱에 저장(파일 저장 X)
-3. 코로나 위젯 코드에 들어가서 `changeSetting`을 `true`로 변경 후 실행(재생버튼 클릭)
-4. 배경 이미지를 방금 만든 이미지로 선택
-5. 실행이 끝나면 `changeSetting`을 `false`로 변경 후 좌측 상단의 `DONE` 클릭
-
 ### 오류 : Select script in widget configurator
 위젯 편집에 들어가셔서 **script-저장한 스크립트 선택** 하면 됩니다.
 
@@ -261,3 +252,4 @@ mzeryck님의 배경화면 자르는 스크립트를 이용했습니다!
 
 > 본 위젯의 현황 데이터는 [corona-live.com](http://corona-live.com)를 이용하였습니다.   
 > 본 위젯의 기상 데이터는 기상청 오픈 API를 이용하였습니다.
+> 투명 배경 소스는 [mzeryck님의 배경화면 자르는 스크립트](https://gist.github.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9)를 이용했습니다.   
