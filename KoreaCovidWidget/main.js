@@ -52,7 +52,7 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.2'
+const scriptVersion = 'covid-widget-v3.21'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일
@@ -1179,7 +1179,7 @@ function fetchLocale(locale) {
   localeJSON.realtime   = !fetch ? '현재'     : 'Real-time'
   localeJSON.country    = !fetch ? '전국'     : 'Korea'
   localeJSON.accumulate = !fetch ? '0시 기준' : 'Total'
-  localeJSON.yesterday  = !fetch ? '어제'     : 'Yesterday'
+  localeJSON.yesterday  = !fetch ? '어제'     : 'Last'
   localeJSON.count      = !fetch ? ' 명'     : ''
   localeJSON.calendar   = !fetch ? '일정'     : 'Calendar'
   localeJSON.reminder   = !fetch ? '미리알림'  : 'Reminder'
