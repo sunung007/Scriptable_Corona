@@ -5,14 +5,15 @@ itmes 안에는 아래 형식으로 추가/변경해주세요.
 ['SF symbol name', '단축어 이름이나 앱 url scheme']
 */
 const buttons = {
-  number : 4,  // 버튼의 개수
+  number : 11,  // 버튼의 개수
   items : [     // 버튼 내용
-    ['headphones', '단축어1'],
-    ['house', '단축어2'],
-    ['dollarsign.circle', '단축어3'],
+    ['headphones', '버즈+지니'],
+    ['house', '집으로 가기'],
+    ['dollarsign.circle', '계좌 공유'],
     ['qrcode', 'kakaotalk://con/web?url=https://'
-                +'accounts.kakao.com/qr_check_in'], // QR 체크
-    
+                +'accounts.kakao.com/qr_check_in'], // QR 체크인
+    ['alarm', '알람 열기'],
+
     // 아래는 어플을 실행하는 버튼입니다.
     // 필요없으시면 지우셔도 됩니다. 대신 위에 number는 줄여주세요!
     ['photo', 'photos-redirect://'],         // 사진
@@ -24,11 +25,9 @@ const buttons = {
     /*...*/
   ]}
 
-/*
-위젯 세팅 설정값 변경
-최초 실행 시에는 false로 두시고, 이후 설정 변경 시 true로 바꾸세요.
-*/
-let changeSetting = false
+
+// 위젯 설정 변경 : 설정 변경 시 true로 바꾸세요.
+let changeSetting = true
 
 // 위젯 새로고침 시간(단위 : 초)
 const refreshTime = 60 * 10
@@ -58,8 +57,8 @@ const scriptVersion = 'covid-widget-v3.2'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일
-const font = 'NanumSquare_ac Regular'
-const boldFont = 'NanumSquare ExtraBold'
+const font = null // 'NanumSquare_ac Regular'
+const boldFont = null // 'NanumSquare ExtraBold'
 
 // Content color
 const colorIncrease = 'F51673'
@@ -79,6 +78,7 @@ dateFormatter.locale = 'ko-Kore_KR'
 
 let VIEW_MODE
 let covidJSON, weatherJSON, calendarJSON
+let settingJSON = {}
 let localeJSON = {}
 let region, contentColor
 let container, box, outbox, stack, batteryBox
@@ -110,9 +110,11 @@ createWidget()
 widget.refreshAfterDate = new Date(Date.now() + 1000*refreshTime)
 widget.setPadding(15,15,15,15)
 
-if(VIEW_MODE == 1) widget.presentSmall()
-else if(VIEW_MODE == 2) widget.presentMedium()
-else widget.presentLarge()
+if(settingJSON.isBackgroundColor != 'invisible') {
+  if(VIEW_MODE == 1) widget.presentSmall()
+  else if(VIEW_MODE == 2) widget.presentMedium()
+  else widget.presentLarge()
+}
 
 Script.setWidget(widget)
 Script.complete()
@@ -249,7 +251,7 @@ function setBatteryWidget() {
     content.tintColor = Color.green()
   } else {
     content.imageSize = new Size(24, fontSizeSmall)
-    if(batteryLevel*100 < 20) content.tintColor = Color.red()
+    if(batteryLevel*100 <= 20) content.tintColor = Color.red()
     else content.tintColor = contentColor
   }
 
@@ -453,8 +455,16 @@ function setWeatherWidget() {
     volume = Number(weatherSettingJSON.volume)
   }
   else {
-    console.log('Load new weather data')
-    const response = weatherJSON['response']
+    let response
+    try {
+      console.log('Load new weather data')
+      response = weatherJSON['response']
+    }
+    catch {
+      console.error('ERROR in extract data from weather json.')
+      console.error('다시 시도해주시기 바랍니다.')
+      return
+    }
 
     // Error code in loading weather
     const errorCode = response['header']['resultCode']
@@ -469,22 +479,15 @@ function setWeatherWidget() {
       }
       console.error('ERROR in weather loading : ' +
                     response['header']['resultCode'])
-      console.error(errrorJSON.errorCode)
-      console.error('URL : ' + getWeatherURL())
+      console.error(errorJSON.errorCode)
       return null
     }
 
     // Extract weather data from JSON file.
-    let weatherItems, totalCount, fcstTime
-    try {
-      weatherItems = response['body']['items']['item']
-      totalCount = Number(response['body']['totalCount'])
-      fcstTime = weatherItems[0].fcstTime
-    }
-    catch {
-      console.error('ERROR in extract data from weather json.')
-      console.error('다시 시도해주시기 바랍니다.')
-    }
+    let weatherItems = response['body']['items']['item']
+    let totalCount = Number(response['body']['totalCount'])
+    let fcstTime = weatherItems[0].fcstTime
+
 
     for(let i in weatherItems) {
       if(weatherItems[i].fcstTime == fcstTime) {
@@ -519,7 +522,7 @@ function setWeatherWidget() {
     let line, content
     stack = box.addStack()
     line = stack.addStack()
-    
+
     // icon
     content = line.addImage(getWeatherImage(rain, sky))
     content.tintColor = contentColor
@@ -586,7 +589,7 @@ function setCalendarWidget() {
                                      -calendarNum))
         setText(content,fontSizeSmall, true, colorGray)
       }
-      getCalendarContent(calendarNum, calendarJSON, 
+      getCalendarContent(calendarNum, calendarJSON,
                          isCalendarRight, true)
     }
   }
@@ -615,7 +618,7 @@ function setCalendarWidget() {
                                     -reminderNum))
         setText(content, fontSizeSmall, true, colorGray)
       }
-      getCalendarContent(reminderNum, reminderJSON, 
+      getCalendarContent(reminderNum, reminderJSON,
                          isCalendarRight, false)
     }
   }
@@ -629,11 +632,11 @@ function setMonthlyDateWidget() {
   let width = fontSizeMonthly*1.4
   let lines = []
   let content
-  
+
   box = outbox.addStack()
   box.url = 'calshow://'
-  box.layoutVertically()  
-  
+  box.layoutVertically()
+
   // 월
   dateFormatter.dateFormat = 'MMM'
   content = box.addText(dateFormatter.string(date))
@@ -656,12 +659,12 @@ function setMonthlyDateWidget() {
     let line = stack.addStack()
     line.layoutVertically()
     line.size = new Size(width, 0)
-    
+
     let inline = line.addStack()
     inline.size = new Size(width, 0)
     inline.layoutHorizontally()
     inline.centerAlignContent()
-    
+
     // 요일 : if i%6=0, weekend
     if(i%6==0) {
       setText(inline.addText(days[i]), fontSizeMonthly,
@@ -676,11 +679,11 @@ function setMonthlyDateWidget() {
       inline = line.addStack()
       inline.size = new Size(width, 0)
       inline.centerAlignContent()
-      
+
       setText(inline.addText(' '), fontSizeMonthly)
       line.addSpacer(5)
     }
-    
+
     // 날짜
     for(let j = (i<firstDay? 8-firstDay+i : i-firstDay+1)
         ; j <= lastDate ; j += 7) {
@@ -700,7 +703,7 @@ function setMonthlyDateWidget() {
     }
     if(i < 6) stack.addSpacer(5)
   }
-  
+
 }
 
 // Functions for making each widget.==========================
@@ -722,8 +725,9 @@ async function fetchJSONs() {
   }
   catch {
     console.error('Error : Load weather data')
-    console.error('URL : '+weatherURL)
-    console.error('nx : '+weatherSettingJSON.nx+' / ny : '+weatherSettingJSON.ny)
+    console.error('URL : ' + weatherURL)
+    console.error('nx : ' + weatherSettingJSON.nx
+                  + ' / ny : ' + weatherSettingJSON.ny)
   }
 
   // Calendar and reminder data.
@@ -809,9 +813,9 @@ function getCalendarContent(num, json, right, isCalendar) {
   draw.respectScreenScale = true
   draw.fillEllipse(new Rect(0, 0, 200, 200))
   let circle = draw.getImage()
-  
+
   dateFormatter.dateFormat = 'd'
-  
+
   for(let i = 0 ; i < num; i++ ) {
     line = stack.addStack()
     line.layoutHorizontally()
@@ -1242,6 +1246,90 @@ function comma(number) {
   return String(number).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+// Function : load invisible script and run it. =================
+async function fetchInvisibleScript() {
+  let message = '투명 위젯은 배경화면을 위젯의 위치와 크기에 맞게 잘라서 '
+                  + '배경으로 사용하여 투명한 것처럼 보이게 하는 것입니다.\n\n'
+                + '진행 전 홈화면 편집모드에서 빈 배경화면의 스크린샷을 '
+                + '준비해주세요.\n\n'
+                +'이후 뜨는 사진 선택에서 빈 배경화면의 사진을 선택해주세요.'
+  let result = await setAlert(['취소','확인'],'투명 위젯 만들기',message)
+  if(result == 0) return null
+
+  // This source is from mzeryck's code.
+  let url = 'https://gist.githubusercontent.com/mzeryck/'
+            + '3a97ccd1e059b3afa3c6666d27a496c9/raw/'
+            + '54587f26d0b1ca7830c8d102cd786382248ff16f/'
+            + 'mz_invisible_widget.js'
+  const widgetSize = ['Small', 'Medium', 'Large']
+  const oldPosition = ['left', 'right', 'top', 'middle', 'bottom',
+                       'Top', 'Middle', 'Bottom']
+  const newPosition = ['왼쪽', '오른쪽', '상단', '중앙', '하단',
+                       '상단', '중앙', '하단']
+  const oldMessages = ["It looks like you selected an image that isn't an iPhone screenshot, or your iPhone is not supported. Try again with a different image.",
+"What type of iPhone do you have?",
+"Note that your device only supports two rows of widgets, so the middle and bottom options are the same.",
+'What position will it be in?',
+'["Top left","Top right","Middle left","Middle right","Bottom left","Bottom right"]',
+'["Top","Middle","Bottom"]',
+'["Top","Bottom"]']
+  const newMessages = ["휴대폰 사이즈와 선택한 이미지의 크기가 다릅니다. 홈화면 편집모드에서 빈화면의 스크린샷을 찍고, 해당 이미지를 선택하세요.",
+"현재 사용 중인 기기의 모델을 선택하세요.",
+"이 기종은 '중앙'과 '하단' 옵션의 결과물이 동일합니다.",
+"위젯이 홈화면에서 놓일 위치를 선택해주세요",
+'["상단 왼쪽","상단 오른쪽","중앙 왼쪽","중앙 오른쪽", "하단 왼쪽", "하단 오른쪽"]',
+'["상단","중앙","하단"]',
+'["상단","하단"]']
+
+  let request = await new Request(url).loadString()
+  for(let i in oldMessages) {
+    request = request.replace(oldMessages[i], newMessages[i])
+  }
+  console.log('Start editing original code.')
+  let index0 = request.indexOf('let img = await')
+  let index1 = request.indexOf('message = "What size of widget')
+  let index2 = request.indexOf('message = "위젯이 홈화면에서 놓일')
+  let index3 = request.indexOf
+                     ('message = "Your widget background is ready')
+  let tailCode = "await FileManager.local().writeImage('"
+                 + (path+'backgroundImage') + "',imgCrop)\n\n"
+                 + "WebView.loadURL('scriptable:///run/'"
+                 + "+ encodeURI('코로나 위젯_업데이트중_투명배경'))\n\n"
+  let functions = request.substring(
+                  request.indexOf('async function generateAlert'))
+
+  // Edit code.
+  let cropCode = request.substring(index2, index3)
+  for(let i in oldPosition) {
+    cropCode = cropCode.replaceAll(oldPosition[i],newPosition[i])
+    functions = functions.replaceAll(oldPosition[i],
+                                     '"'+newPosition[i]+'"')
+  }
+
+  let file = request.substring(index0, index1) + '\n\n'
+             + 'let widgetSize = "' + widgetSize[VIEW_MODE-1]
+             + '"\n\n' + cropCode + '\n\n' + tailCode
+             + '\n\n' + functions
+
+  console.log('Editing original code is completed.')
+
+  let iCloud = FileManager.iCloud()
+  let filePath = iCloud.joinPath(iCloud.documentsDirectory(),
+                 '투명 위젯 설정.js')
+  iCloud.writeString(filePath, file)
+  console.log("Save edited code.")
+
+  fileManager.writeString(path+'settingJSON',
+                          JSON.stringify(settingJSON))
+  if(fileManager.fileExists(path+'backgroundImage')) {
+    fileManager.remove(path+'backgroundImage')
+  }
+
+  // Run script for making widget invisible.
+  WebView.loadURL('scriptable:///run/'
+                  + encodeURI('투명 위젯 설정'))
+}
+
 
 // Funciton : widget setting ====================================
 // Set basic settings of widget.
@@ -1249,7 +1337,6 @@ async function setWidgetAttribute() {
   let haveSettingFile = false
   let haveSettingChange = false
   let changeAttribute = -1
-  let settingJSON = {}
   let isBackgroundColor, isForcedColor, image
 
   // If runs in widget, do not change any setting.
@@ -1266,6 +1353,12 @@ async function setWidgetAttribute() {
     settingJSON = JSON.parse(fileManager.
                              readString(path+'settingJSON'))
     haveSettingFile = true
+    if(settingJSON.isBackgroundColor == 'invisible') {
+      changeSetting = false
+      if(!fileManager.fileExists(path+'backgroundImage')) {
+        settingJSON.isBackgroundColor = null
+      }
+    }
   }
   catch {
     haveSettingFile = false
@@ -1276,7 +1369,7 @@ async function setWidgetAttribute() {
 
   if(changeSetting) {
     let alert = ['코로나 알림 지역 설정', '날씨 정보 지역 설정', '배경 설정',
-                 '글씨/아이콘 설정', '위젯 크기 및 구성 변경', '언어 설정',
+                 '텍스트/아이콘 색상 설정', '위젯 크기 및 구성 변경', '언어 설정',
                  '전체 초기화']
     if(haveSettingFile) alert.push('취소')
     changeAttribute = await setAlert(alert)
@@ -1328,9 +1421,8 @@ async function setWidgetAttribute() {
      changeAttribute == 6 || changeAttribute == 2) {
     haveSettingChange = true
     let result = -1
-    result = await setAlert(
-                   ['북마크에서 선택','사진에서 선택','색상 선택'],
-                   '위젯 배경 설정','배경 유형을 선택하세요.')
+    let arr = ['북마크에서 선택','사진에서 선택','색상 선택','투명하게 설정']
+    result = await setAlert(arr,'위젯 배경 설정','배경 유형을 선택하세요.')
     if(result == 0) {
       let allList = fileManager.allFileBookmarks()
       let allName = []
@@ -1357,6 +1449,9 @@ async function setWidgetAttribute() {
       settingJSON.isBackgroundColor = 'color'
       settingJSON.backgroundColorNumber = await setColor(0, -1)
     }
+    else if(result == 3) {
+      settingJSON.isBackgroundColor = 'invisible'
+    }
   }
   else {
     isBackgroundColor = settingJSON.isBackgroundColor
@@ -1367,11 +1462,21 @@ async function setWidgetAttribute() {
                                      readImage(imagePath)
     }
     else if(isBackgroundColor == 'background') {
-      widget.backgroundImage = fileManager.
+      widget.backgroundImage = await fileManager.
                                readImage(path+'backgroundImage')
     }
     else if(isBackgroundColor == 'color') {
       setColor(0, Number(settingJSON.backgroundColorNumber))
+    }
+    else if(isBackgroundColor == 'invisible') {
+      haveSettingChange = true
+      settingJSON.isBackgroundColor = 'background'
+      widget.backgroundImage = await fileManager.
+                               readImage(path+'backgroundImage')
+      let iCloud = FileManager.iCloud()
+      let filePath = iCloud.joinPath(iCloud.documentsDirectory(),
+                                    '투명 위젯 설정.js')
+      if(iCloud.fileExists(filePath)) iCloud.remove(filePath)
     }
   }
 
@@ -1474,6 +1579,9 @@ async function setWidgetAttribute() {
     else fetchLocale()
   }
 
+  if(settingJSON.isBackgroundColor == 'invisible') {
+    fetchInvisibleScript()
+  }
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
     fileManager.writeString(path+'settingJSON',
