@@ -52,7 +52,7 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.21'
+const scriptVersion = 'covid-widget-v3.22'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일
@@ -1300,8 +1300,8 @@ async function fetchInvisibleScript() {
                  + '"\n\n'
                  + 'let date = new Date()\n\n'
                  + 'date.setSeconds(date.getSeconds()+1)\n\n'
-                 + 'noti.setTriggerDate(date)\n\n'
                  + 'noti.schedule()\n\n\n'
+                 + 'noti.setTriggerDate(date)\n\n'
                  + "WebView.loadURL('scriptable:///run/'"
                  + "+ encodeURI('코로나 위젯_업데이트중_투명배경'))\n\n"
   let functions = request.substring(
@@ -1315,7 +1315,8 @@ async function fetchInvisibleScript() {
                                      '"'+newPosition[i]+'"')
   }
 
-  let file = request.substring(index0, index1) + '\n\n'
+  let file = 'let files = FileManager.local()\n\n'
+             + request.substring(index0, index1) + '\n\n'
              + 'let widgetSize = "' + widgetSize[VIEW_MODE-1]
              + '"\n\n' + cropCode + '\n\n' + tailCode
              + '\n\n' + functions
