@@ -1,3 +1,6 @@
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: teal; icon-glyph: magic;
 /*
 개인 변경 부분
 위젯에 띄울 단축어 버튼들
@@ -59,7 +62,7 @@ const scriptVersion = 'covid-widget-v3.3'
 let font //= 'NanumSquare_ac Regular'
 let boldFont //= 'NanumSquare ExtraBold'
 
-// 버튼 크기, 
+// 버튼 크기,
 const buttonSize = 12
 const buttonSpacer = 10
 
@@ -221,7 +224,7 @@ function setDateWidget() {
   stack.layoutVertically()
 
   // 년도 + 월
-    dateFormatter.dateFormat = localeJSON.year + ' MMM'
+  dateFormatter.dateFormat = localeJSON.year + ' MMM'
   setText(stack, dateFormatter.string(date), fontSizeSmall)
 
   // 일
@@ -446,17 +449,9 @@ async function setWeatherWidget() {
     console.error('다시 시도해주시기 바랍니다.')
     return
   }
-  
+
   // Error code in loading weather
   const errorCode = response.header.resultCode
-
-  let noti = new Notification()
-  noti.title = '[Gofo] 코로나 위젯 날씨 로드'
-  noti.body = errorCode
-  let notiDate = new Date()
-  notiDate.setSeconds(notiDate.getSeconds()+2)
-  noti.schedule()
-  noti.setTriggerDate(notiDate)
 
   if(errorCode != '00') {
     console.error('ERROR in weather loading : ' +
@@ -707,7 +702,7 @@ async function fetchJSONs() {
     nx = getRegionInfo(1, region)
     ny = getRegionInfo(2, region)
   }
-  
+
 //  while(weatherJSON) {
     try {
       weatherURL = await getWeatherURL(nx, ny)
