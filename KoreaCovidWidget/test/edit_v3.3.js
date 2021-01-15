@@ -1,6 +1,3 @@
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: yellow; icon-glyph: magic;
 /*
 개인 변경 부분
 위젯에 띄울 단축어 버튼들
@@ -55,23 +52,23 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.21'
+const scriptVersion = 'covid-widget-v3.3'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일//
-// const font = 'NanumSquare_ac Regular'
-// const boldFont = 'NanumSquare ExtraBold'
+let font //= 'NanumSquare_ac Regular'
+let boldFont //= 'NanumSquare ExtraBold'
 
-// 버튼 크기
-const buttonSize = 20 // 12
-const buttonSpacer = 12 // 10
+// 버튼 크기, 
+const buttonSize = 12
+const buttonSpacer = 10
 
 // Content color
 const color_increase = 'F51673'
 const color_decrease = '2B69F0'
 const color_gray = '545454'
-let color_sunday = color_gray
-let color_saturday = color_gray
+let color_sunday = color_gray   // 일요일 색상을 hex로 넣으세요.
+let color_saturday = color_gray // 토요일 색상을 hex로 넣으세요.
 
 // Etc...
 const localFM = FileManager.local()
@@ -675,38 +672,6 @@ function setMonthlyDateWidget() {
     }
     if(i < 6) stack.addSpacer(4)
   }
-  /*
-  // day
-  for(let i = 0 ; i < 7 ; i++) {
-    color = (i==0?color_sunday : (i==6?color_saturday:null))
-    content = stack.addStack()
-    content.size = new Size(width, fontSizeMonthly)
-    content.centerAlignContent()
-    setText(content, days[i], fontSizeMonthly, false, color)
-  }
-  box.addSpacer(5)
-  stack = box.addStack()
-  // blank
-  for(let i = 0 ; i < firstDay ; i++) {
-    content = stack.addStack()
-    content.size = new Size(width, fontSizeMonthly)
-  }
-  // date
-  for(let i = 1 ; i <= lastDate ; i++) {
-   if((i+firstDay)%7 == 1) {
-      color = color_sunday
-      box.addSpacer(5)
-      stack = box.addStack()
-    }
-    else if((i+firstDay)%7 == 0) {
-      color = color_saturday
-    }
-    else color = null
-    content = stack.addStack()
-    content.size = new Size(width, fontSizeMonthly)
-    content.centerAlignContent()
-    setText(content, i+'', fontSizeMonthly, false, color)
-  }*/
 }
 
 // Functions for making each widget.==========================
