@@ -52,7 +52,7 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.31'
+const scriptVersion = 'covid-widget-v3.32'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일//
@@ -60,7 +60,7 @@ let font //= 'NanumSquare_ac Regular'
 let boldFont //= 'NanumSquare ExtraBold'
 
 // 버튼 크기,
-const buttonSize = 14
+const buttonSize = 20
 const buttonSpacer = 12
 
 // Content color
@@ -680,8 +680,8 @@ async function fetchJSONs() {
   let ny = -1
   if(!useCovidLocation) {
     console.log('Use real-time location as weather location.')
-    console.log('Loading current location data...')
     while(nx+ny < 0) {
+      console.log('Loading current location data...')
       try {
         Location.setAccuracyToThreeKilometers()
         let location = await Location.current()
@@ -1260,15 +1260,11 @@ async function setWidgetAttribute() {
 
   // Load settingJSON file.
   try {
-    if(!localFM.fileExists(path+'settingJSON')) {
-      removeOldLogs()
-      throw error
-    }
     // Load json file saved setting values.
-    console.log('Load setting JSON file.')
-    settingJSON = JSON.parse(localFM.
+    settingJSON = await JSON.parse(localFM.
                              readString(path+'settingJSON'))
     haveSettingFile = true
+    console.log('Load setting JSON file.')
     if(settingJSON.isBackgroundColor == 'invisible') {
       changeSetting = false
       if(!localFM.fileExists(path+'backgroundImage')) {
@@ -1490,7 +1486,7 @@ async function setWidgetAttribute() {
   }
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
-    localFM.writeString(path+'settingJSON', 
+    localFM.writeString(path+'settingJSON',
                         JSON.stringify(settingJSON))
     console.log('Save changed setting')
   }
