@@ -52,7 +52,7 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.3'
+const scriptVersion = 'covid-widget-v3.31'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일//
@@ -1266,8 +1266,8 @@ async function setWidgetAttribute() {
     }
     // Load json file saved setting values.
     console.log('Load setting JSON file.')
-    settingJSON = localFM.readString(path+'settingJSON')
-    settingJSON = JSON.parse(settingJSON)
+    settingJSON = JSON.parse(localFM.
+                             readString(path+'settingJSON'))
     haveSettingFile = true
     if(settingJSON.isBackgroundColor == 'invisible') {
       changeSetting = false
@@ -1490,8 +1490,8 @@ async function setWidgetAttribute() {
   }
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
-    settingJSON = JSON.stringify(settingJSON)
-    localFM.writeString(path+'settingJSON', settingJSON)
+    localFM.writeString(path+'settingJSON', 
+                        JSON.stringify(settingJSON))
     console.log('Save changed setting')
   }
 }
