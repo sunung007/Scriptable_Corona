@@ -60,7 +60,7 @@ let font //= 'NanumSquare_ac Regular'
 let boldFont //= 'NanumSquare ExtraBold'
 
 // 버튼 크기,
-const buttonSize = 20
+const buttonSize = 18
 const buttonSpacer = 12
 
 // Content color
