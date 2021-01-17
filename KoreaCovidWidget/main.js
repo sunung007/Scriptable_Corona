@@ -52,14 +52,14 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.32'
+const scriptVersion = 'covid-widget-v3.33'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
 // 프로파일 : 설정 > 일반 > 프로파일//
 let font //= 'NanumSquare_ac Regular'
 let boldFont //= 'NanumSquare ExtraBold'
 
-// 버튼 크기,
+// 버튼 크기, 버튼 사이 간격
 const buttonSize = 18
 const buttonSpacer = 12
 
@@ -1261,10 +1261,17 @@ async function setWidgetAttribute() {
   // Load settingJSON file.
   try {
     // Load json file saved setting values.
-    settingJSON = await JSON.parse(localFM.
+    if(!localFM.fileExists(path+'settingJSON')) {throw error}
+    settingJSON = JSON.parse(localFM.
                              readString(path+'settingJSON'))
     haveSettingFile = true
     console.log('Load setting JSON file.')
+    if(settingJSON.region == null) {
+      settingJSON = {}
+      localFM.remove(path+'settingJSON')
+      console.log('기존 설정 파일에 문제가 있습니다.')
+      throw error
+    }
     if(settingJSON.isBackgroundColor == 'invisible') {
       changeSetting = false
       if(!localFM.fileExists(path+'backgroundImage')) {
@@ -1275,10 +1282,9 @@ async function setWidgetAttribute() {
   catch {
     haveSettingFile = false
     changeSetting = false
-    console.log('There is no setting file.')
     console.log('위젯 설정을 진행합니다.')
   }
-
+  
   if(changeSetting) {
     let alert = ['코로나 알림 지역 설정','날씨 정보 지역 설정','배경 설정',
                  '텍스트/아이콘 색상 설정','위젯 크기 및 구성 변경','언어 설정',
@@ -1484,6 +1490,7 @@ async function setWidgetAttribute() {
   if(settingJSON.isBackgroundColor == 'invisible') {
     fetchInvisibleScript()
   }
+  
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
     localFM.writeString(path+'settingJSON',
