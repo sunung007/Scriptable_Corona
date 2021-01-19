@@ -599,7 +599,7 @@ function setMonthlyDateWidget() {
   const days = [localeJSON.sun, localeJSON.mon, localeJSON.tue,
                 localeJSON.wen, localeJSON.thu, localeJSON.fri,
                 localeJSON.sat]
-  let width = fontSizeMonthly*1.3
+  let width = fontSizeMonthly*1.4
   let content, color
 
   let date = new Date()
