@@ -52,16 +52,16 @@ const fontSizeMonthly = 10    //큰사이즈 달력
 // =======================================================
 // Do not change from this line.
 // Version of this script.
-const scriptVersion = 'covid-widget-v3.33'
+const scriptVersion = 'covid-widget-v3.34'
 
 // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
-// 프로파일 : 설정 > 일반 > 프로파일//
+// 프로파일 : 설정 > 일반 > 프로파일
 let font //= 'NanumSquare_ac Regular'
 let boldFont //= 'NanumSquare ExtraBold'
 
 // 버튼 크기, 버튼 사이 간격
-const buttonSize = 18
-const buttonSpacer = 12
+const buttonSize = 19
+const buttonSpacer = 11
 
 // Content color
 const color_increase = 'F51673'
@@ -74,17 +74,19 @@ let color_saturday = color_gray // 토요일 색상을 hex로 넣으세요.
 const localFM = FileManager.local()
 const directory = localFM.documentsDirectory()
 const path = localFM.joinPath(directory,'Gofo-covid-widget-data-')
-const fcstPath = localFM.joinPath(directory,'Gofo-Fcst-info')
 
 const widget = new ListWidget()
 let dateFormatter = new DateFormatter()
 dateFormatter.locale = 'ko-Kore_KR'
 
-let VIEW_MODE
-let covidJSON, calendarJSON
 let settingJSON = {}
 let weatherJSON = {}
+let covidJSON = {}
+let calendarJSON = {}
+let reminderJSON = {}
 let localeJSON = {}
+
+let VIEW_MODE
 let region, contentColor
 let container, box, outbox, stack, batteryBox
 
@@ -100,6 +102,10 @@ let calendarPeriod
 // Start main code. ==============================================
 // For test : Reset all setting file.
 //removeOldLogs(true)
+
+// test
+//let calendarList = await Calendar.forEvents()
+//console.log(calendarList)
 
 // Set widget's attributes.
 await setWidgetAttribute()
@@ -519,25 +525,31 @@ function setCalendarWidget() {
   let maxNum = 3 // max number of line each has
   let calendarNum = -1
   let reminderNum = -1
+  let calendarLength, reminderLength
 
   // 0 : calendar / 1 : reminder / 2 : monthly date
   if(!showCalendar[0] || !showCalendar[1]) maxNum = 7
   if(showCalendar[0]) {
-    calendarNum = calendarJSON.length > maxNum
-                  ? maxNum : calendarJSON.length
+    calendarLength = calendarJSON.length
+    calendarNum = calendarLength > maxNum ? maxNum : calendarLength
   }
   if(showCalendar[1]) {
-    reminderNum = reminderJSON.length > maxNum
-                  ? maxNum : reminderJSON.length
+    reminderLength = reminderJSON.length
+    reminderNum = reminderLength > maxNum ? maxNum : reminderLength
   }
+  
   if(showCalendar[0] && showCalendar[1]) {
-    if(calendarNum <= maxNum &&
-       reminderJSON.length > maxNum) {
+    if(calendarNum <= maxNum && reminderLength > maxNum) {
       reminderNum += maxNum - calendarNum
+      if(reminderNum > reminderLength) {
+        reminderNum = reminderLength
+      }
     }
-    else if(calendarJSON.length > maxNum &&
-            reminderNum <= maxNum) {
+    else if(calendarLength > maxNum && reminderNum <= maxNum) {
       calendarNum += maxNum - reminderNum
+      if(calendarNum > calendarLength) {
+        calendarNum = calendarLength
+      }
     }
   }
 
@@ -1284,7 +1296,7 @@ async function setWidgetAttribute() {
     changeSetting = false
     console.log('위젯 설정을 진행합니다.')
   }
-  
+
   if(changeSetting) {
     let alert = ['코로나 알림 지역 설정','날씨 정보 지역 설정','배경 설정',
                  '텍스트/아이콘 색상 설정','위젯 크기 및 구성 변경','언어 설정',
@@ -1490,7 +1502,7 @@ async function setWidgetAttribute() {
   if(settingJSON.isBackgroundColor == 'invisible') {
     fetchInvisibleScript()
   }
-  
+
   // Save changes
   if(!haveSettingFile || haveSettingChange) {
     localFM.writeString(path+'settingJSON',
