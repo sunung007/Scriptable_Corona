@@ -80,7 +80,7 @@ iOS의 **Scriptable** 어플의 midium size와 large size의 위젯에서 작동
 ※ 기기에 **scriptable** 어플이 설치되어 있어야합니다. [여기](https://apps.apple.com/kr/app/scriptable/id1405459188)를 누르면 앱스토어로 이동합니다.
 
 ### 방법 1. 업데이트 파일 이용하기(설치 가능)
-1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/update_covid_widget.js)로 들어갑니다.
+1. [코드 페이지](https://github.com/sunung007/IosScriptable/blob/main/KoreaCovidWidget/update/v2.6.js)로 들어갑니다.
 2. RAW를 눌러 전체 코드를 복사합니다.
 3. scriptable 어플을 실행합니다.   
 4. `+`버튼을 눌러서 코드를 붙여넣습니다.    
