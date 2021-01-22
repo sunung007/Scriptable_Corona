@@ -1,66 +1,3 @@
-const userSetting = {
-  /*
-  위젯에 띄울 단축어 버튼들
-  itmes 안에는 아래 형식으로 추가/변경해주세요.
-  ['SF symbol name', '단축어 이름이나 앱 url scheme']
-  */
-  buttons : {
-    number : 4,  // 버튼의 개수
-    items : [     // 버튼 내용
-      ['headphones.circle', '단축어 이름'],
-      ['house.circle', '단축어 이름'],
-      ['viewfinder.circle', 'kakaotalk://con/web?url=https://'
-                  +'accounts.kakao.com/qr_check_in'], // QR 체크인
-      ['k.circle', 'kakaopay://'],              // 카카오페이
-      ['p.circle', 'photos-redirect://'],         // 사진
-      ['pencil.circle', 'mobilenotes://'], // 메모
-      ['envelope.circle', 'message://'],              // 메일
-      ['folder.circle', 'shareddocuments://'],        // 파일
-      ['circle.grid.2x2', 'App-prefs://'],                // 설정
-    ]
-  },
-
-  // 글자 크기
-  fontSize : {
-    extraSmall : 12, //코로나 전국,지역명,증감 / 큰사이즈 날씨
-    small      : 13, //날짜의 년,월,요일 / 배터리 / 중간사이즈 날씨
-    medium     : 16, //작은 사이즈 코로나 정보
-    large      : 18, //중간과 큰사이즈 코로나 정보
-    date       : 32, //날짜 '일'
-    monthly    : 10, //큰사이즈 달력
-  },
-
-  // 글꼴 : 프로파일 이름과 정확히 일치해야합니다.
-  // 프로파일 : 설정 > 일반 > 프로파일
-  font : {
-    normal : null,
-    bold : null,
-  },
-
-  // 색상 : hex값으로 넣으세요.
-  color : {
-    color_red : 'F51673',
-    color_blue : '2B69F0',
-    color_gray : '545454',
-    color_sunday : color_gray,
-    color_saturday : color_gray,
-  },
-
-  buttonSize : 20,   // 버튼 크기
-  buttonSpacer : 12, // 버튼 사이 간격
-
-  refreshTime : 60 * 10,
-  /*
-  아래 사이트에 들어가서 활용 신청한 후 발급받은 일반 인증키를 붙여넣으시면 됩니다!
-  웬만하면 발급 받으시는게 좋을겁니다... 터지면 저는 재발급받을테니까요..
-  https://data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15057682
-  */
-  appKey : 'e8AFfWnF9M5a355DPc9CSmzWHBW5JhXMfqg7vsEVIcqr9ZaS70Ahr%2FETSdFC1o5TUybHaANphNqbJR0aeZj6dA%3D%3D',
-}
-
-// ============================================================
-// Part : developer
-
 const localFM = FileManager.local()
 const iCloud = FileManager.iCloud()
 
@@ -666,13 +603,6 @@ const save_row = () => {
 
 main()
 
-module.exports.invisibleWidget = () => {
-  fetchInvisibleScript()
-}
-
-module.exports.getSetting = () => {
-  return userSetting
-}
 // ============================================================
 
 function main(runUITable) {
