@@ -1,28 +1,22 @@
 // Part : user
 const userSetting = {
-  /*
-  위젯에 띄울 단축어 버튼들
-  itmes 안에는 아래 형식으로 추가/변경해주세요.
-  ['SF symbol name', '단축어 이름이나 앱 url scheme']
-  */
-  buttons : {
+  buttons : {    // 위젯 아래의 버튼들
     number : 4,  // 버튼의 개수
-    items : [     // 버튼 내용
+    items : [    // 버튼 내용
+      // 형식 : ['SF symbol name', '단축어 이름이나 앱 url scheme']
       ['headphones.circle', '단축어 이름'],
       ['house.circle', '단축어 이름'],
-      ['viewfinder.circle', 'kakaotalk://con/web?url=https://'
-                  +'accounts.kakao.com/qr_check_in'], // QR 체크인
-      ['k.circle', 'kakaopay://'],              // 카카오페이
+      ['viewfinder.circle', 'kakaotalk://con/web?url=https://accounts.kakao.com/qr_check_in'], // QR 체크인
+      ['k.circle', 'kakaopay://'],                // 카카오페이
       ['p.circle', 'photos-redirect://'],         // 사진
-      ['pencil.circle', 'mobilenotes://'], // 메모
-      ['envelope.circle', 'message://'],              // 메일
-      ['folder.circle', 'shareddocuments://'],        // 파일
-      ['circle.grid.2x2', 'App-prefs://'],                // 설정
+      ['pencil.circle', 'mobilenotes://'],        // 메모
+      ['envelope.circle', 'message://'],          // 메일
+      ['folder.circle', 'shareddocuments://'],    // 파일
+      ['circle.grid.2x2', 'App-prefs://'],        // 설정
     ]
   },
-
-  // 글자 크기
-  fontSize : {
+  
+  fontSize : {       // 글자 크기
     extraSmall : 12, //코로나 전국,지역명,증감 / 큰사이즈 날씨
     small      : 13, //날짜의 년,월,요일 / 배터리 / 중간사이즈 날씨
     medium     : 16, //작은 사이즈 코로나 정보
@@ -37,9 +31,8 @@ const userSetting = {
     normal : null,
     bold : null,
   },
-
-  // 색상 : hex값으로 넣으세요.
-  color : {
+  
+  color : {  // 색상 : hex값으로 넣으세요.
     red : 'F51673',
     blue : '2B69F0',
     gray : '545454',
@@ -49,8 +42,11 @@ const userSetting = {
 
   buttonSize : 20,   // 버튼 크기
   buttonSpacer : 12, // 버튼 사이 간격
+  
+  calendarSpacer : 0, // 캘린더/리마인더 일정 내용 사이 줄간격
 
-  refreshTime : 60 * 10,
+  refreshTime : 60 * 10, // 새로고침 시간(단위 : 초)
+  
   /*
   아래 사이트에 들어가서 활용 신청한 후 발급받은 일반 인증키를 붙여넣으시면 됩니다!
   웬만하면 발급 받으시는게 좋을겁니다... 터지면 저는 재발급받을테니까요..
@@ -99,7 +95,7 @@ let calendarPeriod
 //removeOldLogs(true)
 
 // Check version and update.
-await checkVersion()
+await updateScript()
 
 // Set widget's attributes.
 setWidgetAttribute()
@@ -123,7 +119,8 @@ if(settingJSON.isBackgroundColor != 'invisible') {
 Script.setWidget(widget)
 Script.complete()
 
-async function checkVersion() {
+// Function : update ============================================
+async function updateScript() {
   const url = 'https://raw.githubusercontent.com/sunung007/'
               + 'IosScriptable/main/KoreaCovidWidget/version.json'
   const updatePath = iCloud.joinPath(iCloudDirectory,
@@ -133,20 +130,26 @@ async function checkVersion() {
     iCloud.remove(updatePath)
   }
   
+  // version check
   const request = await new Request(url).loadJSON()
   const new_version = Number(request.version)
   const cur_version = Number(scriptVersion.substring(14))
-
+  
+  // install update file
   if(new_version > cur_version) {
-    const update = await new Request(request.path).loadString()
+    const noti = new Notification()
+    noti.title = '[Gofo] 코로나 위젯'
+    noti.body = '새로운 업데이트 파일이 있습니다. 업데이트를 진행합니다.'
+    noti.schedule()
     
+    const update = await new Request(request.path).loadString()
     iCloud.writeString(updatePath, update)
     await WebView.loadURL('scriptable:///run/' 
                           + encodeURI('Gofo_코로나 위젯 업데이트'))
   }
 }
 
-// Function : reate widget =======================================
+// Function : create widget =======================================
 function createWidget() {
   container = widget.addStack()
   container.layoutVertically()
@@ -590,6 +593,7 @@ function setCalendarWidget() {
         let text = ' +'+(calendarJSON.length-calendarNum)
         setText(line, text, userSetting.fontSize.small, true, userSetting.color.gray)
       }
+      stack.addSpacer(userSetting.calendarSpacer)
       getCalendarContent(calendarNum, calendarJSON,
                          isCalendarRight, true)
     }
@@ -618,6 +622,7 @@ function setCalendarWidget() {
         let text = ' +'+(reminderJSON.length-reminderNum)
         setText(line, text, userSetting.fontSize.small, true, userSetting.color.gray)
       }
+      stack.addSpacer(userSetting.calendarSpacer)
       getCalendarContent(reminderNum, reminderJSON,
                          isCalendarRight, false)
     }
@@ -884,6 +889,8 @@ function getCalendarContent(num, json, right, isCalendar) {
     // Add text
     content = setText(line, period + title, userSetting.fontSize.extraSmall)
     content.lineLimit = 1
+    
+    stack.addSpacer(userSetting.calendarSpacer)
   }
 }
 
