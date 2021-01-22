@@ -603,16 +603,6 @@ const save_row = () => {
 
 main()
 
-module.exports.invisibleWidget = () => {
-  let noti = new Notification()
-  noti.title = '1233'
-  noti.schedule()
-
-  fetchInvisibleScript()
-}
-
-
-
 // ============================================================
 
 function main(runUITable) {
