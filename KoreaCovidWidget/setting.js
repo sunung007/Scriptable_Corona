@@ -20,7 +20,30 @@ const monthly_list = ['보이기', '보이지 않기']
 const large_list = ['캘린더만', '리마인더만', '캘린더 + 리마인더']
 const align_list = ['왼쪽 정렬', '오른쪽 정렬']
 const calendar_list = ['오늘 일정만', '이번 주 일정 보기', '이번 달 일정 보기', '7일간 일정 보기', '30일간 일정 보기', '기타']
+let calendar_source_list = []
+let calendar_source_status = []
 const language_list = ['한국어', '영어']
+
+
+const all_calendar_source = await Calendar.forEvents()
+let saved_calendar_source 
+
+if(settingJSON.calendarSource != null) {
+  saved_calendar_source = settingJSON.calendarSource.split(',')
+}
+
+for(let i in all_calendar_source) {
+  calendar_source_list.push(all_calendar_source[i].title)
+  for(let j in saved_calendar_source) {
+    if(saved_calendar_source[j]==calendar_source_list[i]) {
+      calendar_source_status.push(true)
+      break
+    }
+  }
+  if(calendar_source_status[i] != true) {
+    calendar_source_status[i] = false
+  }
+}
 
 // ============================================================
 
@@ -49,18 +72,17 @@ let calendar_period = 0
 let language_change = settingJSON.locale == 'en' ? 1 : 0
 
 if(background_change == 'color') background_change = 0
-else if(background_change == 'background') background_change = 1
-else if(background_change == 'bookmark') background_change = 2
-else if(background_change == 'invisible') background_change = 3
-
-if(background_change == 'background') {
+else if(background_change == 'background') {
+  background_change = 1
   if(localFM.fileExists(path+'backgroundImage')) {
     background_image = await localFM.readImage(path+'backgroundImage')
   }
 }
 else if(background_change == 'bookmark') {
+  background_change = 2
   background_bookmark = settingJSON.bookmark
 }
+else if(background_change == 'invisible') background_change = 3
 
 if(large_setting[0]=='true' && large_setting[1]=='true') {
   large_change = 2
@@ -248,7 +270,8 @@ const background_row = () => {
 
   background_choice.onTap = async () => {
     if(background_change == 1) {
-      background_image = await Photos.fromLibrary()
+      let img = await Photos.fromLibrary()
+      if(img != null) background_image = img 
     }
     else if(background_change == 2) {
       const list = localFM.allFileBookmarks()
@@ -398,11 +421,35 @@ const size_row = () => {
     row.addCell(calendar_period_right)
 
     if(calendar_change == 5) arr.push(row)
-
+    
+    
+    // Calendar source
+    row = new UITableRow()
+    cell = UITableCell.text('','캘린더 종류 선택')
+    row.addCell(cell)
+    if(large_change == 0 || large_change == 2) arr.push(row)
+  
+    if(large_change == 0 || large_change == 2) {
+      for(let i in calendar_source_list) {
+        row = new UITableRow()
+        cell = UITableCell.button(calendar_source_list[i] + '  |  ' + (calendar_source_status[i] ? '보기' : '보지않기'))
+        cell.centerAligned()
+        row.addCell(cell)
+        
+        arr.push(row)
+        
+        cell.onTap = () => {
+          calendar_source_status[i] = !calendar_source_status[i]
+          rows[16] = size_row()
+          refreshAllRows()
+        }
+      }
+    }
+    
 
     // Wheater to left align or right align
     row = new UITableRow()
-    cell = UITableCell.text('','배열 설정')
+    cell = UITableCell.text('','일정 배열 설정')
     row.addCell(cell)
     if(monthly_change == 0) arr.push(row)
 
@@ -712,6 +759,13 @@ async function saveSetting() {
       const calendarPeriod = ['today', 'thisWeek', 'thisMonth', '7days', '30days', calendar_period+'days']
       newJSON.largeWidgetSetting = [true, large_change==2]
       newJSON.calendarPeriod = calendarPeriod[calendar_change].toString()
+
+      newJSON.calendarSource = []
+      for(let i in calendar_source_list) {
+        if(calendar_source_status[i]) {
+          newJSON.calendarSource.push(calendar_source_list[i])
+        }
+      }
     }
 
     if(monthly_change == 0) {
@@ -721,6 +775,7 @@ async function saveSetting() {
     else newJSON.largeWidgetSetting.push('false')
 
     newJSON.largeWidgetSetting = newJSON.largeWidgetSetting.toString()
+    newJSON.calendarSource = newJSON.calendarSource.toString()
   }
 
   // Save new setting values
