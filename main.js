@@ -126,8 +126,7 @@ Script.complete()
 
 // Function : update ============================================
 async function updateScript() {
-  const url = 'https://raw.githubusercontent.com/sunung007/'
-              + 'IosScriptable/main/KoreaCovidWidget/version.json'
+  const url = 'https://raw.githubusercontent.com/sunung007/Scriptable_Corona/main/version.json'
   const updatePath = iCloud.joinPath(iCloudDirectory,
                                      'Gofo_코로나 위젯 업데이트.js')
                                     
