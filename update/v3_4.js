@@ -89,6 +89,7 @@ async function update() {
     const newPath = fileManager.joinPath(directory, '코로나 위젯.js')
     fileManager.writeString(newPath, newScript)
     console.log('성공적으로 업데이트가 종료했습니다.')
+    WebView.loadURL("scriptable:///run/"+encodeURI("코로나 위젯"))
   } catch {
     console.log('업데이트에 실패했습니다.')
   }
