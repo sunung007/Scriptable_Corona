@@ -1,15 +1,4 @@
-// 경고창
-let alert = new Alert()
-alert.title = '코로나 위젯 업데이트'
-alert.message = '업데이트 전 기존 스크립트의 이름이 "코로나 위젯"으로 되어있는지 확인해 주십시오.' + '\n이름이 올바르지 않으면 새로운 스크립트를 설치합니다.'
-alert.addAction('계속')
-alert.addCancelAction('취소')
-let result = await alert.present()
-
-// 진행
-if(result == 0) update()
-else console.log('업데이트 취소')
-
+update()
 
 // Functions ======================================================
 async function update() {
