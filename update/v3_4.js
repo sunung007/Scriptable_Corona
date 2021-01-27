@@ -16,7 +16,7 @@ async function update() {
   console.log('업데이트를 시작합니다.')
   
   // file link
-  const url = 'https://raw.githubusercontent.com/sunung007/Scriptable_Corona/main/update/v3_4.js'
+  const url = 'https://raw.githubusercontent.com/sunung007/Scriptable_Corona/main/main.js'
   
   console.log('파일 로드 중...')
   
