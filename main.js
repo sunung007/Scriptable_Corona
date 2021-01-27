@@ -1241,8 +1241,7 @@ async function setWidgetAttribute() {
 
 
   async function fetchSettingScript(run) {
-    const url = 'https://raw.githubusercontent.com/sunung007/'
-                 +'IosScriptable/main/KoreaCovidWidget/setting.js'
+    const url = 'https://raw.githubusercontent.com/sunung007/Scriptable_Corona/main/setting.js'
     const filePath = iCloud.joinPath(iCloud.documentsDirectory(),
                                      'Gofo_코로나 위젯 설정.js')
 
