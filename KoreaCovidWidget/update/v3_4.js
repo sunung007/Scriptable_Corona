@@ -34,7 +34,7 @@ async function update() {
   // 예전 스크립트
   let fileManager = FileManager.iCloud()
   let directory = fileManager.documentsDirectory()
-  let path = fileManager.joinPath(directory, '코로나 위젯_구버전.js')
+  let path = fileManager.joinPath(directory, '코로나 위젯.js')
   
   let newScript // 바꿀 새로운 스크립트 부분   
   
@@ -86,7 +86,7 @@ async function update() {
 
   // 파일 작성
   try {
-    const newPath = fileManager.joinPath(directory, '코로나 위젯_3.4버전 업데이트 테스트.js')
+    const newPath = fileManager.joinPath(directory, '코로나 위젯.js')
     fileManager.writeString(newPath, newScript)
     console.log('성공적으로 업데이트가 종료했습니다.')
   } catch {
