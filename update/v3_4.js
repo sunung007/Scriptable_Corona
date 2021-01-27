@@ -41,6 +41,7 @@ async function update() {
   // 파일 확인
   if(!fileManager.isFileStoredIniCloud(path)) {
     console.log('기존에 저장된 스크립트가 없습니다. 새로운 스크립트를 로드합니다.')
+    newScript = newFile
   }
   else {
     // 바꿀 예전 스크립트 파일
@@ -86,8 +87,7 @@ async function update() {
 
   // 파일 작성
   try {
-    const newPath = fileManager.joinPath(directory, '코로나 위젯.js')
-    fileManager.writeString(newPath, newScript)
+    fileManager.writeString(path, newScript)
     console.log('성공적으로 업데이트가 종료했습니다.')
     WebView.loadURL("scriptable:///run/"+encodeURI("코로나 위젯"))
   } catch {
