@@ -62,7 +62,7 @@ const userSetting = {
 
 // ============================================================
 // Part : Developer
-const scriptVersion = 'covid-widget-v3.4'
+const scriptVersion = 'covid-widget-v3.41'
 
 const localFM = FileManager.local()
 const iCloud = FileManager.iCloud()
@@ -1215,8 +1215,7 @@ async function setWidgetAttribute() {
   }
 
   if(isBackgroundColor == 'bookmark') {
-    const imagePath = localFM.bookmarkedPath(settingJSON.bookmark)
-    const image = await localFM.readImage(imagePath)
+    const image = await localFM.readImage(settingJSON.bookmark)
     widget.backgroundImage = image
   }
   else if(isBackgroundColor == 'background') {
@@ -1249,6 +1248,7 @@ async function setWidgetAttribute() {
       const request = await new Request(url).loadString()
       console.log('Save setting script.')
       iCloud.writeString(filePath, request)
+      run = true
     }
 
     if(run) {
