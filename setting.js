@@ -274,7 +274,11 @@ const background_row = () => {
       if(img != null) background_image = img 
     }
     else if(background_change == 2) {
-      const list = localFM.allFileBookmarks()
+      const allBookmarks = await localFM.allFileBookmarks()    
+      let list = []
+      for(let i in allBookmarks) {
+        list.push(allBookmarks[i].name)
+      }
       let result = await setAlert(list, '북마크 선택')
       if(result > -1) {
         background_bookmark = localFM.bookmarkedPath(list[result])
@@ -652,15 +656,8 @@ main()
 
 // ============================================================
 
-function main(runUITable) {
-  if(runUITable != false) runUITable = true
-
-  if(settingJSON.isBackgroundColor == 'invisible') {
-    runUITable = true
-    //isInvisible = true
-  }
-
-  if(runUITable) setUITable()
+function main() {
+  setUITable()
 }
 
 // ============================================================
