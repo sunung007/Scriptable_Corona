@@ -15,7 +15,6 @@ if(localFM.fileExists(path+'settingJSON')) {
 // ============================================================
 
 const region_list = ['서울','부산','인천','대구','광주','대전','울산','세종','경기','강원','충북','충남','경북','경남','전북','전남','제주']
-const weather_list = ['코로나 위치 사용', '실시간 위치 사용']
 const background_list = ['단색으로 설정', '이미지에서 선택', '북마크에서 선택', '새로운 투명위젯']
 const color_list = ['검정색','하얀색','노란색','초록색','파란색','시스템']
 const size_list = ['작은 크기', '중간 크기', '큰 크기']
@@ -29,7 +28,7 @@ const language_list = ['한국어', '영어']
 
 
 const all_calendar_source = await Calendar.forEvents()
-let saved_calendar_source 
+let saved_calendar_source
 
 if(settingJSON.calendarSource != null) {
   saved_calendar_source = settingJSON.calendarSource.split(',')
@@ -52,8 +51,6 @@ for(let i in all_calendar_source) {
 
 let region_change = settingJSON.region == null ?
                     0 : Number(settingJSON.region)
-let weather_change = settingJSON.useCovidLocation == 'false' ?
-                     0 : 1
 let background_change = settingJSON.isBackgroundColor == null ?
                         0 : settingJSON.isBackgroundColor
 let back_color_change = settingJSON.backgroundColorNumber == null ?
@@ -128,7 +125,7 @@ const region_row = () => {
   row.addCell(region_right)
 
   region_left.onTap = () => {
-    region_change = region_change==0 ? 16:region_change-1
+    region_change = region_change==0 ? 13:region_change-1
     rows[4] = region_row()
     refreshAllRows()
   }
@@ -142,42 +139,6 @@ const region_row = () => {
   region_right.onTap = () => {
     region_change = (region_change+1) % 17
     rows[4] = region_row()
-    refreshAllRows()
-  }
-
-  return row
-}
-
-const weather_row = () => {
-  row = new UITableRow()
-
-  const weather_left = UITableCell.button('◀️')
-  const weather_name = UITableCell.button(weather_list[weather_change])
-  const weather_right = UITableCell.button('▶️')
-
-  weather_left.centerAligned()
-  weather_name.centerAligned()
-  weather_right.centerAligned()
-
-  row.addCell(weather_left)
-  row.addCell(weather_name)
-  row.addCell(weather_right)
-
-  weather_left.onTap = () => {
-    weather_change = 1 - weather_change
-    rows[7] = weather_row()
-    refreshAllRows()
-  }
-
-  weather_name.onTap = async () => {
-    weather_change = await setAlert(weather_list, '날씨 지역')
-    rows[7] = weather_row()
-    refreshAllRows()
-  }
-
-  weather_right.onTap = () => {
-    weather_change = 1 - weather_change
-    rows[7] = weather_row()
     refreshAllRows()
   }
 
@@ -236,48 +197,48 @@ const background_row = () => {
   background_left.onTap = () => {
     background_change = background_change==0 ?
                         3:background_change-1
-    rows[10] = background_row()
+    rows[7] = background_row()
     refreshAllRows()
   }
 
   background_name.onTap = async () => {
     background_change = await setAlert(background_list, '배경 설정')
-    rows[10] = background_row()
+    rows[7] = background_row()
     refreshAllRows()
   }
 
   background_right.onTap = () => {
     background_change = (background_change+1) % 4
-    rows[10] = background_row()
+    rows[7] = background_row()
     refreshAllRows()
   }
 
   color_left.onTap = () => {
     back_color_change = back_color_change==0 ?
                         5:back_color_change-1
-    rows[10] = background_row()
+    rows[7] = background_row()
     refreshAllRows()
   }
 
   color_name.onTap = async () => {
     back_color_change = await setAlert(color_list, '배경 색상 설정')
-    rows[10] = background_row()
+    rows[7] = background_row()
     refreshAllRows()
   }
 
   color_right.onTap = () => {
     back_color_change = (back_color_change+1) % 6
-    rows[10] = background_row()
+    rows[7] = background_row()
     refreshAllRows()
   }
 
   background_choice.onTap = async () => {
     if(background_change == 1) {
       let img = await Photos.fromLibrary()
-      if(img != null) background_image = img 
+      if(img != null) background_image = img
     }
     else if(background_change == 2) {
-      const allBookmarks = await localFM.allFileBookmarks()    
+      const allBookmarks = await localFM.allFileBookmarks()
       let list = []
       for(let i in allBookmarks) {
         list.push(allBookmarks[i].name)
@@ -308,19 +269,19 @@ const content_row = () => {
 
   content_left.onTap = () => {
     content_change = content_change==0 ? 5:content_change-1
-    rows[13] = content_row()
+    rows[10] = content_row()
     refreshAllRows()
   }
 
   content_name.onTap = async () => {
     content_change = await setAlert(color_list, '텍스트/아이콘 색상 설정')
-    rows[13] = content_row()
+    rows[10] = content_row()
     refreshAllRows()
   }
 
   content_right.onTap = () => {
     content_change = (content_change+1) % 6
-    rows[13] = content_row()
+    rows[10] = content_row()
     refreshAllRows()
   }
 
@@ -428,31 +389,31 @@ const size_row = () => {
     row.addCell(calendar_period_right)
 
     if(calendar_change == 5) arr.push(row)
-    
-    
+
+
     // Calendar source
     row = new UITableRow()
     cell = UITableCell.text('','캘린더 종류 선택')
     row.addCell(cell)
     if(large_change == 0 || large_change == 2) arr.push(row)
-  
+
     if(large_change == 0 || large_change == 2) {
       for(let i in calendar_source_list) {
         row = new UITableRow()
         cell = UITableCell.button(calendar_source_list[i] + '  |  ' + (calendar_source_status[i] ? '보기' : '보지않기'))
         cell.centerAligned()
         row.addCell(cell)
-        
+
         arr.push(row)
-        
+
         cell.onTap = () => {
           calendar_source_status[i] = !calendar_source_status[i]
-          rows[16] = size_row()
+          rows[13] = size_row()
           refreshAllRows()
         }
       }
     }
-    
+
 
     // Wheater to left align or right align
     row = new UITableRow()
@@ -479,104 +440,104 @@ const size_row = () => {
     // Listeners
     monthly_left.onTap = () => {
       monthly_change = 1-monthly_change
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     monthly_name.onTap = async () => {
       monthly_change = await setAlert(monthly_list, '달력 설정')
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     monthly_right.onTap = () => {
       monthly_change = 1-monthly_change
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     large_left.onTap = () => {
       large_change = large_change==0 ? 2 : large_change-1
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     large_name.onTap = async () => {
       large_change = await setAlert(large_list, '캘린더/리마인더 설정')
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     large_right.onTap = () => {
       large_change = (large_change+1) % 3
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     calendar_left.onTap = () => {
       calendar_change = calendar_change==0 ? 5 : calendar_change-1
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     calendar_name.onTap = async () => {
       calendar_change = await setAlert(calendar_list, '캘린더 기간 설정')
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     calendar_right.onTap = () => {
       calendar_change = (calendar_change+1) % 6
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     calendar_period_left.onTap = () => {
       if(calendar_period > 0) calendar_period--
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     calendar_period_right.onTap = () => {
       if(calendar_period < 365) calendar_period++
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     align_left.onTap = () => {
       align_change = 1-align_change
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     align_name.onTap = async () => {
       align_change = await setAlert(align_list, '배열 설정')
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
 
     align_right.onTap = () => {
       align_change = 1-align_change
-      rows[16] = size_row()
+      rows[13] = size_row()
       refreshAllRows()
     }
   }
 
   size_left.onTap = () => {
     size_change = size_change==0 ? 2:size_change-1
-    rows[16] = size_row()
+    rows[13] = size_row()
     refreshAllRows()
   }
 
   size_name.onTap = async () => {
     size_change = await setAlert(size_list, '위젯 크기 설정')
-    rows[16] = size_row()
+    rows[13] = size_row()
     refreshAllRows()
   }
 
   size_right.onTap = () => {
     size_change = (size_change+1) % 3
-    rows[16] = size_row()
+    rows[13] = size_row()
     refreshAllRows()
   }
 
@@ -600,19 +561,19 @@ const language_row = () => {
 
   language_left.onTap = () => {
     language_change = 1 - language_change
-    rows[19] = language_row()
+    rows[16] = language_row()
     refreshAllRows()
   }
 
   language_name.onTap = async () => {
     language_change = await setAlert(language_list, '언어 선택')
-    rows[19] = language_row()
+    rows[16] = language_row()
     refreshAllRows()
   }
 
   language_right.onTap = () => {
     language_change = 1 - language_change
-    rows[19] = language_row()
+    rows[16] = language_row()
     refreshAllRows()
   }
 
@@ -680,12 +641,6 @@ function setUITable() {
 
   division()
 
-  // weather region
-  addTextRow('날씨', '날씨의 지역을 설정해주세요.')
-  addRow(weather_row())
-
-  division()
-
   // background
   addTextRow('배경', '기존에 투명 위젯을 사용 중이고 홈화면이 바뀌지 않았다면, "이미지에서 선택"으로 설정하세요.')
   addRow(background_row())
@@ -729,7 +684,6 @@ async function saveSetting() {
   let isInvisible = false
 
   newJSON.region = region_change.toString()
-  newJSON.useCovidLocation = weather_change==0 ? 'false' : 'true'
   newJSON.locale = language_change==0 ? 'kr' : 'en'
   newJSON.contentColor = content_change.toString()
   newJSON.widgetSize = (size_change + 1).toString()
@@ -870,10 +824,7 @@ async function fetchInvisibleScript() {
   if(result == 0) return null
 
   // This source is from mzeryck's code.
-  let url = 'https://gist.githubusercontent.com/mzeryck/'
-            + '3a97ccd1e059b3afa3c6666d27a496c9/raw/'
-            + '54587f26d0b1ca7830c8d102cd786382248ff16f/'
-            + 'mz_invisible_widget.js'
+  const url = 'https://gist.githubusercontent.com/mzeryck/3a97ccd1e059b3afa3c6666d27a496c9/raw/54587f26d0b1ca7830c8d102cd786382248ff16f/mz_invisible_widget.js';
   const widgetSize = ['Small', 'Medium', 'Large']
   const oldPosition = ['left', 'right', 'top', 'middle', 'bottom',
                        'Top', 'Middle', 'Bottom']
