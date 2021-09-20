@@ -5,23 +5,26 @@
 const userSetting = {
   // 버튼
   buttons  : {    // 위젯 아래의 버튼들
-    number : 4,  // 버튼의 개수
-    items  : [    // 버튼 내용
-      // 형식 : ['SF symbol name', '단축어 이름이나 앱 url scheme']
-      ['headphones.circle', '단축어 이름'],
-      ['house.circle', '단축어 이름'],
-      ['viewfinder.circle', 'kakaotalk://con/web?url=https://accounts.kakao.com/qr_check_in'], // QR 체크인
-      ['k.circle', 'kakaopay://'],                // 카카오페이
-      ['p.circle', 'photos-redirect://'],         // 사진
-      ['pencil.circle', 'mobilenotes://'],        // 메모
-      ['envelope.circle', 'message://'],          // 메일
-      ['folder.circle', 'shareddocuments://'],    // 파일
-      ['circle.grid.2x2', 'App-prefs://'],        // 설정
-    ]
-  },
+    number : 9,  // 버튼의 개수
+  items : [     // 버튼 내용
+    // 형식 : ['SF symbol name', '단축어 이름이나 앱 url scheme']
+    ['headphones.circle', '버즈+음악재생'],
+    ['viewfinder.circle', 'kakaotalk://con/web?url=https://accounts.kakao.com/qr_check_in'], // QR 체크인
+    ['k.circle', 'kakaopay://'],              // 카카오페이
+    ['a.circle', '알람 열기'],
+    // 아래는 어플을 실행하는 버튼입니다.
+    // 필요없으시면 지우셔도 됩니다. 대신 위에 number는 줄여주세요!
+    ['p.circle', 'photos-redirect://'],         // 사진
+    ['pencil.circle', 'mobilenotes://'], // 메모
+    ['envelope.circle', 'message://'],              // 메일
+    ['folder.circle', 'shareddocuments://'],        // 파일
+    ['circle.grid.2x2', 'App-prefs://'],                // 설정
+    /*...*/
+  ]},
 
-  buttonSize   : 20,   // 버튼 크기
+  buttonSize   : 22,   // 버튼 크기
   buttonSpacer : 12, // 버튼 사이 간격
+
 
   // 글자
   fontSize : {       // 글자 크기
@@ -46,14 +49,14 @@ const userSetting = {
     blue : '2B69F0',
     gray : '545454',
     // 월간 달력 색상 : hex값으로 넣으세요.
-    saturday : '545454',
-    sunday   : '545454',
+    saturday : '545454', // '2B69F0',
+    sunday   : '545454', //'F51673',
   },
 
-  calendarSpacer : 0,     // 캘린더/리마인더 일정 내용 사이 줄간격
-  refreshTime : 60 * 10,  // 새로고침 시간(단위 : 초)
-};
+  calendarSpacer : 0, // 캘린더/리마인더 일정 내용 사이 줄간격
 
+  refreshTime : 60 * 10, // 새로고침 시간(단위 : 초)
+};
 
 // ============================================================
 // Part : Developer
@@ -319,9 +322,8 @@ function setCovidWidget() {
     covid = serverJSON.covid,
     currentNum = comma(covid.today[0]),
     currentGap = covid.today[1],
-    totalNum = comma(covid.total[0]),
     yesterNum = covid.total[1]===0 ? "취합 중" : covid.total[1],
-    yesterGap = covid.total[1]===0 ? covid.yesterday : covid.yesterday - yesterNum,
+    yesterGap = covid.total[1]===0 ? covid.yesterday : yesterNum - covid.yesterday,
     regionNum = covid.city[0],
     regionGap = covid.city[1];
 
@@ -447,7 +449,7 @@ function setCovidWidget() {
 
   if(yesterGap !== "" && yesterGap > 0) {
     setText(line, ' +' + comma(yesterGap), userSetting.fontSize.small, false, userSetting.color.red);
-  } else {
+  } else if(yesterGap !== "") {
     setText(line, ' ' + comma(yesterGap), userSetting.fontSize.small, false, userSetting.color.blue);
   }
 }
@@ -733,7 +735,6 @@ async function fetchJSONs() {
   }
 
   // 날씨
-  console.log("현재 위치를 로드합니다.");
   // Location.setAccuracyToThreeKilometers(); // 위치 정보 로드 시간 단축
   Location.setAccuracyToHundredMeters();
   console.log("현재 위치를 로드합니다.");
