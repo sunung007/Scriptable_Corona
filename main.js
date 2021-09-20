@@ -736,9 +736,18 @@ async function fetchJSONs() {
   console.log("현재 위치를 로드합니다.");
   // Location.setAccuracyToThreeKilometers(); // 위치 정보 로드 시간 단축
   Location.setAccuracyToHundredMeters();
-  const location = await Location.current();
+  console.log("현재 위치를 로드합니다.");
+  let location;
+  while(location === undefined) {
+    try {
+      location = await Location.current();
+    }
+    catch {
+      location = undefined;
+    }
+  }
   const [lang, long] = [location.latitude, location.longitude];
-  console.log("위치를 로드가 완료되었습니다.");
+  console.log("위치 로드가 완료되었습니다.");
 
   const url = `https://gofo-corona.herokuapp.com/api?lang=${lang}&long=${long}&region=${region||0}`;
   serverJSON = await new Request(url).loadJSON();
