@@ -58,7 +58,7 @@ const userSetting = {
 // ============================================================
 // Part : Developer
 const
-  scriptVersion = 'covid-widget-v4.00',
+  scriptVersion = 'covid-widget-v4.01',
 
   localFM = FileManager.local(),
   iCloud = FileManager.iCloud(),
@@ -735,6 +735,7 @@ async function fetchJSONs() {
   // 날씨
   console.log("현재 위치를 로드합니다.");
   // Location.setAccuracyToThreeKilometers(); // 위치 정보 로드 시간 단축
+  Location.setAccuracyToHundredMeters();
   const location = await Location.current();
   const [lang, long] = [location.latitude, location.longitude];
   console.log("위치를 로드가 완료되었습니다.");
