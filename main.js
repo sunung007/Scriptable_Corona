@@ -58,7 +58,7 @@ const userSetting = {
 // ============================================================
 // Part : Developer
 const
-  scriptVersion = 'covid-widget-v4.01',
+  scriptVersion = 'covid-widget-v4.02',
 
   localFM = FileManager.local(),
   iCloud = FileManager.iCloud(),
